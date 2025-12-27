@@ -29,14 +29,6 @@
         <h4>Boolean Query</h4>
       </ion-text>
       <pre class="query-display" [class.empty]="!booleanQuery">{{ booleanQuery || 'Enter search criteria above to generate query' }}</pre>
-      <ion-button
-        expand="block"
-        fill="outline"
-        (click)="copyQuery()"
-        [disabled]="!booleanQuery">
-        <ion-icon name="copy" slot="start"></ion-icon>
-        Copy Query
-      </ion-button>
     </div>
 
     <!-- URL Section -->
@@ -45,25 +37,38 @@
         <h4>LinkedIn URL</h4>
       </ion-text>
       <pre class="url-display" [class.empty]="!searchUrl">{{ searchUrl || 'URL will appear here' }}</pre>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="openInLinkedIn()"
+        [disabled]="!searchUrl">
+        <ion-icon name="open" slot="start"></ion-icon>
+        Open in LinkedIn
+      </ion-button>
+
       <ion-button
         expand="block"
         fill="outline"
+        color="medium"
+        (click)="copyQuery()"
+        [disabled]="!booleanQuery">
+        <ion-icon name="copy" slot="start"></ion-icon>
+        Copy Query
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="medium"
         (click)="copyUrl()"
         [disabled]="!searchUrl">
         <ion-icon name="copy" slot="start"></ion-icon>
         Copy URL
       </ion-button>
     </div>
-
-    <!-- Open in LinkedIn Button -->
-    <ion-button
-      expand="block"
-      color="primary"
-      class="open-button"
-      (click)="openInLinkedIn()"
-      [disabled]="!searchUrl">
-      <ion-icon name="open" slot="start"></ion-icon>
-      Open in LinkedIn
-    </ion-button>
   </ion-card-content>
 </ion-card>

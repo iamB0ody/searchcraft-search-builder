@@ -23,12 +23,13 @@ import {
   IonCol,
   IonButton,
   IonIcon,
-  IonNote,
   IonToggle,
-  IonText
+  IonText,
+  IonAccordion,
+  IonAccordionGroup
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trashOutline, peopleOutline, briefcaseOutline } from 'ionicons/icons';
+import { trashOutline, peopleOutline, briefcaseOutline, chevronDownOutline } from 'ionicons/icons';
 
 import { ChipInputComponent } from '../../components/chip-input/chip-input.component';
 import { PreviewComponent } from '../../components/preview/preview.component';
@@ -73,9 +74,10 @@ import {
     IonCol,
     IonButton,
     IonIcon,
-    IonNote,
     IonToggle,
     IonText,
+    IonAccordion,
+    IonAccordionGroup,
     ChipInputComponent,
     PreviewComponent
   ],
@@ -165,7 +167,17 @@ export class SearchBuilderPage implements OnInit {
   ];
 
   constructor() {
-    addIcons({ trashOutline, peopleOutline, briefcaseOutline });
+    addIcons({ trashOutline, peopleOutline, briefcaseOutline, chevronDownOutline });
+  }
+
+  // Check if desktop screen (for accordion default state)
+  protected get isDesktop(): boolean {
+    return window.innerWidth >= 992;
+  }
+
+  // Default accordion value for filters (expanded on desktop)
+  protected get defaultAccordionValue(): string | undefined {
+    return this.isDesktop ? 'filters' : undefined;
   }
 
   ngOnInit(): void {

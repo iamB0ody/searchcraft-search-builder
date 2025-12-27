@@ -10,6 +10,12 @@ ion-content {
   --background: var(--ion-color-light-shade);
 }
 
+// Max-width container for large screens
+ion-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 ion-card {
   margin: 0;
 }
@@ -67,7 +73,63 @@ app-chip-input {
   margin-top: 24px;
 }
 
-// Responsive adjustments
+// Filter helper text
+.filter-helper {
+  display: block;
+  margin-bottom: 12px;
+
+  small {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+// Accordion styling for filters
+ion-accordion-group {
+  margin-top: 16px;
+
+  ion-accordion {
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    margin-bottom: 0;
+
+    ion-item[slot="header"] {
+      --background: transparent;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .accordion-content {
+      padding: 0 12px 12px 12px;
+    }
+  }
+}
+
+// Desktop: Sticky preview column
+@media (min-width: 992px) {
+  ion-row {
+    align-items: flex-start;
+  }
+
+  .preview-column {
+    position: sticky;
+    top: 16px;
+    align-self: flex-start;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+
+  // Filters always expanded on desktop
+  ion-accordion-group ion-accordion {
+    .ion-accordion-toggle-icon {
+      display: none;
+    }
+  }
+}
+
+// Responsive adjustments for mobile/tablet
 @media (max-width: 991px) {
   ion-grid {
     padding: 0;
@@ -80,5 +142,10 @@ app-chip-input {
   app-preview {
     display: block;
     margin-top: 8px;
+  }
+
+  // Tighter spacing on mobile
+  app-chip-input {
+    padding: 0 12px;
   }
 }

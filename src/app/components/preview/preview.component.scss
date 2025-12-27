@@ -1,5 +1,15 @@
+// Preview card enhanced styling
+ion-card {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+ion-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .operator-badge {
-  margin-left: 8px;
   font-size: 12px;
   vertical-align: middle;
 }
@@ -28,10 +38,6 @@
     font-size: 14px;
     font-weight: 500;
   }
-
-  ion-button {
-    margin-top: 8px;
-  }
 }
 
 .query-display,
@@ -44,6 +50,8 @@
   white-space: pre-wrap;
   word-break: break-all;
   min-height: 60px;
+  max-height: 150px;
+  overflow-y: auto;
   margin: 0;
   line-height: 1.5;
   color: var(--ion-text-color);
@@ -51,9 +59,26 @@
   &.empty {
     color: var(--ion-color-medium);
     font-style: italic;
+    min-height: 40px;
   }
 }
 
-.open-button {
-  margin-top: 16px;
+// Action buttons section
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+
+  ion-button {
+    margin: 0;
+    --border-radius: 8px;
+    min-height: 44px;
+  }
+}
+
+// Copy button inline with section
+.copy-button {
+  margin-top: 8px;
+  min-height: 44px;
 }

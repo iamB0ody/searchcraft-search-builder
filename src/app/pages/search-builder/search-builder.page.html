@@ -73,210 +73,222 @@
 
               <!-- Job Filters (for Jobs only) -->
               @if (isJobsSearch) {
-                <div class="job-filters-section">
-                  <ion-note class="section-label">Job Filters</ion-note>
-                  <ion-text color="medium" class="filter-helper">
-                    <small>All filters open LinkedIn with URL parameters applied.</small>
-                  </ion-text>
+                <ion-accordion-group [value]="defaultAccordionValue">
+                  <ion-accordion value="filters">
+                    <ion-item slot="header" color="light">
+                      <ion-label>Job Filters</ion-label>
+                    </ion-item>
+                    <div class="accordion-content" slot="content">
+                      <ion-text color="medium" class="filter-helper">
+                        <small>All filters open LinkedIn with URL parameters applied.</small>
+                      </ion-text>
 
-                  <!-- Location -->
-                  <ion-item class="filter-item">
-                    <ion-input
-                      label="Location"
-                      labelPlacement="floating"
-                      formControlName="location"
-                      placeholder="e.g., San Francisco, CA">
-                    </ion-input>
-                  </ion-item>
+                      <!-- Location -->
+                      <ion-item class="filter-item">
+                        <ion-input
+                          label="Location"
+                          labelPlacement="floating"
+                          formControlName="location"
+                          placeholder="e.g., San Francisco, CA">
+                        </ion-input>
+                      </ion-item>
 
-                  <!-- Sort By -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Sort By"
-                      labelPlacement="floating"
-                      formControlName="sortBy"
-                      interface="popover">
-                      @for (option of sortByOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Sort By -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Sort By"
+                          labelPlacement="floating"
+                          formControlName="sortBy"
+                          interface="popover">
+                          @for (option of sortByOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- Date Posted -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Date Posted"
-                      labelPlacement="floating"
-                      formControlName="datePosted"
-                      interface="popover">
-                      @for (option of datePostedOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Date Posted -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Date Posted"
+                          labelPlacement="floating"
+                          formControlName="datePosted"
+                          interface="popover">
+                          @for (option of datePostedOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- Job Type (Multi-select) -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Job Type"
-                      labelPlacement="floating"
-                      formControlName="jobTypes"
-                      [multiple]="true"
-                      interface="popover">
-                      @for (option of jobTypeOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Job Type (Multi-select) -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Job Type"
+                          labelPlacement="floating"
+                          formControlName="jobTypes"
+                          [multiple]="true"
+                          interface="popover">
+                          @for (option of jobTypeOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- Experience Level (Multi-select) -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Experience Level"
-                      labelPlacement="floating"
-                      formControlName="experienceLevels"
-                      [multiple]="true"
-                      interface="popover">
-                      @for (option of experienceLevelOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Experience Level (Multi-select) -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Experience Level"
+                          labelPlacement="floating"
+                          formControlName="experienceLevels"
+                          [multiple]="true"
+                          interface="popover">
+                          @for (option of experienceLevelOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- Work Type (Multi-select) -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Work Type"
-                      labelPlacement="floating"
-                      formControlName="workTypes"
-                      [multiple]="true"
-                      interface="popover">
-                      @for (option of workTypeOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Work Type (Multi-select) -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Work Type"
+                          labelPlacement="floating"
+                          formControlName="workTypes"
+                          [multiple]="true"
+                          interface="popover">
+                          @for (option of workTypeOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- Easy Apply Toggle -->
-                  <ion-item class="filter-item">
-                    <ion-label>Easy Apply only</ion-label>
-                    <ion-toggle slot="end" formControlName="easyApply"></ion-toggle>
-                  </ion-item>
+                      <!-- Easy Apply Toggle -->
+                      <ion-item class="filter-item">
+                        <ion-label>Easy Apply only</ion-label>
+                        <ion-toggle slot="end" formControlName="easyApply"></ion-toggle>
+                      </ion-item>
 
-                  <!-- Has Verifications Toggle -->
-                  <ion-item class="filter-item">
-                    <ion-label>Has verifications</ion-label>
-                    <ion-toggle slot="end" formControlName="hasVerifications"></ion-toggle>
-                  </ion-item>
+                      <!-- Has Verifications Toggle -->
+                      <ion-item class="filter-item">
+                        <ion-label>Has verifications</ion-label>
+                        <ion-toggle slot="end" formControlName="hasVerifications"></ion-toggle>
+                      </ion-item>
 
-                  <!-- Under 10 Applicants Toggle -->
-                  <ion-item class="filter-item">
-                    <ion-label>Under 10 applicants</ion-label>
-                    <ion-toggle slot="end" formControlName="underTenApplicants"></ion-toggle>
-                  </ion-item>
-                </div>
+                      <!-- Under 10 Applicants Toggle -->
+                      <ion-item class="filter-item">
+                        <ion-label>Under 10 applicants</ion-label>
+                        <ion-toggle slot="end" formControlName="underTenApplicants"></ion-toggle>
+                      </ion-item>
+                    </div>
+                  </ion-accordion>
+                </ion-accordion-group>
               }
 
               <!-- People Filters (for People only) -->
               @if (!isJobsSearch) {
-                <div class="people-filters-section">
-                  <ion-note class="section-label">People Filters</ion-note>
-                  <ion-text color="medium" class="filter-helper">
-                    <small>All filters open LinkedIn with URL parameters applied.</small>
-                  </ion-text>
+                <ion-accordion-group [value]="defaultAccordionValue">
+                  <ion-accordion value="filters">
+                    <ion-item slot="header" color="light">
+                      <ion-label>People Filters</ion-label>
+                    </ion-item>
+                    <div class="accordion-content" slot="content">
+                      <ion-text color="medium" class="filter-helper">
+                        <small>All filters open LinkedIn with URL parameters applied.</small>
+                      </ion-text>
 
-                  <!-- Connection Level (Multi-select) -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Connection Level"
-                      labelPlacement="floating"
-                      formControlName="connectionLevels"
-                      [multiple]="true"
-                      interface="popover">
-                      @for (option of connectionLevelOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Connection Level (Multi-select) -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Connection Level"
+                          labelPlacement="floating"
+                          formControlName="connectionLevels"
+                          [multiple]="true"
+                          interface="popover">
+                          @for (option of connectionLevelOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- Profile Language (Multi-select) -->
-                  <ion-item class="filter-item">
-                    <ion-select
-                      label="Profile Language"
-                      labelPlacement="floating"
-                      formControlName="profileLanguages"
-                      [multiple]="true"
-                      interface="popover">
-                      @for (option of profileLanguageOptions; track option.value) {
-                        <ion-select-option [value]="option.value">
-                          {{ option.label }}
-                        </ion-select-option>
-                      }
-                    </ion-select>
-                  </ion-item>
+                      <!-- Profile Language (Multi-select) -->
+                      <ion-item class="filter-item">
+                        <ion-select
+                          label="Profile Language"
+                          labelPlacement="floating"
+                          formControlName="profileLanguages"
+                          [multiple]="true"
+                          interface="popover">
+                          @for (option of profileLanguageOptions; track option.value) {
+                            <ion-select-option [value]="option.value">
+                              {{ option.label }}
+                            </ion-select-option>
+                          }
+                        </ion-select>
+                      </ion-item>
 
-                  <!-- First Name -->
-                  <ion-item class="filter-item">
-                    <ion-input
-                      label="First Name"
-                      labelPlacement="floating"
-                      formControlName="firstName"
-                      placeholder="e.g., John">
-                    </ion-input>
-                  </ion-item>
+                      <!-- First Name -->
+                      <ion-item class="filter-item">
+                        <ion-input
+                          label="First Name"
+                          labelPlacement="floating"
+                          formControlName="firstName"
+                          placeholder="e.g., John">
+                        </ion-input>
+                      </ion-item>
 
-                  <!-- Last Name -->
-                  <ion-item class="filter-item">
-                    <ion-input
-                      label="Last Name"
-                      labelPlacement="floating"
-                      formControlName="lastName"
-                      placeholder="e.g., Smith">
-                    </ion-input>
-                  </ion-item>
+                      <!-- Last Name -->
+                      <ion-item class="filter-item">
+                        <ion-input
+                          label="Last Name"
+                          labelPlacement="floating"
+                          formControlName="lastName"
+                          placeholder="e.g., Smith">
+                        </ion-input>
+                      </ion-item>
 
-                  <!-- Title -->
-                  <ion-item class="filter-item">
-                    <ion-input
-                      label="Title"
-                      labelPlacement="floating"
-                      formControlName="keywordTitle"
-                      placeholder="e.g., Software Engineer">
-                    </ion-input>
-                  </ion-item>
+                      <!-- Title -->
+                      <ion-item class="filter-item">
+                        <ion-input
+                          label="Title"
+                          labelPlacement="floating"
+                          formControlName="keywordTitle"
+                          placeholder="e.g., Software Engineer">
+                        </ion-input>
+                      </ion-item>
 
-                  <!-- Company -->
-                  <ion-item class="filter-item">
-                    <ion-input
-                      label="Company"
-                      labelPlacement="floating"
-                      formControlName="keywordCompany"
-                      placeholder="e.g., Google">
-                    </ion-input>
-                  </ion-item>
+                      <!-- Company -->
+                      <ion-item class="filter-item">
+                        <ion-input
+                          label="Company"
+                          labelPlacement="floating"
+                          formControlName="keywordCompany"
+                          placeholder="e.g., Google">
+                        </ion-input>
+                      </ion-item>
 
-                  <!-- School -->
-                  <ion-item class="filter-item">
-                    <ion-input
-                      label="School"
-                      labelPlacement="floating"
-                      formControlName="keywordSchool"
-                      placeholder="e.g., Stanford University">
-                    </ion-input>
-                  </ion-item>
-                </div>
+                      <!-- School -->
+                      <ion-item class="filter-item">
+                        <ion-input
+                          label="School"
+                          labelPlacement="floating"
+                          formControlName="keywordSchool"
+                          placeholder="e.g., Stanford University">
+                        </ion-input>
+                      </ion-item>
+                    </div>
+                  </ion-accordion>
+                </ion-accordion-group>
               }
 
               <!-- Clear Button -->
@@ -295,7 +307,7 @@
       </ion-col>
 
       <!-- Preview Column -->
-      <ion-col size="12" size-lg="6">
+      <ion-col size="12" size-lg="6" class="preview-column">
         <app-preview
           [booleanQuery]="booleanQuery"
           [searchUrl]="searchUrl"
