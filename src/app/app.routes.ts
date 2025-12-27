@@ -3,8 +3,8 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'search-builder',
-    pathMatch: 'full'
+    loadComponent: () =>
+      import('./features/home/home.page').then(m => m.HomePage)
   },
   {
     path: 'search-builder',

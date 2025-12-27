@@ -6,7 +6,7 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/search-builder",
+  "start_url": "/",
   "icons": [
     {
       "src": "icons/icon-48.png",

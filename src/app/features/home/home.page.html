@@ -1,0 +1,211 @@
+<app-header [hideHistoryButton]="true" [showBackButton]="false"></app-header>
+
+<ion-content class="ion-padding">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Craft smarter job & people searches</h1>
+      <p class="hero-subtitle">
+        SearchCraft helps you build precise LinkedIn, Google Jobs, and Indeed
+        searches — without guessing Boolean syntax.
+      </p>
+      <div class="hero-actions">
+        <ion-button
+          (click)="navigateToBuilder()"
+          size="large"
+          class="primary-cta"
+        >
+          <ion-icon name="rocket-outline" slot="start"></ion-icon>
+          Start Searching
+        </ion-button>
+        <ion-button
+          (click)="navigateToPresets()"
+          fill="outline"
+          size="large"
+          class="secondary-cta"
+        >
+          View Presets
+        </ion-button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who Is It For Section -->
+  <section class="audience-section">
+    <h2 class="section-title">Who is SearchCraft for?</h2>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <ion-card class="audience-card">
+            <ion-card-header>
+              <div class="card-icon recruiters">
+                <ion-icon name="people-outline"></ion-icon>
+              </div>
+              <ion-card-title>Recruiters & HR</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ul class="feature-list">
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Build precise candidate searches
+                </li>
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Reuse presets for different roles
+                </li>
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Avoid overly restrictive queries
+                </li>
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Compare platforms easily
+                </li>
+              </ul>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12" size-md="6">
+          <ion-card class="audience-card">
+            <ion-card-header>
+              <div class="card-icon jobseekers">
+                <ion-icon name="briefcase-outline"></ion-icon>
+              </div>
+              <ion-card-title>Job Seekers</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ul class="feature-list">
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Find hidden job opportunities
+                </li>
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Search like a recruiter
+                </li>
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Avoid noise and irrelevant roles
+                </li>
+                <li>
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                  Use Google Jobs & LinkedIn efficiently
+                </li>
+              </ul>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2 class="section-title">What makes SearchCraft different?</h2>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-sm="6" size-lg="3">
+          <ion-card class="feature-card">
+            <ion-card-content>
+              <div class="feature-icon">
+                <ion-icon name="layers-outline"></ion-icon>
+              </div>
+              <h3>Multi-platform</h3>
+              <p>
+                One search for LinkedIn, Sales Navigator, Google Jobs, and
+                Indeed
+              </p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12" size-sm="6" size-lg="3">
+          <ion-card class="feature-card">
+            <ion-card-content>
+              <div class="feature-icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <h3>Presets & History</h3>
+              <p>Save, reuse, and share your searches with ease</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12" size-sm="6" size-lg="3">
+          <ion-card class="feature-card">
+            <ion-card-content>
+              <div class="feature-icon">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              <h3>Quality Score</h3>
+              <p>Know when your search is too broad or too strict</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col size="12" size-sm="6" size-lg="3">
+          <ion-card class="feature-card">
+            <ion-card-content>
+              <div class="feature-icon">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+              </div>
+              <h3>Privacy First</h3>
+              <p>No login required. All data stays in your browser</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <h2 class="section-title">How it works</h2>
+    <div class="steps-container">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Add titles & skills</h3>
+        <p>Enter job titles and required skills for your search</p>
+      </div>
+      <div class="step-arrow">
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Review the preview</h3>
+        <p>See your Boolean query and quality score in real-time</p>
+      </div>
+      <div class="step-arrow">
+        <ion-icon name="arrow-forward-outline"></ion-icon>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Open in platform</h3>
+        <p>Launch your search directly in LinkedIn, Google Jobs, or Indeed</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Section -->
+  <section class="trust-section">
+    <ion-card class="trust-card">
+      <ion-card-content>
+        <div class="trust-icon">
+          <ion-icon name="shield-checkmark-outline"></ion-icon>
+        </div>
+        <h3>Your privacy matters</h3>
+        <ul class="trust-list">
+          <li>SearchCraft does not access your LinkedIn account</li>
+          <li>No tracking, no scraping, no data collection</li>
+          <li>All data stays in your browser's local storage</li>
+        </ul>
+      </ion-card-content>
+    </ion-card>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="final-cta-section">
+    <h2>Ready to search smarter?</h2>
+    <ion-button (click)="navigateToBuilder()" size="large" class="final-cta">
+      <ion-icon name="rocket-outline" slot="start"></ion-icon>
+      Start Building Your Search
+    </ion-button>
+  </section>
+</ion-content>

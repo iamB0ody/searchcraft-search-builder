@@ -1,0 +1,357 @@
+// Home Page Styles
+// Using Ionic CSS variables for theming consistency
+
+// Hero Section
+.hero-section {
+  text-align: center;
+  padding: 3rem 1rem 4rem;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--ion-text-color);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+
+    @media (max-width: 576px) {
+      font-size: 1.75rem;
+    }
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--ion-color-medium);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+
+    @media (max-width: 576px) {
+      font-size: 1rem;
+    }
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .primary-cta {
+      --background: var(--ion-color-primary);
+      --color: white;
+      font-weight: 600;
+    }
+
+    .secondary-cta {
+      --border-color: var(--ion-color-primary);
+      --color: var(--ion-color-primary);
+    }
+  }
+}
+
+// Section Titles
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ion-text-color);
+  margin-bottom: 2rem;
+
+  @media (max-width: 576px) {
+    font-size: 1.5rem;
+  }
+}
+
+// Audience Section
+.audience-section {
+  padding: 3rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .audience-card {
+    height: 100%;
+    border-radius: 16px;
+
+    ion-card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 0;
+    }
+
+    .card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+
+      ion-icon {
+        font-size: 32px;
+        color: white;
+      }
+
+      &.recruiters {
+        background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+      }
+
+      &.jobseekers {
+        background: linear-gradient(135deg, var(--ion-color-secondary), var(--ion-color-secondary-shade));
+      }
+    }
+
+    ion-card-title {
+      font-size: 1.25rem;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        color: var(--ion-text-color);
+
+        ion-icon {
+          color: var(--ion-color-success);
+          font-size: 1.25rem;
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+      }
+    }
+  }
+}
+
+// Features Section
+.features-section {
+  padding: 3rem 0;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .feature-card {
+    height: 100%;
+    text-align: center;
+    border-radius: 16px;
+
+    ion-card-content {
+      padding: 1.5rem;
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: var(--ion-color-primary-tint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+
+      ion-icon {
+        font-size: 28px;
+        color: var(--ion-color-primary);
+      }
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+// How It Works Section
+.how-it-works-section {
+  padding: 3rem 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .steps-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  .step {
+    flex: 1;
+    max-width: 250px;
+    text-align: center;
+    padding: 1rem;
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--ion-color-primary);
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  .step-arrow {
+    display: flex;
+    align-items: center;
+    padding-top: 1rem;
+
+    ion-icon {
+      font-size: 24px;
+      color: var(--ion-color-medium);
+    }
+
+    @media (max-width: 768px) {
+      transform: rotate(90deg);
+      padding: 0.5rem 0;
+    }
+  }
+}
+
+// Trust Section
+.trust-section {
+  padding: 2rem 0;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .trust-card {
+    border-radius: 16px;
+    background: var(--ion-color-light);
+
+    ion-card-content {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .trust-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--ion-color-success-tint);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+
+      ion-icon {
+        font-size: 32px;
+        color: var(--ion-color-success);
+      }
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ion-text-color);
+      margin-bottom: 1rem;
+    }
+
+    .trust-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      display: inline-block;
+
+      li {
+        padding: 0.5rem 0;
+        color: var(--ion-color-medium-shade);
+        position: relative;
+        padding-left: 1.5rem;
+
+        &::before {
+          content: "\2713";
+          position: absolute;
+          left: 0;
+          color: var(--ion-color-success);
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+// Final CTA Section
+.final-cta-section {
+  text-align: center;
+  padding: 3rem 1rem 4rem;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--ion-text-color);
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 576px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .final-cta {
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-weight: 600;
+  }
+}
+
+// Dark mode adjustments
+:host-context(.ion-palette-dark) {
+  .trust-card {
+    background: var(--ion-color-step-100);
+  }
+
+  .feature-card .feature-icon {
+    background: rgba(var(--ion-color-primary-rgb), 0.15);
+  }
+
+  .audience-card .card-icon {
+    &.recruiters {
+      background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+    }
+
+    &.jobseekers {
+      background: linear-gradient(135deg, var(--ion-color-secondary), var(--ion-color-secondary-shade));
+    }
+  }
+}
