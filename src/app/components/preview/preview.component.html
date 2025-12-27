@@ -1,0 +1,69 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>
+      Search Preview
+      @if (operatorCount > 0) {
+        <ion-badge color="medium" class="operator-badge">
+          {{ operatorCount }} operators
+        </ion-badge>
+      }
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <!-- Warnings -->
+    @if (warnings.length > 0) {
+      <ion-list class="warnings-list" lines="none">
+        @for (warn of warnings; track warn) {
+          <ion-item color="warning">
+            <ion-icon name="warning" slot="start"></ion-icon>
+            <ion-label class="ion-text-wrap">{{ warn }}</ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }
+
+    <!-- Boolean Query Section -->
+    <div class="preview-section">
+      <ion-text color="medium">
+        <h4>Boolean Query</h4>
+      </ion-text>
+      <pre class="query-display" [class.empty]="!booleanQuery">{{ booleanQuery || 'Enter search criteria above to generate query' }}</pre>
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="copyQuery()"
+        [disabled]="!booleanQuery">
+        <ion-icon name="copy" slot="start"></ion-icon>
+        Copy Query
+      </ion-button>
+    </div>
+
+    <!-- URL Section -->
+    <div class="preview-section">
+      <ion-text color="medium">
+        <h4>LinkedIn URL</h4>
+      </ion-text>
+      <pre class="url-display" [class.empty]="!searchUrl">{{ searchUrl || 'URL will appear here' }}</pre>
+      <ion-button
+        expand="block"
+        fill="outline"
+        (click)="copyUrl()"
+        [disabled]="!searchUrl">
+        <ion-icon name="copy" slot="start"></ion-icon>
+        Copy URL
+      </ion-button>
+    </div>
+
+    <!-- Open in LinkedIn Button -->
+    <ion-button
+      expand="block"
+      color="primary"
+      class="open-button"
+      (click)="openInLinkedIn()"
+      [disabled]="!searchUrl">
+      <ion-icon name="open" slot="start"></ion-icon>
+      Open in LinkedIn
+    </ion-button>
+  </ion-card-content>
+</ion-card>

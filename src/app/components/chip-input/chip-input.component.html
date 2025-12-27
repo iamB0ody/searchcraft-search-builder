@@ -1,0 +1,34 @@
+<div class="chip-input-wrapper">
+  <ion-label class="input-label">{{ label }}</ion-label>
+
+  <div class="chips-container">
+    @for (item of items; track item; let i = $index) {
+      <ion-chip [color]="chipColor" [disabled]="isDisabled">
+        <ion-label>{{ item }}</ion-label>
+        <ion-icon name="close" (click)="removeItem(i)"></ion-icon>
+      </ion-chip>
+    }
+  </div>
+
+  <div class="input-row">
+    <ion-input
+      [value]="inputValue"
+      [placeholder]="placeholder"
+      [disabled]="isDisabled"
+      (ionInput)="onInputChange($event)"
+      (keydown)="onKeydown($event)"
+      (ionBlur)="onBlur()">
+    </ion-input>
+    <ion-button
+      fill="clear"
+      size="small"
+      (click)="addItem()"
+      [disabled]="!inputValue.trim() || isDisabled">
+      <ion-icon slot="icon-only" name="add"></ion-icon>
+    </ion-button>
+  </div>
+
+  @if (helperText) {
+    <ion-note class="helper-text">{{ helperText }}</ion-note>
+  }
+</div>

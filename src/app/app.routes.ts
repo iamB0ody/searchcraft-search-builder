@@ -1,3 +1,16 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'search-builder',
+    pathMatch: 'full'
+  },
+  {
+    path: 'search-builder',
+    loadComponent: () =>
+      import('./pages/search-builder/search-builder.page').then(
+        m => m.SearchBuilderPage
+      )
+  }
+];

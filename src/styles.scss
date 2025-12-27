@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure routed pages fill the viewport */
+app-root {
+  display: block;
+  height: 100%;
+}
+
+ion-app {
+  height: 100%;
+}
+
+/* Router outlet pages should fill available space */
+router-outlet + * {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

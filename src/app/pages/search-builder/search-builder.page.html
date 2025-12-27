@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>LinkedIn Boolean Search Builder</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <!-- Builder Column -->
+      <ion-col size="12" size-lg="6">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Search Builder</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <form [formGroup]="form">
+              <!-- Search Type Segment -->
+              <ion-segment
+                [value]="form.get('searchType')?.value"
+                (ionChange)="onSearchTypeChange($event)"
+                class="search-type-segment">
+                @for (type of searchTypes; track type.value) {
+                  <ion-segment-button [value]="type.value">
+                    <ion-icon [name]="type.icon"></ion-icon>
+                    <ion-label>{{ type.label }}</ion-label>
+                  </ion-segment-button>
+                }
+              </ion-segment>
+
+              <!-- Platform Mode Select -->
+              <ion-item class="mode-select">
+                <ion-select
+                  label="Platform"
+                  labelPlacement="floating"
+                  formControlName="mode"
+                  interface="popover">
+                  @for (mode of searchModes; track mode.value) {
+                    <ion-select-option [value]="mode.value">
+                      {{ mode.label }}
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </ion-item>
+
+              <!-- Titles Input (OR joined) -->
+              <app-chip-input
+                formControlName="titles"
+                label="Job Titles (OR)"
+                placeholder="e.g., Software Engineer"
+                chipColor="primary"
+                helperText="Multiple titles are joined with OR">
+              </app-chip-input>
+
+              <!-- Skills Input (AND joined) -->
+              <app-chip-input
+                formControlName="skills"
+                label="Skills (AND)"
+                placeholder="e.g., Angular, TypeScript"
+                chipColor="secondary"
+                helperText="Skills are joined with AND">
+              </app-chip-input>
+
+              <!-- Exclude Input (NOT) -->
+              <app-chip-input
+                formControlName="exclude"
+                label="Exclude (NOT)"
+                placeholder="e.g., Junior, Intern"
+                chipColor="danger"
+                helperText="Terms to exclude from results">
+              </app-chip-input>
+
+              <!-- Location (for Jobs only) -->
+              @if (isJobsSearch) {
+                <ion-item class="location-input">
+                  <ion-input
+                    label="Location"
+                    labelPlacement="floating"
+                    formControlName="location"
+                    placeholder="e.g., San Francisco, CA">
+                  </ion-input>
+                </ion-item>
+                <ion-note class="location-note">
+                  Location is appended to the jobs search URL
+                </ion-note>
+              }
+
+              <!-- Clear Button -->
+              <ion-button
+                expand="block"
+                fill="outline"
+                color="medium"
+                (click)="clearForm()"
+                class="clear-button">
+                <ion-icon name="trash-outline" slot="start"></ion-icon>
+                Clear All
+              </ion-button>
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- Preview Column -->
+      <ion-col size="12" size-lg="6">
+        <app-preview
+          [booleanQuery]="booleanQuery"
+          [searchUrl]="searchUrl"
+          [warnings]="warnings"
+          [operatorCount]="operatorCount">
+        </app-preview>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
