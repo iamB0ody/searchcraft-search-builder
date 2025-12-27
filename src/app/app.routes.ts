@@ -19,5 +19,12 @@ export const routes: Routes = [
       import('./features/presets/presets.routes').then(
         m => m.PRESETS_ROUTES
       )
+  },
+  {
+    path: 'history',
+    loadChildren: () =>
+      import('./features/history/history.routes').then(
+        m => m.HISTORY_ROUTES
+      )
   }
 ];

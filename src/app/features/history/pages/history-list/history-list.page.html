@@ -1,0 +1,86 @@
+<app-header
+  [showBackButton]="true"
+  pageTitle="Search History"
+  [hideHistoryButton]="true">
+  <ion-buttons slot="end">
+    @if (historyItems.length > 0) {
+      <ion-button (click)="onClearAll()" color="danger">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    }
+  </ion-buttons>
+</app-header>
+
+<ion-content class="ion-padding">
+  <!-- Search -->
+  <div class="controls">
+    <ion-searchbar
+      [value]="searchQuery"
+      (ionInput)="onSearchChange($event)"
+      placeholder="Search history..."
+      debounce="300">
+    </ion-searchbar>
+  </div>
+
+  <!-- Empty State -->
+  @if (filteredItems.length === 0) {
+    <div class="empty-state">
+      @if (searchQuery) {
+        <ion-text color="medium">
+          <p>No history matches your search.</p>
+        </ion-text>
+      } @else {
+        <ion-icon name="time-outline" class="empty-icon"></ion-icon>
+        <ion-text color="medium">
+          <h3>No Search History</h3>
+          <p>Your executed searches will appear here.</p>
+        </ion-text>
+        <ion-button (click)="navigateToBuilder()" fill="outline">
+          Go to Builder
+        </ion-button>
+      }
+    </div>
+  }
+
+  <!-- History List -->
+  @if (filteredItems.length > 0) {
+    <ion-list>
+      @for (item of filteredItems; track item.id) {
+        <ion-item-sliding>
+          <ion-item>
+            <ion-icon
+              [name]="getSearchTypeIcon(item)"
+              slot="start"
+              color="primary">
+            </ion-icon>
+            <ion-label>
+              <h2>{{ getItemSummary(item) }}</h2>
+              <p class="query-preview">{{ item.booleanQuery | slice:0:60 }}{{ item.booleanQuery.length > 60 ? '...' : '' }}</p>
+              <ion-note>{{ formatDate(item.createdAt) }} • {{ item.mode }} • {{ item.operatorCount }} ops</ion-note>
+            </ion-label>
+          </ion-item>
+
+          <!-- Left side options -->
+          <ion-item-options side="start">
+            <ion-item-option color="success" (click)="onApply(item)">
+              <ion-icon slot="icon-only" name="play-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+
+          <!-- Right side options -->
+          <ion-item-options side="end">
+            <ion-item-option color="primary" (click)="onCopyQuery(item)">
+              <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="secondary" (click)="onCopyUrl(item)">
+              <ion-icon slot="icon-only" name="link-outline"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="onDelete(item)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+</ion-content>

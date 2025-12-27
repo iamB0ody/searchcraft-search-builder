@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import {
   IonCard,
   IonCardHeader,
@@ -43,6 +43,8 @@ export class PreviewComponent {
   @Input() warnings: string[] = [];
   @Input() operatorCount = 0;
   @Input() badgeStatus: BadgeStatus = 'safe';
+
+  @Output() executeSearch = new EventEmitter<void>();
 
   get badgeColor(): string {
     switch (this.badgeStatus) {
@@ -90,6 +92,6 @@ export class PreviewComponent {
 
   openInLinkedIn(): void {
     if (!this.searchUrl) return;
-    window.open(this.searchUrl, '_blank', 'noopener,noreferrer');
+    this.executeSearch.emit();
   }
 }

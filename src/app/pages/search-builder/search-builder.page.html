@@ -325,7 +325,8 @@
           [searchUrl]="searchUrl"
           [warnings]="warnings"
           [operatorCount]="operatorCount"
-          [badgeStatus]="badgeStatus">
+          [badgeStatus]="badgeStatus"
+          (executeSearch)="onExecuteSearch()">
         </app-preview>
       </ion-col>
     </ion-row>

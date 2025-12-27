@@ -10,7 +10,7 @@ import {
   IonBackButton
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { folderOutline, moonOutline, sunnyOutline } from 'ionicons/icons';
+import { folderOutline, moonOutline, sunnyOutline, timeOutline } from 'ionicons/icons';
 import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
@@ -41,15 +41,22 @@ export class AppHeaderComponent {
   /** Hide presets button (useful on presets pages) */
   @Input() hidePresetsButton = false;
 
+  /** Hide history button (useful on history pages) */
+  @Input() hideHistoryButton = false;
+
   private readonly router = inject(Router);
   protected readonly theme = inject(ThemeService);
 
   constructor() {
-    addIcons({ folderOutline, moonOutline, sunnyOutline });
+    addIcons({ folderOutline, moonOutline, sunnyOutline, timeOutline });
   }
 
   navigateToPresets(): void {
     this.router.navigate(['/presets']);
+  }
+
+  navigateToHistory(): void {
+    this.router.navigate(['/history']);
   }
 
   toggleTheme(): void {

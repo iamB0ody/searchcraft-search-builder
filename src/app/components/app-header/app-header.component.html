@@ -23,6 +23,13 @@
         <ion-icon slot="icon-only" [name]="themeIcon"></ion-icon>
       </ion-button>
 
+      <!-- History Navigation -->
+      @if (!hideHistoryButton) {
+        <ion-button (click)="navigateToHistory()" aria-label="Search history">
+          <ion-icon slot="icon-only" name="time-outline"></ion-icon>
+        </ion-button>
+      }
+
       <!-- Presets Navigation -->
       @if (!hidePresetsButton) {
         <ion-button (click)="navigateToPresets()" aria-label="Saved presets">

@@ -46,6 +46,7 @@ import { LinkedinUrlBuilderService } from '../../services/linkedin-url-builder.s
 import { IntelligenceEngineService } from '../../services/intelligence/intelligence-engine.service';
 import { ToastService } from '../../services/toast.service';
 import { PresetRepositoryService } from '../../core/services/preset-repository.service';
+import { HistoryRepositoryService } from '../../core/services/history-repository.service';
 import { QueryPayload } from '../../models/platform.model';
 import { IntelligenceSuggestion } from '../../models/intelligence.model';
 import {
@@ -106,6 +107,7 @@ export class SearchBuilderPage implements OnInit {
   private readonly intelligence = inject(IntelligenceEngineService);
   private readonly toast = inject(ToastService);
   private readonly presetRepository = inject(PresetRepositoryService);
+  private readonly historyRepository = inject(HistoryRepositoryService);
 
   protected form!: FormGroup;
   protected booleanQuery = '';
@@ -224,6 +226,10 @@ export class SearchBuilderPage implements OnInit {
         this.applyPreset(preset.payload, preset.mode);
         this.toast.showSuccess(`Preset "${preset.name}" applied`);
       }
+    } else if (state?.historyPayload) {
+      // Apply from history
+      this.applyPreset(state.historyPayload, state.historyMode);
+      this.toast.showSuccess('Search loaded from history');
     }
   }
 
@@ -402,5 +408,31 @@ export class SearchBuilderPage implements OnInit {
       keywordCompany: '',
       keywordSchool: ''
     });
+  }
+
+  protected onExecuteSearch(): void {
+    if (!this.searchUrl) return;
+
+    const formValue = this.form.value as SearchFormModel;
+
+    // Add to history
+    this.historyRepository.add({
+      platformId: 'linkedin',
+      searchType: formValue.searchType,
+      mode: formValue.mode,
+      payload: {
+        searchType: formValue.searchType,
+        titles: formValue.titles || [],
+        skills: formValue.skills || [],
+        exclude: formValue.exclude || [],
+        location: formValue.location || undefined
+      },
+      booleanQuery: this.booleanQuery,
+      url: this.searchUrl,
+      operatorCount: this.operatorCount
+    });
+
+    // Open in new tab
+    window.open(this.searchUrl, '_blank', 'noopener,noreferrer');
   }
 }
