@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { ClipboardService } from '../../services/clipboard.service';
 import { ToastService } from '../../services/toast.service';
 import { Preset } from '../models/preset.model';
+import { BuilderShareState } from '../../models/platform.model';
 
 /**
  * Service for sharing presets via Web Share API, WhatsApp, Telegram, etc.
@@ -135,6 +136,90 @@ export class ShareService {
     } catch {
       return null;
     }
+  }
+
+  // ============================================
+  // Builder State Sharing Methods
+  // ============================================
+
+  /**
+   * Build a shareable URL for the current builder state
+   */
+  buildBuilderShareUrl(state: BuilderShareState): string {
+    const json = JSON.stringify(state);
+    const encoded = this.base64UrlEncode(json);
+    const baseUrl = this.isBrowser ? window.location.origin : '';
+    return `${baseUrl}/search-builder?state=${encoded}`;
+  }
+
+  /**
+   * Decode a builder state from URL parameter
+   */
+  decodeBuilderState(encoded: string): BuilderShareState | null {
+    try {
+      const json = this.base64UrlDecode(encoded);
+      const data = JSON.parse(json);
+
+      // Validate required fields
+      if (!data.schemaVersion || !data.payload || !data.platformId) {
+        return null;
+      }
+
+      // Validate payload structure
+      if (!data.payload.searchType || !Array.isArray(data.payload.titles)) {
+        return null;
+      }
+
+      return data as BuilderShareState;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Share builder state using best available method
+   */
+  async shareBuilderState(state: BuilderShareState): Promise<void> {
+    if (!this.isBrowser) {
+      return;
+    }
+
+    const url = this.buildBuilderShareUrl(state);
+    const shareData: ShareData = {
+      title: 'SearchCraft Search',
+      text: `${state.payload.searchType} search with ${state.payload.titles.length} title(s)`,
+      url
+    };
+
+    if (this.canUseWebShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (e) {
+        if ((e as Error).name === 'AbortError') {
+          return;
+        }
+      }
+    }
+
+    // Fallback to clipboard
+    await this.copyBuilderShareLink(state);
+  }
+
+  /**
+   * Copy builder share link to clipboard
+   */
+  async copyBuilderShareLink(state: BuilderShareState): Promise<boolean> {
+    const url = this.buildBuilderShareUrl(state);
+    const copied = await this.clipboard.copyToClipboard(url);
+
+    if (copied) {
+      await this.toast.showSuccess('Search link copied to clipboard');
+    } else {
+      await this.toast.showError('Failed to copy link');
+    }
+
+    return copied;
   }
 
   /**

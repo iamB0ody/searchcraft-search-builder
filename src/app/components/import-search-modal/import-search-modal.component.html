@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Apply Shared Search?</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="modal-content">
+    <ion-icon name="share-social-outline" class="share-icon"></ion-icon>
+
+    <ion-text>
+      <p>Someone shared a search configuration with you:</p>
+    </ion-text>
+
+    <div class="state-summary">
+      <div class="summary-item">
+        <span class="label">Type:</span>
+        <ion-chip color="primary">{{ state.payload.searchType }}</ion-chip>
+      </div>
+
+      <div class="summary-item">
+        <span class="label">Mode:</span>
+        <ion-chip color="secondary">{{ state.mode }}</ion-chip>
+      </div>
+
+      <div class="summary-item">
+        <span class="label">Contains:</span>
+        <span>{{ summary }}</span>
+      </div>
+
+      @if (state.payload.titles?.length) {
+        <div class="chips-row">
+          @for (title of state.payload.titles.slice(0, 3); track title) {
+            <ion-chip color="primary" outline>{{ title }}</ion-chip>
+          }
+          @if (state.payload.titles.length > 3) {
+            <ion-chip color="medium">+{{ state.payload.titles.length - 3 }} more</ion-chip>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="action-buttons">
+      <ion-button expand="block" color="primary" (click)="onApply()">
+        <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+        Apply Search
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" color="medium" (click)="onCancel()">
+        Cancel
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

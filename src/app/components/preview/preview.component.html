@@ -55,7 +55,7 @@
     <!-- URL Section -->
     <div class="preview-section">
       <ion-text color="medium">
-        <h4>LinkedIn URL</h4>
+        <h4>{{ platformLabel }} URL</h4>
       </ion-text>
       <pre class="url-display" [class.empty]="!searchUrl">{{ searchUrl || 'URL will appear here' }}</pre>
     </div>
@@ -67,8 +67,8 @@
         color="primary"
         (click)="openInLinkedIn()"
         [disabled]="!searchUrl">
-        <ion-icon name="open" slot="start"></ion-icon>
-        Open in LinkedIn
+        <ion-icon [name]="platformIcon" slot="start"></ion-icon>
+        Open in {{ platformLabel }}
       </ion-button>
 
       <ion-button
@@ -89,6 +89,16 @@
         [disabled]="!searchUrl">
         <ion-icon name="copy" slot="start"></ion-icon>
         Copy URL
+      </ion-button>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="tertiary"
+        (click)="shareSearch.emit()"
+        [disabled]="!booleanQuery">
+        <ion-icon name="share-social-outline" slot="start"></ion-icon>
+        Share Search
       </ion-button>
     </div>
   </ion-card-content>

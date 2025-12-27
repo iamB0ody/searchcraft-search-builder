@@ -1,10 +1,17 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { PlatformAdapter } from '../../models/platform.model';
+import { SearchType } from '../../models/search-form.model';
 import { LinkedInPlatformAdapter } from './linkedin-platform.adapter';
+import { SalesNavPlatformAdapter } from './salesnav-platform.adapter';
+import { GooglePlatformAdapter } from './google-platform.adapter';
+import { IndeedPlatformAdapter } from './indeed-platform.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class PlatformRegistryService {
   private readonly linkedinAdapter = inject(LinkedInPlatformAdapter);
+  private readonly salesnavAdapter = inject(SalesNavPlatformAdapter);
+  private readonly googleAdapter = inject(GooglePlatformAdapter);
+  private readonly indeedAdapter = inject(IndeedPlatformAdapter);
 
   private platforms = new Map<string, PlatformAdapter>();
   private currentPlatformId = signal<string>('linkedin');
@@ -19,6 +26,9 @@ export class PlatformRegistryService {
 
   constructor() {
     this.register(this.linkedinAdapter);
+    this.register(this.salesnavAdapter);
+    this.register(this.googleAdapter);
+    this.register(this.indeedAdapter);
   }
 
   register(adapter: PlatformAdapter): void {
@@ -33,5 +43,14 @@ export class PlatformRegistryService {
 
   getPlatformById(id: string): PlatformAdapter | undefined {
     return this.platforms.get(id);
+  }
+
+  /**
+   * Get platforms that support a specific search type
+   * Filters out platforms that don't support the given type
+   */
+  getPlatformsForSearchType(searchType: SearchType): PlatformAdapter[] {
+    return Array.from(this.platforms.values())
+      .filter(p => p.supportedSearchTypes.includes(searchType));
   }
 }

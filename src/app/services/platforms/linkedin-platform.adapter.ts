@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   PlatformAdapter,
   PlatformCapabilities,
+  PlatformQueryResult,
   QueryPayload,
   ValidationResult
 } from '../../models/platform.model';
@@ -14,6 +15,7 @@ import {
   JobType,
   ConnectionLevel
 } from '../../models/search-form.model';
+import { buildBooleanQuery } from './query-builder.util';
 
 // LinkedIn URL parameter mappings
 const DATE_POSTED_MAP: Record<DatePosted, string> = {
@@ -62,12 +64,20 @@ const CONNECTION_LEVEL_MAP: Record<ConnectionLevel, string> = {
 export class LinkedInPlatformAdapter implements PlatformAdapter {
   readonly id = 'linkedin';
   readonly label = 'LinkedIn';
+  readonly description = 'Standard LinkedIn search with full boolean support';
+  readonly notes = [
+    'Supports up to 500 characters in query',
+    'Full parentheses and quotes support',
+    'Use for basic LinkedIn people and job searches'
+  ] as const;
+  readonly icon = 'logo-linkedin';
   readonly supportedSearchTypes = ['people', 'jobs'] as const;
 
   private readonly PEOPLE_BASE_URL = 'https://www.linkedin.com/search/results/people/';
   private readonly JOBS_BASE_URL = 'https://www.linkedin.com/jobs/search/';
   private readonly MAX_QUERY_LENGTH = 500;
   private readonly OPERATOR_WARNING_THRESHOLD = 10;
+  private readonly QUERY_LENGTH_WARNING = 250;
 
   getCapabilities(): PlatformCapabilities {
     return {
@@ -78,6 +88,16 @@ export class LinkedInPlatformAdapter implements PlatformAdapter {
       maxOperators: undefined,
       maxQueryLength: this.MAX_QUERY_LENGTH
     };
+  }
+
+  buildQuery(payload: QueryPayload): PlatformQueryResult {
+    return buildBooleanQuery(payload, {
+      notOperator: 'NOT',
+      wrapGroups: true,
+      uppercaseOperators: true,
+      operatorWarningThreshold: this.OPERATOR_WARNING_THRESHOLD,
+      queryLengthWarning: this.QUERY_LENGTH_WARNING
+    });
   }
 
   buildUrl(payload: QueryPayload, booleanQuery: string): string {

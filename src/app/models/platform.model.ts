@@ -1,4 +1,4 @@
-import { SearchType } from './search-form.model';
+import { SearchType, SearchMode, BadgeStatus } from './search-form.model';
 
 /**
  * Platform-agnostic query payload
@@ -11,6 +11,32 @@ export interface QueryPayload {
   exclude: string[];
   location?: string;
   filters?: Record<string, unknown>;
+}
+
+/**
+ * Result of platform-specific query building
+ */
+export interface PlatformQueryResult {
+  query: string;
+  operatorCount: number;
+  warnings: string[];
+  badgeStatus: BadgeStatus;
+}
+
+/**
+ * Indeed regional domains
+ */
+export type IndeedRegion = 'com' | 'co.uk' | 'de' | 'fr' | 'ca' | 'in' | 'au';
+
+/**
+ * Shareable builder state for URL encoding
+ * Contains minimal state needed to recreate a search
+ */
+export interface BuilderShareState {
+  schemaVersion: number;
+  payload: QueryPayload;
+  platformId: string;
+  mode: SearchMode;
 }
 
 /**
@@ -36,14 +62,18 @@ export interface ValidationResult {
 
 /**
  * Platform adapter interface
- * Each platform (LinkedIn, Sales Navigator, Recruiter, etc.) implements this
+ * Each platform (LinkedIn, Sales Navigator, Google, Indeed, etc.) implements this
  */
 export interface PlatformAdapter {
   readonly id: string;
   readonly label: string;
+  readonly description: string;
+  readonly notes: readonly string[];
+  readonly icon: string;
   readonly supportedSearchTypes: readonly SearchType[];
 
   getCapabilities(): PlatformCapabilities;
+  buildQuery(payload: QueryPayload): PlatformQueryResult;
   buildUrl(payload: QueryPayload, booleanQuery: string): string;
   validate(payload: QueryPayload, booleanQuery: string): ValidationResult;
 }

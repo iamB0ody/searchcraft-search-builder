@@ -25,20 +25,56 @@
                 }
               </ion-segment>
 
-              <!-- Search Mode Select -->
-              <ion-item class="mode-select">
+              <!-- Platform Selector -->
+              <ion-item class="platform-select">
                 <ion-select
-                  label="Search Mode"
+                  label="Platform"
                   labelPlacement="floating"
-                  formControlName="mode"
+                  [value]="currentPlatformId"
+                  (ionChange)="onPlatformChange($event.detail.value)"
                   interface="popover">
-                  @for (mode of searchModes; track mode.value) {
-                    <ion-select-option [value]="mode.value">
-                      {{ mode.label }}
+                  @for (platform of availablePlatforms; track platform.id) {
+                    <ion-select-option [value]="platform.id">
+                      {{ platform.label }}
                     </ion-select-option>
                   }
                 </ion-select>
               </ion-item>
+
+              <!-- Platform Notes -->
+              <ion-text color="medium" class="platform-notes">
+                <small>{{ platformRegistry.currentPlatform().notes[0] }}</small>
+              </ion-text>
+
+              <!-- Google-specific: LinkedIn restriction toggle -->
+              @if (isGooglePlatform) {
+                <ion-item class="platform-option">
+                  <ion-label>Restrict to LinkedIn profiles</ion-label>
+                  <ion-toggle
+                    slot="end"
+                    [checked]="googleAdapter.restrictToLinkedIn()"
+                    (ionChange)="onGoogleToggleChange($event.detail.checked)">
+                  </ion-toggle>
+                </ion-item>
+              }
+
+              <!-- Indeed-specific: Region selector -->
+              @if (isIndeedPlatform) {
+                <ion-item class="platform-option">
+                  <ion-select
+                    label="Region"
+                    labelPlacement="floating"
+                    [value]="indeedAdapter.currentRegion()"
+                    (ionChange)="onIndeedRegionChange($event.detail.value)"
+                    interface="popover">
+                    @for (region of indeedRegions; track region.value) {
+                      <ion-select-option [value]="region.value">
+                        {{ region.label }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                </ion-item>
+              }
 
               <!-- Titles Input (OR joined) -->
               <app-chip-input
@@ -67,8 +103,8 @@
                 helperText="Terms to exclude from results">
               </app-chip-input>
 
-              <!-- Job Filters (for Jobs only) -->
-              @if (isJobsSearch) {
+              <!-- Job Filters (for Jobs + LinkedIn platforms only) -->
+              @if (isJobsSearch && showLinkedInFilters) {
                 <ion-accordion-group [value]="defaultAccordionValue">
                   <ion-accordion value="filters">
                     <ion-item slot="header" color="light">
@@ -76,7 +112,7 @@
                     </ion-item>
                     <div class="accordion-content" slot="content">
                       <ion-text color="medium" class="filter-helper">
-                        <small>All filters open LinkedIn with URL parameters applied.</small>
+                        <small>These filters apply to LinkedIn search URL parameters.</small>
                       </ion-text>
 
                       <!-- Location -->
@@ -189,8 +225,8 @@
                 </ion-accordion-group>
               }
 
-              <!-- People Filters (for People only) -->
-              @if (!isJobsSearch) {
+              <!-- People Filters (for People + LinkedIn platforms only) -->
+              @if (!isJobsSearch && showLinkedInFilters) {
                 <ion-accordion-group [value]="defaultAccordionValue">
                   <ion-accordion value="filters">
                     <ion-item slot="header" color="light">
@@ -198,7 +234,7 @@
                     </ion-item>
                     <div class="accordion-content" slot="content">
                       <ion-text color="medium" class="filter-helper">
-                        <small>All filters open LinkedIn with URL parameters applied.</small>
+                        <small>These filters apply to LinkedIn search URL parameters.</small>
                       </ion-text>
 
                       <!-- Connection Level (Multi-select) -->
@@ -327,7 +363,10 @@
           [operatorCount]="operatorCount"
           [badgeStatus]="badgeStatus"
           [qualityScore]="qualityScoreResult"
-          (executeSearch)="onExecuteSearch()">
+          [platformLabel]="platformRegistry.currentPlatform().label"
+          [platformIcon]="platformRegistry.currentPlatform().icon"
+          (executeSearch)="onExecuteSearch()"
+          (shareSearch)="onShareSearch()">
         </app-preview>
       </ion-col>
     </ion-row>

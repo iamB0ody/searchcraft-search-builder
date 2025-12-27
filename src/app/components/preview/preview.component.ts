@@ -13,7 +13,7 @@ import {
   IonBadge
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline } from 'ionicons/icons';
+import { copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline, shareSocialOutline } from 'ionicons/icons';
 import { ClipboardService } from '../../services/clipboard.service';
 import { ToastService } from '../../services/toast.service';
 import { BadgeStatus } from '../../models/search-form.model';
@@ -45,8 +45,11 @@ export class PreviewComponent {
   @Input() operatorCount = 0;
   @Input() badgeStatus: BadgeStatus = 'safe';
   @Input() qualityScore?: QualityScoreResult;
+  @Input() platformLabel = 'LinkedIn';
+  @Input() platformIcon = 'logo-linkedin';
 
   @Output() executeSearch = new EventEmitter<void>();
+  @Output() shareSearch = new EventEmitter<void>();
 
   get badgeColor(): string {
     switch (this.badgeStatus) {
@@ -85,7 +88,7 @@ export class PreviewComponent {
   private toast = inject(ToastService);
 
   constructor() {
-    addIcons({ copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline });
+    addIcons({ copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline, shareSocialOutline });
   }
 
   async copyQuery(): Promise<void> {

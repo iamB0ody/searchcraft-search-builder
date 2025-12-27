@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, DestroyRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/operators';
@@ -40,14 +41,17 @@ import { AppHeaderComponent } from '../../components/app-header/app-header.compo
 import { ChipInputComponent } from '../../components/chip-input/chip-input.component';
 import { PreviewComponent } from '../../components/preview/preview.component';
 import { SuggestionsComponent } from '../../components/suggestions/suggestions.component';
+import { ImportSearchModalComponent } from '../../components/import-search-modal/import-search-modal.component';
 import { SavePresetModalComponent } from '../../features/presets/components/save-preset-modal/save-preset-modal.component';
-import { BooleanBuilderService } from '../../services/boolean-builder.service';
-import { LinkedinUrlBuilderService } from '../../services/linkedin-url-builder.service';
 import { IntelligenceEngineService } from '../../services/intelligence/intelligence-engine.service';
 import { ToastService } from '../../services/toast.service';
 import { PresetRepositoryService } from '../../core/services/preset-repository.service';
 import { HistoryRepositoryService } from '../../core/services/history-repository.service';
-import { QueryPayload } from '../../models/platform.model';
+import { ShareService } from '../../core/services/share.service';
+import { PlatformRegistryService } from '../../services/platforms/platform-registry.service';
+import { GooglePlatformAdapter } from '../../services/platforms/google-platform.adapter';
+import { IndeedPlatformAdapter, getIndeedRegionOptions } from '../../services/platforms/indeed-platform.adapter';
+import { QueryPayload, BuilderShareState, PlatformAdapter, IndeedRegion } from '../../models/platform.model';
 import { IntelligenceSuggestion } from '../../models/intelligence.model';
 import { QualityScoreResult } from '../../models/quality-score.model';
 import { QualityScoreService } from '../../services/quality-score.service';
@@ -103,14 +107,20 @@ export class SearchBuilderPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly modalController = inject(ModalController);
-  private readonly booleanBuilder = inject(BooleanBuilderService);
-  private readonly urlBuilder = inject(LinkedinUrlBuilderService);
   private readonly intelligence = inject(IntelligenceEngineService);
   private readonly qualityScoreService = inject(QualityScoreService);
   private readonly toast = inject(ToastService);
   private readonly presetRepository = inject(PresetRepositoryService);
   private readonly historyRepository = inject(HistoryRepositoryService);
+  private readonly shareService = inject(ShareService);
+
+  // Platform services
+  protected readonly platformRegistry = inject(PlatformRegistryService);
+  protected readonly googleAdapter = inject(GooglePlatformAdapter);
+  protected readonly indeedAdapter = inject(IndeedPlatformAdapter);
 
   protected form!: FormGroup;
   protected booleanQuery = '';
@@ -190,6 +200,35 @@ export class SearchBuilderPage implements OnInit {
     { value: 'ru', label: 'Russian' }
   ];
 
+  // Indeed regions for dropdown
+  protected readonly indeedRegions = getIndeedRegionOptions();
+
+  // Get platforms available for current search type
+  protected get availablePlatforms(): PlatformAdapter[] {
+    const searchType = this.form?.get('searchType')?.value || 'people';
+    return this.platformRegistry.getPlatformsForSearchType(searchType);
+  }
+
+  // Current platform ID
+  protected get currentPlatformId(): string {
+    return this.platformRegistry.currentPlatform().id;
+  }
+
+  // Check if current platform is Google (for toggle UI)
+  protected get isGooglePlatform(): boolean {
+    return this.currentPlatformId === 'google';
+  }
+
+  // Check if current platform is Indeed (for region selector UI)
+  protected get isIndeedPlatform(): boolean {
+    return this.currentPlatformId === 'indeed';
+  }
+
+  // Check if platform supports LinkedIn-specific filters
+  protected get showLinkedInFilters(): boolean {
+    return this.currentPlatformId === 'linkedin' || this.currentPlatformId === 'salesnav';
+  }
+
   constructor() {
     addIcons({
       trashOutline,
@@ -210,14 +249,53 @@ export class SearchBuilderPage implements OnInit {
     return this.isDesktop ? 'filters' : undefined;
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initForm();
     this.setupFormSubscription();
+    await this.checkForSharedState();
     this.checkForPresetToApply();
   }
 
   ionViewWillEnter(): void {
     this.checkForPresetToApply();
+  }
+
+  private async checkForSharedState(): Promise<void> {
+    const stateParam = this.route.snapshot.queryParamMap.get('state');
+    if (!stateParam) return;
+
+    const decoded = this.shareService.decodeBuilderState(stateParam);
+    if (!decoded) {
+      await this.toast.showError('Invalid shared search link');
+      this.clearStateParam();
+      return;
+    }
+
+    // Show confirmation modal
+    const modal = await this.modalController.create({
+      component: ImportSearchModalComponent,
+      componentProps: { state: decoded }
+    });
+
+    await modal.present();
+    const { data, role } = await modal.onDidDismiss();
+
+    if (role === 'apply' && data === true) {
+      this.applyPreset(decoded.payload, decoded.mode);
+      await this.toast.showSuccess('Shared search applied');
+    }
+
+    // Always clear the param after handling
+    this.clearStateParam();
+  }
+
+  private clearStateParam(): void {
+    // Remove ?state= from URL without navigation
+    const url = this.router.createUrlTree([], {
+      relativeTo: this.route,
+      queryParams: {}
+    }).toString();
+    this.location.replaceState(url);
   }
 
   private checkForPresetToApply(): void {
@@ -251,6 +329,7 @@ export class SearchBuilderPage implements OnInit {
 
   protected async openSavePresetModal(): Promise<void> {
     const formValue = this.form.value as SearchFormModel;
+    const platform = this.platformRegistry.currentPlatform();
 
     const payload: QueryPayload = {
       searchType: formValue.searchType,
@@ -264,7 +343,7 @@ export class SearchBuilderPage implements OnInit {
       component: SavePresetModalComponent,
       componentProps: {
         payload,
-        platformId: 'linkedin',
+        platformId: platform.id,
         mode: formValue.mode
       }
     });
@@ -310,9 +389,22 @@ export class SearchBuilderPage implements OnInit {
   }
 
   private updatePreview(form: SearchFormModel): void {
-    const result = this.booleanBuilder.buildQuery(form);
+    // Build payload from form
+    const payload: QueryPayload = {
+      searchType: form.searchType,
+      titles: form.titles || [],
+      skills: form.skills || [],
+      exclude: form.exclude || [],
+      location: form.location || undefined,
+      filters: form as unknown as Record<string, unknown> // Pass full form for LinkedIn-specific URL filters
+    };
+
+    // Use current platform adapter
+    const platform = this.platformRegistry.currentPlatform();
+    const result = platform.buildQuery(payload);
+
     this.booleanQuery = result.query;
-    this.searchUrl = result.query ? this.urlBuilder.buildUrl(form, result.query) : '';
+    this.searchUrl = result.query ? platform.buildUrl(payload, result.query) : '';
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
@@ -328,13 +420,6 @@ export class SearchBuilderPage implements OnInit {
     });
 
     // Generate suggestions
-    const payload: QueryPayload = {
-      searchType: form.searchType,
-      titles: form.titles || [],
-      skills: form.skills || [],
-      exclude: form.exclude || [],
-      location: form.location
-    };
     this.suggestions = this.intelligence.generateSuggestions(payload, result.operatorCount);
   }
 
@@ -392,7 +477,34 @@ export class SearchBuilderPage implements OnInit {
   }
 
   protected onSearchTypeChange(event: CustomEvent): void {
-    this.form.patchValue({ searchType: event.detail.value });
+    const newSearchType = event.detail.value as SearchType;
+    this.form.patchValue({ searchType: newSearchType });
+
+    // Check if current platform supports the new search type
+    const currentPlatform = this.platformRegistry.currentPlatform();
+    if (!currentPlatform.supportedSearchTypes.includes(newSearchType)) {
+      // Switch to first platform that supports the new search type
+      const supportedPlatforms = this.platformRegistry.getPlatformsForSearchType(newSearchType);
+      if (supportedPlatforms.length > 0) {
+        this.platformRegistry.setCurrentPlatform(supportedPlatforms[0].id);
+      }
+    }
+  }
+
+  protected onPlatformChange(platformId: string): void {
+    this.platformRegistry.setCurrentPlatform(platformId);
+    // Trigger preview update
+    this.updatePreview(this.form.value);
+  }
+
+  protected onGoogleToggleChange(restrictToLinkedIn: boolean): void {
+    this.googleAdapter.restrictToLinkedIn.set(restrictToLinkedIn);
+    this.updatePreview(this.form.value);
+  }
+
+  protected onIndeedRegionChange(region: IndeedRegion): void {
+    this.indeedAdapter.currentRegion.set(region);
+    this.updatePreview(this.form.value);
   }
 
   protected get isJobsSearch(): boolean {
@@ -429,10 +541,11 @@ export class SearchBuilderPage implements OnInit {
     if (!this.searchUrl) return;
 
     const formValue = this.form.value as SearchFormModel;
+    const platform = this.platformRegistry.currentPlatform();
 
     // Add to history
     this.historyRepository.add({
-      platformId: 'linkedin',
+      platformId: platform.id,
       searchType: formValue.searchType,
       mode: formValue.mode,
       payload: {
@@ -449,5 +562,25 @@ export class SearchBuilderPage implements OnInit {
 
     // Open in new tab
     window.open(this.searchUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  protected async onShareSearch(): Promise<void> {
+    const formValue = this.form.value as SearchFormModel;
+    const platform = this.platformRegistry.currentPlatform();
+
+    const state: BuilderShareState = {
+      schemaVersion: 1,
+      payload: {
+        searchType: formValue.searchType,
+        titles: formValue.titles || [],
+        skills: formValue.skills || [],
+        exclude: formValue.exclude || [],
+        location: formValue.location || undefined
+      },
+      platformId: platform.id,
+      mode: formValue.mode
+    };
+
+    await this.shareService.shareBuilderState(state);
   }
 }
