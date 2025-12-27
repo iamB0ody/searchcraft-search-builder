@@ -49,6 +49,8 @@ import { PresetRepositoryService } from '../../core/services/preset-repository.s
 import { HistoryRepositoryService } from '../../core/services/history-repository.service';
 import { QueryPayload } from '../../models/platform.model';
 import { IntelligenceSuggestion } from '../../models/intelligence.model';
+import { QualityScoreResult } from '../../models/quality-score.model';
+import { QualityScoreService } from '../../services/quality-score.service';
 import {
   SearchFormModel,
   SearchType,
@@ -105,6 +107,7 @@ export class SearchBuilderPage implements OnInit {
   private readonly booleanBuilder = inject(BooleanBuilderService);
   private readonly urlBuilder = inject(LinkedinUrlBuilderService);
   private readonly intelligence = inject(IntelligenceEngineService);
+  private readonly qualityScoreService = inject(QualityScoreService);
   private readonly toast = inject(ToastService);
   private readonly presetRepository = inject(PresetRepositoryService);
   private readonly historyRepository = inject(HistoryRepositoryService);
@@ -116,6 +119,7 @@ export class SearchBuilderPage implements OnInit {
   protected operatorCount = 0;
   protected badgeStatus: BadgeStatus = 'safe';
   protected suggestions: IntelligenceSuggestion[] = [];
+  protected qualityScoreResult?: QualityScoreResult;
 
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
     { value: 'people', label: 'People', icon: 'people-outline' },
@@ -312,6 +316,16 @@ export class SearchBuilderPage implements OnInit {
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
+
+    // Calculate quality score
+    this.qualityScoreResult = this.qualityScoreService.calculateScore({
+      titles: form.titles || [],
+      skills: form.skills || [],
+      exclude: form.exclude || [],
+      booleanQuery: result.query,
+      operatorCount: result.operatorCount,
+      warnings: result.warnings
+    });
 
     // Generate suggestions
     const payload: QueryPayload = {

@@ -11,6 +11,27 @@
   </ion-card-header>
 
   <ion-card-content>
+    <!-- Quality Score Badge -->
+    @if (qualityScore) {
+      <div class="quality-score">
+        <ion-badge [color]="scoreColor" class="score-badge">
+          {{ qualityScore.score }} - {{ scoreLabel }}
+        </ion-badge>
+
+        @if (qualityScore.reasons.length > 0) {
+          <div class="quality-reasons">
+            @for (reason of qualityScore.reasons; track reason.message) {
+              <div class="reason" [class.warning]="reason.type === 'warning'">
+                <ion-icon [name]="reason.type === 'warning' ? 'alert-circle-outline' : 'information-circle-outline'"
+                          [color]="reason.type === 'warning' ? 'warning' : 'medium'">
+                </ion-icon>
+                <span>{{ reason.message }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
     <!-- Warnings -->
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">

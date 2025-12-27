@@ -13,10 +13,11 @@ import {
   IonBadge
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { copy, open, warning, checkmarkCircle, alertCircle } from 'ionicons/icons';
+import { copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline } from 'ionicons/icons';
 import { ClipboardService } from '../../services/clipboard.service';
 import { ToastService } from '../../services/toast.service';
 import { BadgeStatus } from '../../models/search-form.model';
+import { QualityScoreResult } from '../../models/quality-score.model';
 
 @Component({
   selector: 'app-preview',
@@ -43,6 +44,7 @@ export class PreviewComponent {
   @Input() warnings: string[] = [];
   @Input() operatorCount = 0;
   @Input() badgeStatus: BadgeStatus = 'safe';
+  @Input() qualityScore?: QualityScoreResult;
 
   @Output() executeSearch = new EventEmitter<void>();
 
@@ -51,6 +53,24 @@ export class PreviewComponent {
       case 'danger': return 'danger';
       case 'warning': return 'warning';
       default: return 'success';
+    }
+  }
+
+  get scoreColor(): string {
+    if (!this.qualityScore) return 'medium';
+    switch (this.qualityScore.level) {
+      case 'good': return 'success';
+      case 'ok': return 'warning';
+      case 'risky': return 'danger';
+    }
+  }
+
+  get scoreLabel(): string {
+    if (!this.qualityScore) return '';
+    switch (this.qualityScore.level) {
+      case 'good': return 'Good';
+      case 'ok': return 'OK';
+      case 'risky': return 'Risky';
     }
   }
 
@@ -65,7 +85,7 @@ export class PreviewComponent {
   private toast = inject(ToastService);
 
   constructor() {
-    addIcons({ copy, open, warning, checkmarkCircle, alertCircle });
+    addIcons({ copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline });
   }
 
   async copyQuery(): Promise<void> {
