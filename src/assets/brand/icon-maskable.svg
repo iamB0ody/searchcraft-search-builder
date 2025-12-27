@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full canvas emerald background for maskable safe zone -->
+  <rect width="512" height="512" fill="#10B981"/>
+  <!-- White "SC" text, scaled to fit within 80% safe zone (center 410x410 area) -->
+  <text x="256" y="280"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="180"
+        font-weight="700"
+        fill="white"
+        text-anchor="middle"
+        dominant-baseline="middle">SC</text>
+</svg>
