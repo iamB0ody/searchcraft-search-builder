@@ -24,7 +24,8 @@ import {
   IonButton,
   IonIcon,
   IonNote,
-  IonToggle
+  IonToggle,
+  IonText
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline, peopleOutline, briefcaseOutline } from 'ionicons/icons';
@@ -43,7 +44,8 @@ import {
   SortBy,
   JobType,
   ConnectionLevel,
-  ProfileLanguage
+  ProfileLanguage,
+  BadgeStatus
 } from '../../models/search-form.model';
 
 @Component({
@@ -73,6 +75,7 @@ import {
     IonIcon,
     IonNote,
     IonToggle,
+    IonText,
     ChipInputComponent,
     PreviewComponent
   ],
@@ -90,6 +93,7 @@ export class SearchBuilderPage implements OnInit {
   protected searchUrl = '';
   protected warnings: string[] = [];
   protected operatorCount = 0;
+  protected badgeStatus: BadgeStatus = 'safe';
 
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
     { value: 'people', label: 'People', icon: 'people-outline' },
@@ -212,6 +216,7 @@ export class SearchBuilderPage implements OnInit {
     this.searchUrl = result.query ? this.urlBuilder.buildUrl(form, result.query) : '';
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
+    this.badgeStatus = result.badgeStatus;
   }
 
   protected onSearchTypeChange(event: CustomEvent): void {

@@ -16,6 +16,7 @@ import { addIcons } from 'ionicons';
 import { copy, open, warning, checkmarkCircle, alertCircle } from 'ionicons/icons';
 import { ClipboardService } from '../../services/clipboard.service';
 import { ToastService } from '../../services/toast.service';
+import { BadgeStatus } from '../../models/search-form.model';
 
 @Component({
   selector: 'app-preview',
@@ -41,6 +42,22 @@ export class PreviewComponent {
   @Input() searchUrl = '';
   @Input() warnings: string[] = [];
   @Input() operatorCount = 0;
+  @Input() badgeStatus: BadgeStatus = 'safe';
+
+  get badgeColor(): string {
+    switch (this.badgeStatus) {
+      case 'danger': return 'danger';
+      case 'warning': return 'warning';
+      default: return 'success';
+    }
+  }
+
+  getWarningColor(warning: string): string {
+    if (warning.includes('Sales Navigator supports up to 15')) {
+      return 'danger';
+    }
+    return 'warning';
+  }
 
   private clipboard = inject(ClipboardService);
   private toast = inject(ToastService);

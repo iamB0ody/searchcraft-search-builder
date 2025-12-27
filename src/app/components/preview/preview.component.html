@@ -3,7 +3,7 @@
     <ion-card-title>
       Search Preview
       @if (operatorCount > 0) {
-        <ion-badge color="medium" class="operator-badge">
+        <ion-badge [color]="badgeColor" class="operator-badge">
           {{ operatorCount }} operators
         </ion-badge>
       }
@@ -15,7 +15,7 @@
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">
         @for (warn of warnings; track warn) {
-          <ion-item color="warning">
+          <ion-item [color]="getWarningColor(warn)">
             <ion-icon name="warning" slot="start"></ion-icon>
             <ion-label class="ion-text-wrap">{{ warn }}</ion-label>
           </ion-item>

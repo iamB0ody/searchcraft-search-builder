@@ -29,10 +29,10 @@
                 }
               </ion-segment>
 
-              <!-- Platform Mode Select -->
+              <!-- Search Mode Select -->
               <ion-item class="mode-select">
                 <ion-select
-                  label="Platform"
+                  label="Search Mode"
                   labelPlacement="floating"
                   formControlName="mode"
                   interface="popover">
@@ -75,6 +75,9 @@
               @if (isJobsSearch) {
                 <div class="job-filters-section">
                   <ion-note class="section-label">Job Filters</ion-note>
+                  <ion-text color="medium" class="filter-helper">
+                    <small>All filters open LinkedIn with URL parameters applied.</small>
+                  </ion-text>
 
                   <!-- Location -->
                   <ion-item class="filter-item">
@@ -188,6 +191,9 @@
               @if (!isJobsSearch) {
                 <div class="people-filters-section">
                   <ion-note class="section-label">People Filters</ion-note>
+                  <ion-text color="medium" class="filter-helper">
+                    <small>All filters open LinkedIn with URL parameters applied.</small>
+                  </ion-text>
 
                   <!-- Connection Level (Multi-select) -->
                   <ion-item class="filter-item">
@@ -294,7 +300,8 @@
           [booleanQuery]="booleanQuery"
           [searchUrl]="searchUrl"
           [warnings]="warnings"
-          [operatorCount]="operatorCount">
+          [operatorCount]="operatorCount"
+          [badgeStatus]="badgeStatus">
         </app-preview>
       </ion-col>
     </ion-row>

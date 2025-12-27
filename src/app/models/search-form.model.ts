@@ -38,8 +38,11 @@ export interface SearchFormModel {
   keywordSchool: string;
 }
 
+export type BadgeStatus = 'safe' | 'warning' | 'danger';
+
 export interface BooleanQueryResult {
   query: string;
   warnings: string[];
   operatorCount: number;
+  badgeStatus: BadgeStatus;
 }

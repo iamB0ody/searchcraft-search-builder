@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { SearchFormModel, BooleanQueryResult } from '../models/search-form.model';
+import { SearchFormModel, BooleanQueryResult, BadgeStatus, SearchMode } from '../models/search-form.model';
 
 @Injectable({ providedIn: 'root' })
 export class BooleanBuilderService {
   private readonly UNSUPPORTED_CHARS = ['*', '{', '}', '[', ']', '<', '>'];
   private readonly SALES_NAV_OPERATOR_LIMIT = 15;
+  private readonly SALES_NAV_WARNING_THRESHOLD = 12;
+  private readonly LINKEDIN_OPERATOR_WARNING = 10;
+  private readonly LINKEDIN_LENGTH_WARNING = 250;
 
   buildQuery(form: SearchFormModel): BooleanQueryResult {
     const warnings: string[] = [];
@@ -19,7 +22,7 @@ export class BooleanBuilderService {
     [...titles, ...skills, ...excludes].forEach(value => {
       const unsupported = this.detectUnsupportedChars(value);
       if (unsupported.length > 0) {
-        warnings.push(`"${value}" contains unsupported characters: ${unsupported.join(', ')}`);
+        warnings.push(`Unsupported characters detected in "${value}". LinkedIn may ignore them.`);
       }
     });
 
@@ -48,28 +51,44 @@ export class BooleanBuilderService {
       operatorCount += parts.length - 1;
     }
 
+    const normalizedQuery = this.normalizeQuery(query);
+
     // Add mode-specific warnings
     if (form.mode === 'salesnav' && operatorCount > this.SALES_NAV_OPERATOR_LIMIT) {
-      warnings.push(`Sales Navigator may limit queries with more than ${this.SALES_NAV_OPERATOR_LIMIT} operators. Current count: ${operatorCount}`);
+      warnings.push('Sales Navigator supports up to 15 Boolean operators. Please simplify your query.');
     }
 
-    if (form.mode === 'linkedin' && query.length > 500) {
-      warnings.push('Long queries may be truncated in LinkedIn basic search');
+    if (form.mode === 'linkedin' && (operatorCount >= this.LINKEDIN_OPERATOR_WARNING || normalizedQuery.length >= this.LINKEDIN_LENGTH_WARNING)) {
+      warnings.push('LinkedIn search may limit very long Boolean queries. Consider simplifying.');
     }
+
+    const badgeStatus = this.getBadgeStatus(form.mode, operatorCount, normalizedQuery.length);
 
     return {
-      query: this.normalizeQuery(query),
+      query: normalizedQuery,
       warnings,
-      operatorCount
+      operatorCount,
+      badgeStatus
     };
+  }
+
+  private getBadgeStatus(mode: SearchMode, operatorCount: number, queryLength: number): BadgeStatus {
+    if (mode === 'salesnav') {
+      if (operatorCount > this.SALES_NAV_OPERATOR_LIMIT) return 'danger';
+      if (operatorCount >= this.SALES_NAV_WARNING_THRESHOLD) return 'warning';
+    }
+    if (mode === 'linkedin') {
+      if (operatorCount >= this.LINKEDIN_OPERATOR_WARNING || queryLength >= this.LINKEDIN_LENGTH_WARNING) return 'warning';
+    }
+    // Recruiter mode: no operator limit warnings
+    return 'safe';
   }
 
   private buildTitlesClause(titles: string[]): string {
     if (titles.length === 0) return '';
 
     const formatted = titles.map(t => this.formatValue(t));
-    if (formatted.length === 1) return formatted[0];
-
+    // Always wrap in parentheses for consistency
     return `(${formatted.join(' OR ')})`;
   }
 
@@ -77,9 +96,8 @@ export class BooleanBuilderService {
     if (skills.length === 0) return '';
 
     const formatted = skills.map(s => this.formatValue(s));
-    if (formatted.length === 1) return formatted[0];
-
-    return formatted.join(' AND ');
+    // Always wrap in parentheses for consistency
+    return `(${formatted.join(' AND ')})`;
   }
 
   private buildExcludeClause(excludes: string[]): string {

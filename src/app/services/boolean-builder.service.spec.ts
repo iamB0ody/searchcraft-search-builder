@@ -46,9 +46,9 @@ describe('BooleanBuilderService', () => {
         expect(result.query).toBe('');
       });
 
-      it('should return single title without parentheses', () => {
+      it('should wrap single title in parentheses', () => {
         const result = service.buildQuery(createForm({ titles: ['Developer'] }));
-        expect(result.query).toBe('Developer');
+        expect(result.query).toBe('(Developer)');
       });
 
       it('should wrap multiple titles in OR clause with parentheses', () => {
@@ -72,23 +72,23 @@ describe('BooleanBuilderService', () => {
         expect(result.query).toBe('');
       });
 
-      it('should return single skill without AND', () => {
+      it('should wrap single skill in parentheses', () => {
         const result = service.buildQuery(createForm({ skills: ['Angular'] }));
-        expect(result.query).toBe('Angular');
+        expect(result.query).toBe('(Angular)');
       });
 
-      it('should join multiple skills with AND', () => {
+      it('should wrap multiple skills with AND in parentheses', () => {
         const result = service.buildQuery(createForm({
           skills: ['Angular', 'TypeScript', 'RxJS']
         }));
-        expect(result.query).toBe('Angular AND TypeScript AND RxJS');
+        expect(result.query).toBe('(Angular AND TypeScript AND RxJS)');
       });
 
       it('should quote multi-word skills', () => {
         const result = service.buildQuery(createForm({
           skills: ['Machine Learning', 'Deep Learning']
         }));
-        expect(result.query).toBe('"Machine Learning" AND "Deep Learning"');
+        expect(result.query).toBe('("Machine Learning" AND "Deep Learning")');
       });
     });
 
@@ -124,7 +124,7 @@ describe('BooleanBuilderService', () => {
           titles: ['Developer', 'Engineer'],
           skills: ['Angular', 'TypeScript']
         }));
-        expect(result.query).toBe('(Developer OR Engineer) AND Angular AND TypeScript');
+        expect(result.query).toBe('(Developer OR Engineer) AND (Angular AND TypeScript)');
       });
 
       it('should append exclude clause without AND', () => {
@@ -132,7 +132,7 @@ describe('BooleanBuilderService', () => {
           titles: ['Developer'],
           exclude: ['Junior']
         }));
-        expect(result.query).toBe('Developer NOT Junior');
+        expect(result.query).toBe('(Developer) NOT Junior');
       });
 
       it('should combine all clauses correctly', () => {
@@ -141,7 +141,7 @@ describe('BooleanBuilderService', () => {
           skills: ['Angular', 'TypeScript'],
           exclude: ['Junior', 'Intern']
         }));
-        expect(result.query).toBe('(Developer OR Engineer) AND Angular AND TypeScript NOT Junior NOT Intern');
+        expect(result.query).toBe('(Developer OR Engineer) AND (Angular AND TypeScript) NOT Junior NOT Intern');
       });
     });
 
@@ -150,31 +150,32 @@ describe('BooleanBuilderService', () => {
         const result = service.buildQuery(createForm({
           titles: ['Developer', 'developer', 'DEVELOPER']
         }));
-        expect(result.query).toBe('Developer');
+        expect(result.query).toBe('(Developer)');
       });
 
       it('should preserve original casing of first occurrence', () => {
         const result = service.buildQuery(createForm({
           skills: ['TypeScript', 'typescript']
         }));
-        expect(result.query).toBe('TypeScript');
+        expect(result.query).toBe('(TypeScript)');
       });
 
       it('should deduplicate across multiple values', () => {
         const result = service.buildQuery(createForm({
           skills: ['Angular', 'angular', 'React', 'ANGULAR']
         }));
-        expect(result.query).toBe('Angular AND React');
+        expect(result.query).toBe('(Angular AND React)');
       });
     });
 
     describe('unsupported characters', () => {
-      it('should warn about asterisk wildcard', () => {
+      it('should warn about asterisk wildcard with proper format', () => {
         const result = service.buildQuery(createForm({
           titles: ['Dev*']
         }));
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings[0]).toContain('*');
+        expect(result.warnings[0]).toContain('Unsupported characters detected in "Dev*"');
+        expect(result.warnings[0]).toContain('LinkedIn may ignore them');
       });
 
       it('should warn about curly braces', () => {
@@ -182,7 +183,7 @@ describe('BooleanBuilderService', () => {
           skills: ['test{value}']
         }));
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings[0]).toContain('{');
+        expect(result.warnings[0]).toContain('Unsupported characters detected');
       });
 
       it('should warn about square brackets', () => {
@@ -190,7 +191,7 @@ describe('BooleanBuilderService', () => {
           skills: ['test[value]']
         }));
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings[0]).toContain('[');
+        expect(result.warnings[0]).toContain('Unsupported characters detected');
       });
 
       it('should warn about angle brackets', () => {
@@ -198,14 +199,14 @@ describe('BooleanBuilderService', () => {
           skills: ['C<test>']
         }));
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings.some(w => w.includes('<') || w.includes('>'))).toBeTrue();
+        expect(result.warnings.some(w => w.includes('Unsupported characters detected'))).toBeTrue();
       });
 
       it('should keep the value despite warning', () => {
         const result = service.buildQuery(createForm({
           titles: ['Dev*']
         }));
-        expect(result.query).toBe('Dev*');
+        expect(result.query).toBe('(Dev*)');
       });
     });
 
@@ -250,10 +251,22 @@ describe('BooleanBuilderService', () => {
           skills: ['X', 'Y', 'Z', 'W', 'V', 'U', 'T', 'S']
         }));
         expect(result.operatorCount).toBeGreaterThan(15);
-        expect(result.warnings.some(w => w.includes('Sales Navigator'))).toBeTrue();
+        expect(result.warnings.some(w => w.includes('Sales Navigator supports up to 15 Boolean operators'))).toBeTrue();
+        expect(result.badgeStatus).toBe('danger');
       });
 
-      it('should not warn for LinkedIn mode with many operators', () => {
+      it('should show warning badge when approaching limit (12-15 operators)', () => {
+        // 8 titles = 7 ORs, 5 skills = 4 ANDs + 1 AND joining = 12 operators
+        const result = service.buildQuery(createForm({
+          mode: 'salesnav',
+          titles: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+          skills: ['X', 'Y', 'Z', 'W', 'V']
+        }));
+        expect(result.operatorCount).toBeGreaterThanOrEqual(12);
+        expect(result.badgeStatus).toBe('warning');
+      });
+
+      it('should not warn for LinkedIn mode with many operators (Sales Nav specific)', () => {
         const result = service.buildQuery(createForm({
           mode: 'linkedin',
           titles: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
@@ -263,19 +276,40 @@ describe('BooleanBuilderService', () => {
       });
     });
 
+    describe('LinkedIn warnings', () => {
+      it('should warn for long LinkedIn queries', () => {
+        const result = service.buildQuery(createForm({
+          mode: 'linkedin',
+          titles: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
+        }));
+        expect(result.warnings.some(w => w.includes('LinkedIn search may limit'))).toBeTrue();
+        expect(result.badgeStatus).toBe('warning');
+      });
+
+      it('should not warn for Recruiter mode', () => {
+        const result = service.buildQuery(createForm({
+          mode: 'recruiter',
+          titles: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
+        }));
+        expect(result.warnings.some(w => w.includes('Sales Navigator'))).toBeFalse();
+        expect(result.warnings.some(w => w.includes('LinkedIn search may limit'))).toBeFalse();
+        expect(result.badgeStatus).toBe('safe');
+      });
+    });
+
     describe('query normalization', () => {
       it('should trim whitespace', () => {
         const result = service.buildQuery(createForm({
           titles: ['  Developer  ']
         }));
-        expect(result.query).toBe('Developer');
+        expect(result.query).toBe('(Developer)');
       });
 
       it('should collapse multiple spaces', () => {
         const result = service.buildQuery(createForm({
           titles: ['Software   Engineer']
         }));
-        expect(result.query).toBe('"Software Engineer"');
+        expect(result.query).toBe('("Software Engineer")');
       });
 
       it('should handle empty arrays without producing AND', () => {
@@ -283,8 +317,27 @@ describe('BooleanBuilderService', () => {
           titles: [],
           skills: ['Angular']
         }));
-        expect(result.query).toBe('Angular');
+        expect(result.query).toBe('(Angular)');
         expect(result.query).not.toMatch(/^\s*AND/);
+      });
+    });
+
+    describe('badge status', () => {
+      it('should return safe badge for simple queries', () => {
+        const result = service.buildQuery(createForm({
+          mode: 'linkedin',
+          titles: ['Developer']
+        }));
+        expect(result.badgeStatus).toBe('safe');
+      });
+
+      it('should return safe badge for recruiter mode regardless of complexity', () => {
+        const result = service.buildQuery(createForm({
+          mode: 'recruiter',
+          titles: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+          skills: ['X', 'Y', 'Z', 'W', 'V', 'U', 'T', 'S']
+        }));
+        expect(result.badgeStatus).toBe('safe');
       });
     });
   });
