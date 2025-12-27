@@ -115,6 +115,9 @@
   --sc-code-border: #E5E7EB;
   --sc-card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   --sc-header-border: rgba(0, 0, 0, 0.08);
+
+  // Soft primary background for icon containers
+  --sc-primary-soft: rgba(16, 185, 129, 0.12);
 }
 
 // ============================================
@@ -193,4 +196,7 @@
   --sc-code-border: #374151;
   --sc-card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   --sc-header-border: rgba(255, 255, 255, 0.08);
+
+  // Soft primary background (dark mode)
+  --sc-primary-soft: rgba(52, 211, 153, 0.15);
 }

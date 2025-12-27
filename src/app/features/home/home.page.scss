@@ -121,7 +121,7 @@
         color: var(--ion-text-color);
 
         ion-icon {
-          color: var(--ion-color-success);
+          color: var(--ion-color-primary);
           font-size: 1.25rem;
           flex-shrink: 0;
           margin-top: 2px;
@@ -150,7 +150,7 @@
       width: 56px;
       height: 56px;
       border-radius: 12px;
-      background: var(--ion-color-primary-tint);
+      background: var(--sc-primary-soft);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -268,7 +268,7 @@
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: var(--ion-color-success-tint);
+      background: var(--sc-primary-soft);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -276,7 +276,7 @@
 
       ion-icon {
         font-size: 32px;
-        color: var(--ion-color-success);
+        color: var(--ion-color-primary);
       }
     }
 
@@ -304,7 +304,7 @@
           content: "\2713";
           position: absolute;
           left: 0;
-          color: var(--ion-color-success);
+          color: var(--ion-color-primary);
           font-weight: bold;
         }
       }
@@ -339,10 +339,6 @@
 :host-context(.ion-palette-dark) {
   .trust-card {
     background: var(--ion-color-step-100);
-  }
-
-  .feature-card .feature-icon {
-    background: rgba(var(--ion-color-primary-rgb), 0.15);
   }
 
   .audience-card .card-icon {
