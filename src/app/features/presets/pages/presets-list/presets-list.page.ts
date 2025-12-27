@@ -30,7 +30,9 @@ import {
   downloadOutline,
   playOutline,
   timeOutline,
-  textOutline
+  textOutline,
+  pin,
+  pinOutline
 } from 'ionicons/icons';
 
 import { AppHeaderComponent } from '../../../../components/app-header/app-header.component';
@@ -38,6 +40,7 @@ import { PresetRepositoryService } from '../../../../core/services/preset-reposi
 import { ShareService } from '../../../../core/services/share.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Preset } from '../../../../core/models/preset.model';
+import { formatRelativeTime } from '../../../../core/utils/date.utils';
 
 type SortMode = 'recent' | 'alpha';
 
@@ -89,7 +92,9 @@ export class PresetsListPage implements OnInit {
       downloadOutline,
       playOutline,
       timeOutline,
-      textOutline
+      textOutline,
+      pin,
+      pinOutline
     });
   }
 
@@ -157,6 +162,19 @@ export class PresetsListPage implements OnInit {
     await alert.present();
   }
 
+  protected async onTogglePin(preset: Preset): Promise<void> {
+    const result = this.repository.togglePin(preset.id);
+    if (result) {
+      const action = result.pinned ? 'pinned' : 'unpinned';
+      await this.toast.showSuccess(`Preset ${action}`);
+      this.loadPresets();
+    }
+  }
+
+  protected formatLastUsed(preset: Preset): string {
+    return formatRelativeTime(preset.lastUsedAt);
+  }
+
   protected navigateToBuilder(): void {
     this.router.navigate(['/search-builder']);
   }
@@ -201,7 +219,7 @@ export class PresetsListPage implements OnInit {
       const query = this.searchQuery.toLowerCase();
       result = result.filter(p =>
         p.name.toLowerCase().includes(query) ||
-        p.description?.toLowerCase().includes(query) ||
+        p.notes?.toLowerCase().includes(query) ||
         p.tags?.some(t => t.toLowerCase().includes(query))
       );
     }
@@ -210,7 +228,7 @@ export class PresetsListPage implements OnInit {
     if (this.sortMode === 'alpha') {
       result = [...result].sort((a, b) => a.name.localeCompare(b.name));
     }
-    // 'recent' is already sorted from repository
+    // 'recent' is already sorted from repository (pinned first, then updatedAt)
 
     this.filteredPresets = result;
   }

@@ -7,7 +7,8 @@ import {
   PresetUpdateInput,
   generateUUID,
   migrateStorage,
-  validatePreset
+  validatePreset,
+  CURRENT_SCHEMA_VERSION
 } from '../models/preset.model';
 
 /**
@@ -20,13 +21,17 @@ export class PresetRepositoryService {
   private readonly storage = inject(LocalStorageAdapter);
 
   /**
-   * List all presets, sorted by updatedAt descending (most recent first)
+   * List all presets, sorted by pinned first, then updatedAt descending
    */
   list(): Preset[] {
     const envelope = this.loadEnvelope();
-    return [...envelope.presets].sort((a, b) =>
-      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-    );
+    return [...envelope.presets].sort((a, b) => {
+      // Pinned presets first
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      // Then by updatedAt descending
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
   }
 
   /**
@@ -107,6 +112,37 @@ export class PresetRepositoryService {
   }
 
   /**
+   * Update lastUsedAt timestamp when preset is applied
+   */
+  touchLastUsedAt(id: string): void {
+    const envelope = this.loadEnvelope();
+    const index = envelope.presets.findIndex(p => p.id === id);
+
+    if (index !== -1) {
+      envelope.presets[index].lastUsedAt = new Date().toISOString();
+      this.saveEnvelope(envelope);
+    }
+  }
+
+  /**
+   * Toggle pinned state for a preset
+   */
+  togglePin(id: string): Preset | null {
+    const envelope = this.loadEnvelope();
+    const index = envelope.presets.findIndex(p => p.id === id);
+
+    if (index === -1) {
+      return null;
+    }
+
+    envelope.presets[index].pinned = !envelope.presets[index].pinned;
+    envelope.presets[index].updatedAt = new Date().toISOString();
+    this.saveEnvelope(envelope);
+
+    return envelope.presets[index];
+  }
+
+  /**
    * Duplicate a preset with a new name
    */
   duplicate(id: string): Preset | null {
@@ -118,11 +154,12 @@ export class PresetRepositoryService {
 
     return this.create({
       name: `${original.name} (Copy)`,
-      description: original.description,
+      notes: original.notes,
       payload: { ...original.payload },
       platformId: original.platformId,
       mode: original.mode,
       tags: original.tags ? [...original.tags] : undefined
+      // Note: lastUsedAt and pinned are not copied
     });
   }
 
@@ -136,7 +173,7 @@ export class PresetRepositoryService {
       return null;
     }
 
-    return JSON.stringify({ schemaVersion: 1, preset }, null, 2);
+    return JSON.stringify({ schemaVersion: CURRENT_SCHEMA_VERSION, preset }, null, 2);
   }
 
   /**
@@ -202,7 +239,7 @@ export class PresetRepositoryService {
   }
 
   /**
-   * Search presets by name (case-insensitive)
+   * Search presets by name, notes, or tags (case-insensitive)
    */
   search(query: string): Preset[] {
     const lower = query.toLowerCase().trim();
@@ -212,7 +249,7 @@ export class PresetRepositoryService {
 
     return this.list().filter(p =>
       p.name.toLowerCase().includes(lower) ||
-      p.description?.toLowerCase().includes(lower) ||
+      p.notes?.toLowerCase().includes(lower) ||
       p.tags?.some(t => t.toLowerCase().includes(lower))
     );
   }
@@ -228,7 +265,7 @@ export class PresetRepositoryService {
    * Clear all presets (use with caution)
    */
   clearAll(): void {
-    this.saveEnvelope({ schemaVersion: 1, presets: [] });
+    this.saveEnvelope({ schemaVersion: CURRENT_SCHEMA_VERSION, presets: [] });
   }
 
   private loadEnvelope(): PresetStorageEnvelope {

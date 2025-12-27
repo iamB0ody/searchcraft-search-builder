@@ -223,6 +223,7 @@ export class SearchBuilderPage implements OnInit {
     if (state?.presetId) {
       const preset = this.presetRepository.getById(state.presetId);
       if (preset) {
+        this.presetRepository.touchLastUsedAt(state.presetId);
         this.applyPreset(preset.payload, preset.mode);
         this.toast.showSuccess(`Preset "${preset.name}" applied`);
       }

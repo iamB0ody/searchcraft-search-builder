@@ -20,11 +20,11 @@
         </ion-input>
       </ion-item>
 
-      <!-- Description -->
+      <!-- Notes -->
       <ion-item>
         <ion-textarea
-          formControlName="description"
-          label="Description"
+          formControlName="notes"
+          label="Notes"
           labelPlacement="floating"
           placeholder="Add notes about this preset..."
           [autoGrow]="true"
@@ -41,6 +41,13 @@
           labelPlacement="floating"
           placeholder="e.g., tech, frontend, remote">
         </ion-input>
+      </ion-item>
+
+      <!-- Pinned Toggle -->
+      <ion-item>
+        <ion-toggle formControlName="pinned" labelPlacement="start">
+          Pin to top of list
+        </ion-toggle>
       </ion-item>
     </form>
 
@@ -64,6 +71,11 @@
       <ion-text color="medium">
         <small>Updated: {{ formatDate(preset.updatedAt) }}</small>
       </ion-text>
+      @if (preset.lastUsedAt) {
+        <ion-text color="medium">
+          <small>Last used: {{ formatLastUsed() }}</small>
+        </ion-text>
+      }
       <ion-text color="medium">
         <small>Version: {{ preset.version }}</small>
       </ion-text>

@@ -7,7 +7,7 @@ import { SearchMode } from '../../models/search-form.model';
 export interface Preset {
   id: string;
   name: string;
-  description?: string;
+  notes?: string;          // Renamed from description
   createdAt: string;
   updatedAt: string;
   version: number;
@@ -15,6 +15,8 @@ export interface Preset {
   platformId: string;
   mode?: SearchMode;
   tags?: string[];
+  lastUsedAt?: string;     // ISO timestamp, updated when preset is applied
+  pinned?: boolean;        // Pinned presets appear at top of list
 }
 
 /**
@@ -36,23 +38,44 @@ export type PresetCreateInput = Omit<Preset, 'id' | 'createdAt' | 'updatedAt' | 
 export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 
 /**
+ * Current schema version
+ */
+export const CURRENT_SCHEMA_VERSION = 2;
+
+/**
  * Migrate storage data to current schema version
  */
 export function migrateStorage(data: unknown): PresetStorageEnvelope {
   if (!data || typeof data !== 'object') {
-    return { schemaVersion: 1, presets: [] };
+    return { schemaVersion: CURRENT_SCHEMA_VERSION, presets: [] };
   }
 
   const envelope = data as PresetStorageEnvelope;
 
   // Handle missing schemaVersion (legacy data)
   if (!envelope.schemaVersion) {
-    return { schemaVersion: 1, presets: envelope.presets || [] };
+    envelope.schemaVersion = 1;
+    envelope.presets = envelope.presets || [];
   }
 
-  // Future migration logic would go here:
-  // if (envelope.schemaVersion === 1) { migrate to 2 }
-  // if (envelope.schemaVersion === 2) { migrate to 3 }
+  // Migrate v1 → v2: rename description→notes, add lastUsedAt/pinned
+  if (envelope.schemaVersion === 1) {
+    envelope.presets = envelope.presets.map(p => {
+      const preset = p as Preset & { description?: string };
+      return {
+        ...preset,
+        notes: preset.description ?? preset.notes ?? undefined,
+        lastUsedAt: preset.lastUsedAt ?? undefined,
+        pinned: preset.pinned ?? false,
+        description: undefined  // Remove old field
+      };
+    }).map(p => {
+      // Clean up undefined description field
+      const { description, ...rest } = p as Preset & { description?: string };
+      return rest as Preset;
+    });
+    envelope.schemaVersion = 2;
+  }
 
   return envelope;
 }

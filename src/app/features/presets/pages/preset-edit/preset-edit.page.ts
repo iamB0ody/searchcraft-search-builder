@@ -13,6 +13,7 @@ import {
   IonCardTitle,
   IonCardContent,
   IonText,
+  IonToggle,
   AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -28,6 +29,7 @@ import { PresetRepositoryService } from '../../../../core/services/preset-reposi
 import { ShareService } from '../../../../core/services/share.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Preset } from '../../../../core/models/preset.model';
+import { formatRelativeTime } from '../../../../core/utils/date.utils';
 
 @Component({
   selector: 'app-preset-edit',
@@ -45,7 +47,8 @@ import { Preset } from '../../../../core/models/preset.model';
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
-    IonText
+    IonText,
+    IonToggle
   ],
   templateUrl: './preset-edit.page.html',
   styleUrl: './preset-edit.page.scss'
@@ -74,8 +77,9 @@ export class PresetEditPage implements OnInit {
   private initForm(): void {
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
-      description: ['', Validators.maxLength(500)],
-      tags: ['']
+      notes: ['', Validators.maxLength(500)],
+      tags: [''],
+      pinned: [false]
     });
   }
 
@@ -96,8 +100,9 @@ export class PresetEditPage implements OnInit {
 
     this.form.patchValue({
       name: this.preset.name,
-      description: this.preset.description || '',
-      tags: this.preset.tags?.join(', ') || ''
+      notes: this.preset.notes || '',
+      tags: this.preset.tags?.join(', ') || '',
+      pinned: this.preset.pinned || false
     });
   }
 
@@ -106,7 +111,7 @@ export class PresetEditPage implements OnInit {
       return;
     }
 
-    const { name, description, tags } = this.form.value;
+    const { name, notes, tags, pinned } = this.form.value;
 
     const tagList = tags
       ? tags.split(',').map((t: string) => t.trim()).filter((t: string) => t.length > 0)
@@ -114,8 +119,9 @@ export class PresetEditPage implements OnInit {
 
     const updated = this.repository.update(this.preset.id, {
       name: name.trim(),
-      description: description?.trim() || undefined,
-      tags: tagList?.length ? tagList : undefined
+      notes: notes?.trim() || undefined,
+      tags: tagList?.length ? tagList : undefined,
+      pinned: pinned || false
     });
 
     if (updated) {
@@ -198,5 +204,9 @@ export class PresetEditPage implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  protected formatLastUsed(): string {
+    return formatRelativeTime(this.preset?.lastUsedAt);
   }
 }

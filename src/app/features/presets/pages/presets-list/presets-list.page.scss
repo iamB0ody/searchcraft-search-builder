@@ -54,6 +54,11 @@ ion-item {
   --padding-end: 16px;
   --inner-padding-end: 8px;
 
+  .pin-icon {
+    font-size: 16px;
+    margin-right: 8px;
+  }
+
   ion-label {
     h2 {
       font-weight: 600;
@@ -69,6 +74,12 @@ ion-item {
 
     ion-note {
       font-size: 12px;
+      display: block;
+
+      &.last-used {
+        margin-top: 2px;
+        color: var(--ion-color-medium-shade);
+      }
     }
   }
 }

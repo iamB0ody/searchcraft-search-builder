@@ -52,10 +52,16 @@
       @for (preset of filteredPresets; track preset.id) {
         <ion-item-sliding>
           <ion-item>
+            @if (preset.pinned) {
+              <ion-icon name="pin" color="primary" slot="start" class="pin-icon"></ion-icon>
+            }
             <ion-label>
               <h2>{{ preset.name }}</h2>
               <p>{{ getPresetSummary(preset) }}</p>
               <ion-note>Updated {{ formatDate(preset.updatedAt) }}</ion-note>
+              @if (preset.lastUsedAt) {
+                <ion-note class="last-used">Last used {{ formatLastUsed(preset) }}</ion-note>
+              }
             </ion-label>
 
             @if (preset.tags?.length) {
@@ -76,6 +82,9 @@
 
           <!-- Right side options -->
           <ion-item-options side="end">
+            <ion-item-option [color]="preset.pinned ? 'warning' : 'tertiary'" (click)="onTogglePin(preset)">
+              <ion-icon slot="icon-only" [name]="preset.pinned ? 'pin' : 'pin-outline'"></ion-icon>
+            </ion-item-option>
             <ion-item-option color="primary" (click)="onEdit(preset)">
               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
             </ion-item-option>

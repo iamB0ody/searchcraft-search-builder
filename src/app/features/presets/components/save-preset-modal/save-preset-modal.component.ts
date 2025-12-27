@@ -60,7 +60,7 @@ export class SavePresetModalComponent {
 
     this.form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
-      description: ['', Validators.maxLength(500)],
+      notes: ['', Validators.maxLength(500)],
       tags: ['']
     });
   }
@@ -70,7 +70,7 @@ export class SavePresetModalComponent {
       return;
     }
 
-    const { name, description, tags } = this.form.value;
+    const { name, notes, tags } = this.form.value;
 
     // Parse tags from comma-separated string
     const tagList = tags
@@ -80,7 +80,7 @@ export class SavePresetModalComponent {
     try {
       const preset = this.repository.create({
         name: name.trim(),
-        description: description?.trim() || undefined,
+        notes: notes?.trim() || undefined,
         payload: this.payload,
         platformId: this.platformId,
         mode: this.mode,

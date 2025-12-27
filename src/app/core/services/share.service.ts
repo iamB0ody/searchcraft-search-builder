@@ -103,7 +103,7 @@ export class ShareService {
   getEmailUrl(preset: Preset): string {
     const shareUrl = this.buildShareUrl(preset);
     const subject = `SearchCraft Preset: ${preset.name}`;
-    const body = `Check out this search preset:\n\n${preset.name}\n${preset.description || ''}\n\n${shareUrl}`;
+    const body = `Check out this search preset:\n\n${preset.name}\n${preset.notes || ''}\n\n${shareUrl}`;
     return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
@@ -173,7 +173,7 @@ export class ShareService {
   private buildShareData(preset: Preset): ShareData {
     return {
       title: `SearchCraft Preset: ${preset.name}`,
-      text: preset.description || `Search preset for ${preset.payload.searchType}`,
+      text: preset.notes || `Search preset for ${preset.payload.searchType}`,
       url: this.buildShareUrl(preset)
     };
   }
