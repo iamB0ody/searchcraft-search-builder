@@ -46,16 +46,42 @@
                 <small>{{ platformRegistry.currentPlatform().notes[0] }}</small>
               </ion-text>
 
-              <!-- Google-specific: LinkedIn restriction toggle -->
-              @if (isGooglePlatform) {
+              <!-- Google Jobs-specific toggles -->
+              @if (isGoogleJobsPlatform) {
                 <ion-item class="platform-option">
-                  <ion-label>Restrict to LinkedIn profiles</ion-label>
+                  <ion-label>Include location in query</ion-label>
                   <ion-toggle
                     slot="end"
-                    [checked]="googleAdapter.restrictToLinkedIn()"
-                    (ionChange)="onGoogleToggleChange($event.detail.checked)">
+                    [checked]="googleJobsAdapter.includeLocationKeyword()"
+                    (ionChange)="onGoogleJobsLocationToggleChange($event.detail.checked)">
                   </ion-toggle>
                 </ion-item>
+
+                <ion-item class="platform-option">
+                  <ion-select
+                    label="Skills joiner"
+                    labelPlacement="floating"
+                    [value]="googleJobsAdapter.skillsJoiner()"
+                    (ionChange)="onGoogleJobsSkillsJoinerChange($event.detail.value)"
+                    interface="popover">
+                    <ion-select-option value="OR">OR (broader results)</ion-select-option>
+                    <ion-select-option value="AND">AND (more specific)</ion-select-option>
+                  </ion-select>
+                </ion-item>
+
+                <!-- Location input for Google Jobs -->
+                <ion-item class="platform-option">
+                  <ion-input
+                    label="Location"
+                    labelPlacement="floating"
+                    formControlName="location"
+                    placeholder="e.g., San Francisco, CA">
+                  </ion-input>
+                </ion-item>
+
+                <ion-text color="medium" class="platform-hint">
+                  <small>Google Jobs works best with shorter, simpler queries.</small>
+                </ion-text>
               }
 
               <!-- Indeed-specific: Region selector -->

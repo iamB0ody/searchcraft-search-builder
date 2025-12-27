@@ -40,7 +40,7 @@ export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 /**
  * Current schema version
  */
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 /**
  * Migrate storage data to current schema version
@@ -75,6 +75,15 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
       return rest as Preset;
     });
     envelope.schemaVersion = 2;
+  }
+
+  // Migrate v2 → v3: rename platformId 'google' to 'google-jobs'
+  if (envelope.schemaVersion === 2) {
+    envelope.presets = envelope.presets.map(p => ({
+      ...p,
+      platformId: p.platformId === 'google' ? 'google-jobs' : p.platformId
+    }));
+    envelope.schemaVersion = 3;
   }
 
   return envelope;

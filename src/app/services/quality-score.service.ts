@@ -16,8 +16,10 @@ export class QualityScoreService {
   /**
    * Calculate a quality score (0-100) for a search query input.
    * Returns score, level, reasons, and optional tips.
+   * @param input - The search query input to score
+   * @param platformId - Optional platform ID for platform-specific scoring
    */
-  calculateScore(input: QualityScoreInput): QualityScoreResult {
+  calculateScore(input: QualityScoreInput, platformId?: string): QualityScoreResult {
     let score = 100;
     const reasons: QualityReason[] = [];
     const tips: string[] = [];
@@ -75,12 +77,35 @@ export class QualityScoreService {
       reasons.push({ type: 'warning', message: 'Query contains unsupported characters' });
     }
 
-    // Rule 6: Balanced search bonus (titles + skills)
+    // Rule 6: Platform-specific adjustments for Google Jobs
+    if (platformId === 'google-jobs') {
+      // Penalize complexity more aggressively for Google Jobs
+      if (input.operatorCount > 10) {
+        score -= 15;
+        reasons.push({ type: 'warning', message: 'Google Jobs prefers simpler queries' });
+        tips.push('Try reducing the number of search terms');
+      }
+
+      // Penalize long queries for Google Jobs
+      if (input.booleanQuery.length > 150) {
+        score -= 10;
+        reasons.push({ type: 'info', message: 'Consider shortening your query for Google Jobs' });
+      }
+
+      // Penalize many ANDs (Google Jobs works better with OR)
+      const andCount = (input.booleanQuery.match(/\bAND\b/g) || []).length;
+      if (andCount > 3) {
+        score -= 10;
+        reasons.push({ type: 'info', message: 'Consider using OR instead of AND for broader results' });
+      }
+    }
+
+    // Rule 7: Balanced search bonus (titles + skills)
     if (input.titles.length >= 1 && input.skills.length >= 1) {
       score += 5;
     }
 
-    // Rule 7: Suggestion for no exclusions
+    // Rule 8: Suggestion for no exclusions
     if (input.exclude.length === 0 && (input.titles.length + input.skills.length) > 2) {
       tips.push('Consider adding exclusions to refine results');
     }

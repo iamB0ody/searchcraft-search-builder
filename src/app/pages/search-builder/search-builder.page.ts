@@ -49,7 +49,7 @@ import { PresetRepositoryService } from '../../core/services/preset-repository.s
 import { HistoryRepositoryService } from '../../core/services/history-repository.service';
 import { ShareService } from '../../core/services/share.service';
 import { PlatformRegistryService } from '../../services/platforms/platform-registry.service';
-import { GooglePlatformAdapter } from '../../services/platforms/google-platform.adapter';
+import { GoogleJobsPlatformAdapter } from '../../services/platforms/google-jobs-platform.adapter';
 import { IndeedPlatformAdapter, getIndeedRegionOptions } from '../../services/platforms/indeed-platform.adapter';
 import { QueryPayload, BuilderShareState, PlatformAdapter, IndeedRegion } from '../../models/platform.model';
 import { IntelligenceSuggestion } from '../../models/intelligence.model';
@@ -119,7 +119,7 @@ export class SearchBuilderPage implements OnInit {
 
   // Platform services
   protected readonly platformRegistry = inject(PlatformRegistryService);
-  protected readonly googleAdapter = inject(GooglePlatformAdapter);
+  protected readonly googleJobsAdapter = inject(GoogleJobsPlatformAdapter);
   protected readonly indeedAdapter = inject(IndeedPlatformAdapter);
 
   protected form!: FormGroup;
@@ -214,9 +214,9 @@ export class SearchBuilderPage implements OnInit {
     return this.platformRegistry.currentPlatform().id;
   }
 
-  // Check if current platform is Google (for toggle UI)
-  protected get isGooglePlatform(): boolean {
-    return this.currentPlatformId === 'google';
+  // Check if current platform is Google Jobs (for toggle UI)
+  protected get isGoogleJobsPlatform(): boolean {
+    return this.currentPlatformId === 'google-jobs';
   }
 
   // Check if current platform is Indeed (for region selector UI)
@@ -409,7 +409,7 @@ export class SearchBuilderPage implements OnInit {
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
 
-    // Calculate quality score
+    // Calculate quality score (pass platformId for platform-specific scoring)
     this.qualityScoreResult = this.qualityScoreService.calculateScore({
       titles: form.titles || [],
       skills: form.skills || [],
@@ -417,7 +417,7 @@ export class SearchBuilderPage implements OnInit {
       booleanQuery: result.query,
       operatorCount: result.operatorCount,
       warnings: result.warnings
-    });
+    }, platform.id);
 
     // Generate suggestions
     this.suggestions = this.intelligence.generateSuggestions(payload, result.operatorCount);
@@ -478,6 +478,13 @@ export class SearchBuilderPage implements OnInit {
 
   protected onSearchTypeChange(event: CustomEvent): void {
     const newSearchType = event.detail.value as SearchType;
+
+    // If switching to 'people' while on Google Jobs, switch platform to LinkedIn
+    if (newSearchType === 'people' && this.currentPlatformId === 'google-jobs') {
+      this.platformRegistry.setCurrentPlatform('linkedin');
+      this.toast.showInfo('Switched to LinkedIn for people search.');
+    }
+
     this.form.patchValue({ searchType: newSearchType });
 
     // Check if current platform supports the new search type
@@ -493,12 +500,24 @@ export class SearchBuilderPage implements OnInit {
 
   protected onPlatformChange(platformId: string): void {
     this.platformRegistry.setCurrentPlatform(platformId);
+
+    // If Google Jobs selected and search type is 'people', switch to 'jobs'
+    if (platformId === 'google-jobs' && this.form.get('searchType')?.value === 'people') {
+      this.form.patchValue({ searchType: 'jobs' });
+      this.toast.showInfo('Google Jobs supports job searches only.');
+    }
+
     // Trigger preview update
     this.updatePreview(this.form.value);
   }
 
-  protected onGoogleToggleChange(restrictToLinkedIn: boolean): void {
-    this.googleAdapter.restrictToLinkedIn.set(restrictToLinkedIn);
+  protected onGoogleJobsLocationToggleChange(includeLocation: boolean): void {
+    this.googleJobsAdapter.includeLocationKeyword.set(includeLocation);
+    this.updatePreview(this.form.value);
+  }
+
+  protected onGoogleJobsSkillsJoinerChange(joiner: 'OR' | 'AND'): void {
+    this.googleJobsAdapter.skillsJoiner.set(joiner);
     this.updatePreview(this.form.value);
   }
 

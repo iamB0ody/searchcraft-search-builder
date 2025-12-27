@@ -6,6 +6,7 @@ import {
   HistoryStorageEnvelope,
   HistoryCreateInput,
   MAX_HISTORY_ITEMS,
+  HISTORY_SCHEMA_VERSION,
   migrateHistoryStorage
 } from '../models/history-item.model';
 
@@ -110,7 +111,7 @@ export class HistoryRepositoryService {
    * Clear all history items
    */
   clearAll(): void {
-    this.saveEnvelope({ schemaVersion: 1, items: [] });
+    this.saveEnvelope({ schemaVersion: HISTORY_SCHEMA_VERSION, items: [] });
   }
 
   private loadEnvelope(): HistoryStorageEnvelope {

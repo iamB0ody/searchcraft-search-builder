@@ -35,20 +35,34 @@ export type HistoryCreateInput = Omit<HistoryItem, 'id' | 'createdAt'>;
 export const MAX_HISTORY_ITEMS = 20;
 
 /**
+ * Current schema version for history
+ */
+export const HISTORY_SCHEMA_VERSION = 2;
+
+/**
  * Migrate storage data to current schema version
  */
 export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
   if (!data || typeof data !== 'object') {
-    return { schemaVersion: 1, items: [] };
+    return { schemaVersion: HISTORY_SCHEMA_VERSION, items: [] };
   }
 
   const envelope = data as HistoryStorageEnvelope;
 
   // Handle missing schemaVersion (legacy data)
   if (!envelope.schemaVersion) {
-    return { schemaVersion: 1, items: envelope.items || [] };
+    envelope.schemaVersion = 1;
+    envelope.items = envelope.items || [];
   }
 
-  // Future migration logic would go here
+  // Migrate v1 → v2: rename platformId 'google' to 'google-jobs'
+  if (envelope.schemaVersion === 1) {
+    envelope.items = envelope.items.map(item => ({
+      ...item,
+      platformId: item.platformId === 'google' ? 'google-jobs' : item.platformId
+    }));
+    envelope.schemaVersion = 2;
+  }
+
   return envelope;
 }

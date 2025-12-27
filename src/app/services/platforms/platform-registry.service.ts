@@ -3,14 +3,14 @@ import { PlatformAdapter } from '../../models/platform.model';
 import { SearchType } from '../../models/search-form.model';
 import { LinkedInPlatformAdapter } from './linkedin-platform.adapter';
 import { SalesNavPlatformAdapter } from './salesnav-platform.adapter';
-import { GooglePlatformAdapter } from './google-platform.adapter';
+import { GoogleJobsPlatformAdapter } from './google-jobs-platform.adapter';
 import { IndeedPlatformAdapter } from './indeed-platform.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class PlatformRegistryService {
   private readonly linkedinAdapter = inject(LinkedInPlatformAdapter);
   private readonly salesnavAdapter = inject(SalesNavPlatformAdapter);
-  private readonly googleAdapter = inject(GooglePlatformAdapter);
+  private readonly googleJobsAdapter = inject(GoogleJobsPlatformAdapter);
   private readonly indeedAdapter = inject(IndeedPlatformAdapter);
 
   private platforms = new Map<string, PlatformAdapter>();
@@ -27,7 +27,7 @@ export class PlatformRegistryService {
   constructor() {
     this.register(this.linkedinAdapter);
     this.register(this.salesnavAdapter);
-    this.register(this.googleAdapter);
+    this.register(this.googleJobsAdapter);
     this.register(this.indeedAdapter);
   }
 
