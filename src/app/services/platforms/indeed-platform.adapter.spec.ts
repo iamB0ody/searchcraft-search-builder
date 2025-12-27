@@ -92,8 +92,8 @@ describe('IndeedPlatformAdapter', () => {
       expect(INDEED_REGIONS['au'].domain).toBe('au.indeed.com');
     });
 
-    it('should have 7 regions total', () => {
-      expect(Object.keys(INDEED_REGIONS).length).toBe(7);
+    it('should have 63 regions total', () => {
+      expect(Object.keys(INDEED_REGIONS).length).toBe(63);
     });
   });
 
@@ -101,7 +101,7 @@ describe('IndeedPlatformAdapter', () => {
     it('should return array of region options', () => {
       const options = getIndeedRegionOptions();
       expect(Array.isArray(options)).toBeTrue();
-      expect(options.length).toBe(7);
+      expect(options.length).toBe(63);
     });
 
     it('should have value and label for each option', () => {
@@ -132,7 +132,20 @@ describe('IndeedPlatformAdapter', () => {
     });
 
     it('should accept all valid regions', () => {
-      const regions: IndeedRegion[] = ['com', 'co.uk', 'de', 'fr', 'ca', 'in', 'au'];
+      const regions: IndeedRegion[] = [
+        // Americas
+        'ar', 'br', 'ca', 'cl', 'co', 'com', 'ec', 'mx', 'pe', 've',
+        // Europe
+        'at', 'be', 'ch', 'co.uk', 'cz', 'de', 'dk', 'es', 'fi', 'fr',
+        'gr', 'hu', 'ie', 'it', 'lu', 'nl', 'no', 'pl', 'pt', 'ro',
+        'ru', 'se', 'sk', 'tr', 'ua',
+        // Asia-Pacific
+        'au', 'bd', 'cn', 'hk', 'id', 'in', 'jp', 'kr', 'my', 'nz',
+        'pk', 'ph', 'sg', 'th', 'tw', 'vn',
+        // Middle East & Africa
+        'ae', 'bh', 'eg', 'il', 'ke', 'kw', 'ma', 'ng', 'om', 'qa', 'sa', 'za'
+      ];
+      expect(regions.length).toBe(63);
       regions.forEach(region => {
         adapter.currentRegion.set(region);
         expect(adapter.currentRegion()).toBe(region);

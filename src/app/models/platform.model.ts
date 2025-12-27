@@ -24,9 +24,20 @@ export interface PlatformQueryResult {
 }
 
 /**
- * Indeed regional domains
+ * Indeed regional domains (63 countries)
  */
-export type IndeedRegion = 'com' | 'co.uk' | 'de' | 'fr' | 'ca' | 'in' | 'au';
+export type IndeedRegion =
+  // Americas
+  | 'ar' | 'br' | 'ca' | 'cl' | 'co' | 'com' | 'ec' | 'mx' | 'pe' | 've'
+  // Europe
+  | 'at' | 'be' | 'ch' | 'co.uk' | 'cz' | 'de' | 'dk' | 'es' | 'fi' | 'fr'
+  | 'gr' | 'hu' | 'ie' | 'it' | 'lu' | 'nl' | 'no' | 'pl' | 'pt' | 'ro'
+  | 'ru' | 'se' | 'sk' | 'tr' | 'ua'
+  // Asia-Pacific
+  | 'au' | 'bd' | 'cn' | 'hk' | 'id' | 'in' | 'jp' | 'kr' | 'my' | 'nz'
+  | 'pk' | 'ph' | 'sg' | 'th' | 'tw' | 'vn'
+  // Middle East & Africa
+  | 'ae' | 'bh' | 'eg' | 'il' | 'ke' | 'kw' | 'ma' | 'ng' | 'om' | 'qa' | 'sa' | 'za';
 
 /**
  * Shareable builder state for URL encoding
