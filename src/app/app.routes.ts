@@ -12,5 +12,12 @@ export const routes: Routes = [
       import('./pages/search-builder/search-builder.page').then(
         m => m.SearchBuilderPage
       )
+  },
+  {
+    path: 'presets',
+    loadChildren: () =>
+      import('./features/presets/presets.routes').then(
+        m => m.PRESETS_ROUTES
+      )
   }
 ];

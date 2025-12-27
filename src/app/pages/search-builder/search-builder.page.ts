@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/operators';
@@ -22,21 +23,33 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  IonButtons,
   IonIcon,
   IonToggle,
   IonText,
   IonAccordion,
-  IonAccordionGroup
+  IonAccordionGroup,
+  ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { trashOutline, peopleOutline, briefcaseOutline, chevronDownOutline } from 'ionicons/icons';
+import {
+  trashOutline,
+  peopleOutline,
+  briefcaseOutline,
+  chevronDownOutline,
+  saveOutline,
+  folderOutline
+} from 'ionicons/icons';
 
 import { ChipInputComponent } from '../../components/chip-input/chip-input.component';
 import { PreviewComponent } from '../../components/preview/preview.component';
 import { SuggestionsComponent } from '../../components/suggestions/suggestions.component';
+import { SavePresetModalComponent } from '../../features/presets/components/save-preset-modal/save-preset-modal.component';
 import { BooleanBuilderService } from '../../services/boolean-builder.service';
 import { LinkedinUrlBuilderService } from '../../services/linkedin-url-builder.service';
 import { IntelligenceEngineService } from '../../services/intelligence/intelligence-engine.service';
+import { ToastService } from '../../services/toast.service';
+import { PresetRepositoryService } from '../../core/services/preset-repository.service';
 import { QueryPayload } from '../../models/platform.model';
 import { IntelligenceSuggestion } from '../../models/intelligence.model';
 import {
@@ -77,6 +90,7 @@ import {
     IonRow,
     IonCol,
     IonButton,
+    IonButtons,
     IonIcon,
     IonToggle,
     IonText,
@@ -90,11 +104,15 @@ import {
   styleUrl: './search-builder.page.scss'
 })
 export class SearchBuilderPage implements OnInit {
-  private fb = inject(FormBuilder);
-  private destroyRef = inject(DestroyRef);
-  private booleanBuilder = inject(BooleanBuilderService);
-  private urlBuilder = inject(LinkedinUrlBuilderService);
-  private intelligence = inject(IntelligenceEngineService);
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+  private readonly modalController = inject(ModalController);
+  private readonly booleanBuilder = inject(BooleanBuilderService);
+  private readonly urlBuilder = inject(LinkedinUrlBuilderService);
+  private readonly intelligence = inject(IntelligenceEngineService);
+  private readonly toast = inject(ToastService);
+  private readonly presetRepository = inject(PresetRepositoryService);
 
   protected form!: FormGroup;
   protected booleanQuery = '';
@@ -174,7 +192,14 @@ export class SearchBuilderPage implements OnInit {
   ];
 
   constructor() {
-    addIcons({ trashOutline, peopleOutline, briefcaseOutline, chevronDownOutline });
+    addIcons({
+      trashOutline,
+      peopleOutline,
+      briefcaseOutline,
+      chevronDownOutline,
+      saveOutline,
+      folderOutline
+    });
   }
 
   // Check if desktop screen (for accordion default state)
@@ -190,6 +215,62 @@ export class SearchBuilderPage implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.setupFormSubscription();
+    this.checkForPresetToApply();
+  }
+
+  ionViewWillEnter(): void {
+    this.checkForPresetToApply();
+  }
+
+  private checkForPresetToApply(): void {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras?.state || history.state;
+
+    if (state?.presetId) {
+      const preset = this.presetRepository.getById(state.presetId);
+      if (preset) {
+        this.applyPreset(preset.payload, preset.mode);
+        this.toast.showSuccess(`Preset "${preset.name}" applied`);
+      }
+    }
+  }
+
+  private applyPreset(payload: QueryPayload, mode?: SearchMode): void {
+    this.form.patchValue({
+      searchType: payload.searchType,
+      titles: payload.titles || [],
+      skills: payload.skills || [],
+      exclude: payload.exclude || [],
+      location: payload.location || '',
+      mode: mode || 'linkedin'
+    });
+  }
+
+  protected async openSavePresetModal(): Promise<void> {
+    const formValue = this.form.value as SearchFormModel;
+
+    const payload: QueryPayload = {
+      searchType: formValue.searchType,
+      titles: formValue.titles || [],
+      skills: formValue.skills || [],
+      exclude: formValue.exclude || [],
+      location: formValue.location || undefined
+    };
+
+    const modal = await this.modalController.create({
+      component: SavePresetModalComponent,
+      componentProps: {
+        payload,
+        platformId: 'linkedin',
+        mode: formValue.mode
+      }
+    });
+
+    await modal.present();
+  }
+
+  protected navigateToPresets(): void {
+    this.router.navigate(['/presets']);
   }
 
   private initForm(): void {

@@ -1,0 +1,97 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/presets"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Preset</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSave()" [disabled]="form.invalid">
+        <ion-icon slot="icon-only" name="save-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (preset) {
+    <form [formGroup]="form">
+      <!-- Name -->
+      <ion-item>
+        <ion-input
+          formControlName="name"
+          label="Name"
+          labelPlacement="floating"
+          placeholder="Preset name"
+          [clearInput]="true"
+          maxlength="100">
+        </ion-input>
+      </ion-item>
+
+      <!-- Description -->
+      <ion-item>
+        <ion-textarea
+          formControlName="description"
+          label="Description"
+          labelPlacement="floating"
+          placeholder="Add notes about this preset..."
+          [autoGrow]="true"
+          maxlength="500"
+          rows="2">
+        </ion-textarea>
+      </ion-item>
+
+      <!-- Tags -->
+      <ion-item>
+        <ion-input
+          formControlName="tags"
+          label="Tags"
+          labelPlacement="floating"
+          placeholder="e.g., tech, frontend, remote">
+        </ion-input>
+      </ion-item>
+    </form>
+
+    <!-- Payload Summary -->
+    <ion-card class="summary-card">
+      <ion-card-header>
+        <ion-card-title>Search Criteria</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        @for (item of getPayloadSummary(); track item) {
+          <p class="summary-item">{{ item }}</p>
+        }
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Metadata -->
+    <div class="metadata">
+      <ion-text color="medium">
+        <small>Created: {{ formatDate(preset.createdAt) }}</small>
+      </ion-text>
+      <ion-text color="medium">
+        <small>Updated: {{ formatDate(preset.updatedAt) }}</small>
+      </ion-text>
+      <ion-text color="medium">
+        <small>Version: {{ preset.version }}</small>
+      </ion-text>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <ion-button expand="block" color="success" (click)="onApply()">
+        <ion-icon name="play-outline" slot="start"></ion-icon>
+        Apply Preset
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" (click)="onShare()">
+        <ion-icon name="share-outline" slot="start"></ion-icon>
+        Share
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" color="danger" (click)="onDelete()">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Delete
+      </ion-button>
+    </div>
+  }
+</ion-content>

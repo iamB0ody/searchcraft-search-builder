@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="onCancel()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Save Preset</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSave()" [disabled]="form.invalid" color="primary">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Save
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form">
+    <!-- Preset Name -->
+    <ion-item>
+      <ion-input
+        formControlName="name"
+        label="Name"
+        labelPlacement="floating"
+        placeholder="e.g., Frontend Developer Search"
+        [clearInput]="true"
+        maxlength="100">
+      </ion-input>
+    </ion-item>
+
+    <!-- Description -->
+    <ion-item>
+      <ion-textarea
+        formControlName="description"
+        label="Description (optional)"
+        labelPlacement="floating"
+        placeholder="Add notes about this preset..."
+        [autoGrow]="true"
+        maxlength="500"
+        rows="2">
+      </ion-textarea>
+    </ion-item>
+
+    <!-- Tags -->
+    <ion-item>
+      <ion-input
+        formControlName="tags"
+        label="Tags (optional)"
+        labelPlacement="floating"
+        placeholder="e.g., tech, frontend, remote">
+      </ion-input>
+    </ion-item>
+
+    <!-- Preview Summary -->
+    <div class="preview-section">
+      <ion-label color="medium">
+        <small>This preset will save:</small>
+      </ion-label>
+      <p class="summary">{{ getPayloadSummary() }}</p>
+    </div>
+  </form>
+</ion-content>

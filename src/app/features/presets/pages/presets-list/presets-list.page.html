@@ -1,0 +1,109 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/search-builder"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Saved Presets</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Search and Sort -->
+  <div class="controls">
+    <ion-searchbar
+      [value]="searchQuery"
+      (ionInput)="onSearchChange($event)"
+      placeholder="Search presets..."
+      debounce="300">
+    </ion-searchbar>
+
+    <ion-segment [value]="sortMode" (ionChange)="onSortChange($event)">
+      <ion-segment-button value="recent">
+        <ion-icon name="time-outline"></ion-icon>
+        <ion-label>Recent</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="alpha">
+        <ion-icon name="text-outline"></ion-icon>
+        <ion-label>A-Z</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Empty State -->
+  @if (filteredPresets.length === 0) {
+    <div class="empty-state">
+      @if (searchQuery) {
+        <ion-text color="medium">
+          <p>No presets match your search.</p>
+        </ion-text>
+      } @else {
+        <ion-text color="medium">
+          <h3>No Saved Presets</h3>
+          <p>Create presets from the Search Builder to save your favorite searches.</p>
+        </ion-text>
+        <ion-button (click)="navigateToBuilder()" fill="outline">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Go to Builder
+        </ion-button>
+      }
+    </div>
+  }
+
+  <!-- Presets List -->
+  @if (filteredPresets.length > 0) {
+    <ion-list>
+      @for (preset of filteredPresets; track preset.id) {
+        <ion-item-sliding>
+          <ion-item>
+            <ion-label>
+              <h2>{{ preset.name }}</h2>
+              <p>{{ getPresetSummary(preset) }}</p>
+              <ion-note>Updated {{ formatDate(preset.updatedAt) }}</ion-note>
+            </ion-label>
+
+            @if (preset.tags?.length) {
+              <div slot="end" class="tags">
+                @for (tag of (preset.tags ?? []).slice(0, 2); track tag) {
+                  <ion-chip size="small" color="medium">{{ tag }}</ion-chip>
+                }
+              </div>
+            }
+          </ion-item>
+
+          <!-- Left side options -->
+          <ion-item-options side="start">
+            <ion-item-option color="success" (click)="onApply(preset)">
+              <ion-icon slot="icon-only" name="play-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+
+          <!-- Right side options -->
+          <ion-item-options side="end">
+            <ion-item-option color="primary" (click)="onEdit(preset)">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="secondary" (click)="onDuplicate(preset)">
+              <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="tertiary" (click)="onShare(preset)">
+              <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="medium" (click)="onExport(preset)">
+              <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+            </ion-item-option>
+            <ion-item-option color="danger" (click)="onDelete(preset)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      }
+    </ion-list>
+  }
+
+  <!-- FAB to go to builder -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="navigateToBuilder()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

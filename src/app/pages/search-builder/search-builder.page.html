@@ -1,6 +1,11 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-title>LinkedIn Boolean Search Builder</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToPresets()">
+        <ion-icon slot="icon-only" name="folder-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -298,16 +303,25 @@
                 (removeSuggestion)="onRemoveSuggestion($event)">
               </app-suggestions>
 
-              <!-- Clear Button -->
-              <ion-button
-                expand="block"
-                fill="outline"
-                color="medium"
-                (click)="clearForm()"
-                class="clear-button">
-                <ion-icon name="trash-outline" slot="start"></ion-icon>
-                Clear All
-              </ion-button>
+              <!-- Action Buttons -->
+              <div class="form-actions">
+                <ion-button
+                  expand="block"
+                  color="secondary"
+                  (click)="openSavePresetModal()">
+                  <ion-icon name="save-outline" slot="start"></ion-icon>
+                  Save Preset
+                </ion-button>
+
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  color="medium"
+                  (click)="clearForm()">
+                  <ion-icon name="trash-outline" slot="start"></ion-icon>
+                  Clear All
+                </ion-button>
+              </div>
             </form>
           </ion-card-content>
         </ion-card>

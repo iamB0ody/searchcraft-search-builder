@@ -1,0 +1,23 @@
+ion-item {
+  --border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.preview-section {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+
+  ion-label {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .summary {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ion-text-color);
+    line-height: 1.5;
+  }
+}

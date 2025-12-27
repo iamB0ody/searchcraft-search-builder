@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/presets"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Import Preset</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <ion-text color="medium">
+        <p>Decoding preset data...</p>
+      </ion-text>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!loading && error) {
+    <ion-card class="error-card">
+      <ion-card-header>
+        <ion-icon name="alert-circle-outline" color="danger" class="error-icon"></ion-icon>
+        <ion-card-title color="danger">Import Failed</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ error }}</p>
+        <div class="action-buttons">
+          <ion-button expand="block" fill="outline" (click)="onCancel()">
+            Go to Presets
+          </ion-button>
+          <ion-button expand="block" fill="outline" color="medium" (click)="onGoToBuilder()">
+            Go to Builder
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- Success State - Preset Preview -->
+  @if (!loading && !error && presetData) {
+    <ion-card class="preview-card">
+      <ion-card-header>
+        <ion-icon name="checkmark-circle-outline" color="success" class="success-icon"></ion-icon>
+        <ion-card-title>{{ presetData.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        @if (presetData.description) {
+          <p class="description">{{ presetData.description }}</p>
+        }
+
+        <!-- Tags -->
+        @if (presetData.tags?.length) {
+          <div class="tags">
+            @for (tag of presetData.tags; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
+          </div>
+        }
+
+        <!-- Payload Summary -->
+        <div class="summary-section">
+          <h4>Search Criteria</h4>
+          @for (item of getPayloadSummary(); track item) {
+            <p class="summary-item">{{ item }}</p>
+          }
+        </div>
+
+        <!-- Metadata -->
+        <div class="metadata">
+          <ion-text color="medium">
+            <small>Platform: {{ presetData.platformId }}</small>
+          </ion-text>
+          @if (presetData.mode) {
+            <ion-text color="medium">
+              <small>Mode: {{ presetData.mode }}</small>
+            </ion-text>
+          }
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ion-button expand="block" color="success" (click)="onImport()">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Save to My Presets
+          </ion-button>
+
+          <ion-button expand="block" fill="outline" color="medium" (click)="onCancel()">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Cancel
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+</ion-content>
