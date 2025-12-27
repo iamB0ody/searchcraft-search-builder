@@ -291,6 +291,13 @@
                 </ion-accordion-group>
               }
 
+              <!-- Suggestions -->
+              <app-suggestions
+                [suggestions]="suggestions"
+                (applySuggestion)="onApplySuggestion($event)"
+                (removeSuggestion)="onRemoveSuggestion($event)">
+              </app-suggestions>
+
               <!-- Clear Button -->
               <ion-button
                 expand="block"

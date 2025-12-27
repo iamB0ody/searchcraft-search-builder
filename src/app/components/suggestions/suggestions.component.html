@@ -1,0 +1,41 @@
+@if (suggestions.length > 0) {
+  <div class="suggestions-container">
+    <ion-text color="medium" class="suggestions-header">
+      <small>Smart Suggestions (optional)</small>
+    </ion-text>
+
+    <!-- Hint/Lint suggestions (non-actionable) -->
+    @for (suggestion of hintSuggestions; track suggestion.id) {
+      <ion-item lines="none" class="suggestion-item hint-item">
+        <ion-icon
+          [name]="getSeverityIcon(suggestion)"
+          [color]="getSeverityColor(suggestion)"
+          slot="start">
+        </ion-icon>
+        <ion-label class="ion-text-wrap">
+          <h3>{{ suggestion.title }}</h3>
+          <p>{{ suggestion.description }}</p>
+        </ion-label>
+      </ion-item>
+    }
+
+    <!-- Actionable suggestions (with checkbox) -->
+    @for (suggestion of actionableSuggestions; track suggestion.id) {
+      <ion-item lines="none" class="suggestion-item actionable-item">
+        <ion-checkbox
+          slot="start"
+          [checked]="suggestion.isApplied"
+          (ionChange)="onToggle(suggestion, $event)">
+        </ion-checkbox>
+        <ion-label class="ion-text-wrap">
+          <h3>{{ suggestion.title }}</h3>
+          <p>{{ suggestion.description }}</p>
+        </ion-label>
+      </ion-item>
+    }
+
+    <ion-text color="medium" class="disclaimer">
+      <small>Suggestions are optional and may not cover all terminology.</small>
+    </ion-text>
+  </div>
+}

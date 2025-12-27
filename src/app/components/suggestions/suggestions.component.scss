@@ -1,0 +1,80 @@
+.suggestions-container {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+}
+
+.suggestions-header {
+  display: block;
+  margin-bottom: 12px;
+
+  small {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.suggestion-item {
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --min-height: 48px;
+  margin-bottom: 8px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  ion-icon {
+    font-size: 20px;
+    margin-right: 12px;
+  }
+
+  ion-checkbox {
+    margin-right: 12px;
+  }
+
+  ion-label {
+    h3 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 0 4px 0;
+      color: var(--ion-text-color);
+    }
+
+    p {
+      font-size: 13px;
+      margin: 0;
+      color: var(--ion-color-medium-shade);
+      line-height: 1.4;
+    }
+  }
+}
+
+.hint-item {
+  ion-label h3 {
+    color: var(--ion-color-medium-shade);
+  }
+}
+
+.actionable-item {
+  background: var(--ion-background-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+.disclaimer {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+
+  small {
+    font-size: 11px;
+    font-style: italic;
+  }
+}

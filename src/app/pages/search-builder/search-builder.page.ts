@@ -33,8 +33,12 @@ import { trashOutline, peopleOutline, briefcaseOutline, chevronDownOutline } fro
 
 import { ChipInputComponent } from '../../components/chip-input/chip-input.component';
 import { PreviewComponent } from '../../components/preview/preview.component';
+import { SuggestionsComponent } from '../../components/suggestions/suggestions.component';
 import { BooleanBuilderService } from '../../services/boolean-builder.service';
 import { LinkedinUrlBuilderService } from '../../services/linkedin-url-builder.service';
+import { IntelligenceEngineService } from '../../services/intelligence/intelligence-engine.service';
+import { QueryPayload } from '../../models/platform.model';
+import { IntelligenceSuggestion } from '../../models/intelligence.model';
 import {
   SearchFormModel,
   SearchType,
@@ -79,7 +83,8 @@ import {
     IonAccordion,
     IonAccordionGroup,
     ChipInputComponent,
-    PreviewComponent
+    PreviewComponent,
+    SuggestionsComponent
   ],
   templateUrl: './search-builder.page.html',
   styleUrl: './search-builder.page.scss'
@@ -89,6 +94,7 @@ export class SearchBuilderPage implements OnInit {
   private destroyRef = inject(DestroyRef);
   private booleanBuilder = inject(BooleanBuilderService);
   private urlBuilder = inject(LinkedinUrlBuilderService);
+  private intelligence = inject(IntelligenceEngineService);
 
   protected form!: FormGroup;
   protected booleanQuery = '';
@@ -96,6 +102,7 @@ export class SearchBuilderPage implements OnInit {
   protected warnings: string[] = [];
   protected operatorCount = 0;
   protected badgeStatus: BadgeStatus = 'safe';
+  protected suggestions: IntelligenceSuggestion[] = [];
 
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
     { value: 'people', label: 'People', icon: 'people-outline' },
@@ -229,6 +236,69 @@ export class SearchBuilderPage implements OnInit {
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
+
+    // Generate suggestions
+    const payload: QueryPayload = {
+      searchType: form.searchType,
+      titles: form.titles || [],
+      skills: form.skills || [],
+      exclude: form.exclude || [],
+      location: form.location
+    };
+    this.suggestions = this.intelligence.generateSuggestions(payload, result.operatorCount);
+  }
+
+  protected onApplySuggestion(suggestion: IntelligenceSuggestion): void {
+    if (suggestion.suggestedAdds?.titles) {
+      const current = this.form.get('titles')?.value || [];
+      const merged = this.dedupeArray([...current, ...suggestion.suggestedAdds.titles]);
+      this.form.patchValue({ titles: merged });
+    }
+    if (suggestion.suggestedAdds?.skills) {
+      const current = this.form.get('skills')?.value || [];
+      const merged = this.dedupeArray([...current, ...suggestion.suggestedAdds.skills]);
+      this.form.patchValue({ skills: merged });
+    }
+    if (suggestion.suggestedAdds?.exclude) {
+      const current = this.form.get('exclude')?.value || [];
+      const merged = this.dedupeArray([...current, ...suggestion.suggestedAdds.exclude]);
+      this.form.patchValue({ exclude: merged });
+    }
+    suggestion.isApplied = true;
+  }
+
+  protected onRemoveSuggestion(suggestion: IntelligenceSuggestion): void {
+    if (suggestion.suggestedAdds?.titles) {
+      const current = this.form.get('titles')?.value || [];
+      const filtered = current.filter((t: string) =>
+        !suggestion.suggestedAdds!.titles!.some(s => s.toLowerCase() === t.toLowerCase())
+      );
+      this.form.patchValue({ titles: filtered });
+    }
+    if (suggestion.suggestedAdds?.skills) {
+      const current = this.form.get('skills')?.value || [];
+      const filtered = current.filter((s: string) =>
+        !suggestion.suggestedAdds!.skills!.some(sk => sk.toLowerCase() === s.toLowerCase())
+      );
+      this.form.patchValue({ skills: filtered });
+    }
+    if (suggestion.suggestedAdds?.exclude) {
+      const current = this.form.get('exclude')?.value || [];
+      const filtered = current.filter((e: string) =>
+        !suggestion.suggestedAdds!.exclude!.some(ex => ex.toLowerCase() === e.toLowerCase())
+      );
+      this.form.patchValue({ exclude: filtered });
+    }
+    suggestion.isApplied = false;
+  }
+
+  private dedupeArray(arr: string[]): string[] {
+    const seen = new Map<string, string>();
+    for (const item of arr) {
+      const lower = item.toLowerCase();
+      if (!seen.has(lower)) seen.set(lower, item);
+    }
+    return Array.from(seen.values());
   }
 
   protected onSearchTypeChange(event: CustomEvent): void {
