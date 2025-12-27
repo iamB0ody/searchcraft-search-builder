@@ -35,8 +35,9 @@ app-chip-input {
   padding: 0 16px;
 }
 
-// Job Filters Section
-.job-filters-section {
+// Filter Sections (Job & People)
+.job-filters-section,
+.people-filters-section {
   margin-top: 16px;
   padding: 12px;
   background: var(--ion-color-light);

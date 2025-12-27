@@ -23,10 +23,10 @@ describe('App', () => {
     expect(compiled.querySelector('ion-app')).toBeTruthy();
   });
 
-  it('should have router-outlet', () => {
+  it('should have ion-router-outlet', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('ion-router-outlet')).toBeTruthy();
   });
 });

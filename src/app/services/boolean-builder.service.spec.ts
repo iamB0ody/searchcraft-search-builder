@@ -22,6 +22,21 @@ describe('BooleanBuilderService', () => {
       exclude: [],
       location: '',
       mode: 'linkedin',
+      sortBy: 'relevant',
+      datePosted: 'any',
+      jobTypes: [],
+      experienceLevels: [],
+      workTypes: [],
+      easyApply: false,
+      hasVerifications: false,
+      underTenApplicants: false,
+      connectionLevels: [],
+      profileLanguages: [],
+      firstName: '',
+      lastName: '',
+      keywordTitle: '',
+      keywordCompany: '',
+      keywordSchool: '',
       ...overrides
     });
 

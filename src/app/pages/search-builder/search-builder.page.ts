@@ -39,7 +39,11 @@ import {
   SearchMode,
   DatePosted,
   ExperienceLevel,
-  WorkType
+  WorkType,
+  SortBy,
+  JobType,
+  ConnectionLevel,
+  ProfileLanguage
 } from '../../models/search-form.model';
 
 @Component({
@@ -120,6 +124,42 @@ export class SearchBuilderPage implements OnInit {
     { value: 'hybrid', label: 'Hybrid' }
   ];
 
+  protected readonly sortByOptions: { value: SortBy; label: string }[] = [
+    { value: 'relevant', label: 'Most relevant' },
+    { value: 'recent', label: 'Most recent' }
+  ];
+
+  protected readonly jobTypeOptions: { value: JobType; label: string }[] = [
+    { value: 'full-time', label: 'Full-time' },
+    { value: 'part-time', label: 'Part-time' },
+    { value: 'contract', label: 'Contract' },
+    { value: 'temporary', label: 'Temporary' },
+    { value: 'internship', label: 'Internship' },
+    { value: 'other', label: 'Other' }
+  ];
+
+  // People filter options
+  protected readonly connectionLevelOptions: { value: ConnectionLevel; label: string }[] = [
+    { value: '1st', label: '1st Connections' },
+    { value: '2nd', label: '2nd Connections' },
+    { value: '3rd+', label: '3rd+ Connections' }
+  ];
+
+  protected readonly profileLanguageOptions: { value: ProfileLanguage; label: string }[] = [
+    { value: 'en', label: 'English' },
+    { value: 'es', label: 'Spanish' },
+    { value: 'fr', label: 'French' },
+    { value: 'de', label: 'German' },
+    { value: 'pt', label: 'Portuguese' },
+    { value: 'ar', label: 'Arabic' },
+    { value: 'zh', label: 'Chinese' },
+    { value: 'ja', label: 'Japanese' },
+    { value: 'ko', label: 'Korean' },
+    { value: 'it', label: 'Italian' },
+    { value: 'nl', label: 'Dutch' },
+    { value: 'ru', label: 'Russian' }
+  ];
+
   constructor() {
     addIcons({ trashOutline, peopleOutline, briefcaseOutline });
   }
@@ -138,10 +178,22 @@ export class SearchBuilderPage implements OnInit {
       location: [''],
       mode: ['linkedin' as SearchMode],
       // Job filters
+      sortBy: ['relevant' as SortBy],
       datePosted: ['any' as DatePosted],
+      jobTypes: [[] as JobType[]],
       experienceLevels: [[] as ExperienceLevel[]],
       workTypes: [[] as WorkType[]],
-      easyApply: [false]
+      easyApply: [false],
+      hasVerifications: [false],
+      underTenApplicants: [false],
+      // People filters
+      connectionLevels: [[] as ConnectionLevel[]],
+      profileLanguages: [[] as ProfileLanguage[]],
+      firstName: [''],
+      lastName: [''],
+      keywordTitle: [''],
+      keywordCompany: [''],
+      keywordSchool: ['']
     });
   }
 
@@ -178,10 +230,21 @@ export class SearchBuilderPage implements OnInit {
       exclude: [],
       location: '',
       mode: 'linkedin',
+      sortBy: 'relevant',
       datePosted: 'any',
+      jobTypes: [],
       experienceLevels: [],
       workTypes: [],
-      easyApply: false
+      easyApply: false,
+      hasVerifications: false,
+      underTenApplicants: false,
+      connectionLevels: [],
+      profileLanguages: [],
+      firstName: '',
+      lastName: '',
+      keywordTitle: '',
+      keywordCompany: '',
+      keywordSchool: ''
     });
   }
 }
