@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { ThemeService } from './core/services/theme.service';
+import { PwaInstallService } from './core/services/pwa-install.service';
+import { PwaUpdateService } from './core/services/pwa-update.service';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +15,8 @@ import { ThemeService } from './core/services/theme.service';
   `
 })
 export class App {
-  // Inject ThemeService to ensure it initializes on app startup
+  // Inject services to ensure they initialize on app startup
   private readonly theme = inject(ThemeService);
+  private readonly pwaInstall = inject(PwaInstallService);
+  private readonly pwaUpdate = inject(PwaUpdateService);
 }

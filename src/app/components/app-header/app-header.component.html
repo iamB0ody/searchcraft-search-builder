@@ -18,6 +18,13 @@
 
     <!-- Right: Actions -->
     <ion-buttons slot="end">
+      <!-- Install PWA -->
+      @if (pwaInstall.shouldShowInstallButton()) {
+        <ion-button (click)="handleInstallClick()" aria-label="Install app">
+          <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+        </ion-button>
+      }
+
       <!-- Theme Toggle -->
       <ion-button (click)="toggleTheme()" [attr.aria-label]="themeLabel">
         <ion-icon slot="icon-only" [name]="themeIcon"></ion-icon>

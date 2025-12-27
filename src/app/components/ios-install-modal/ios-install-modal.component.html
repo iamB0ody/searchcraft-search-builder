@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Install SearchCraft</ion-title>
+    <ion-button slot="end" fill="clear" (click)="onDismiss()">
+      <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="modal-content">
+    <p class="intro">Install SearchCraft on your device for quick access and offline use:</p>
+
+    <ion-list lines="none">
+      <ion-item>
+        <ion-icon slot="start" name="share-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h2>Step 1</h2>
+          <p>Tap the <strong>Share</strong> button in your browser</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon slot="start" name="add-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h2>Step 2</h2>
+          <p>Scroll down and tap <strong>"Add to Home Screen"</strong></p>
+        </ion-label>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon slot="start" name="checkmark-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h2>Step 3</h2>
+          <p>Tap <strong>"Add"</strong> to confirm</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" color="medium" fill="outline" (click)="onDismiss()">
+      Got it
+    </ion-button>
+  </div>
+</ion-content>
