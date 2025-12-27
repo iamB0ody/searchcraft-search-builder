@@ -1,9 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
@@ -16,8 +13,6 @@ import {
   IonSegmentButton,
   IonIcon,
   IonButton,
-  IonButtons,
-  IonBackButton,
   IonFab,
   IonFabButton,
   IonText,
@@ -38,6 +33,7 @@ import {
   textOutline
 } from 'ionicons/icons';
 
+import { AppHeaderComponent } from '../../../../components/app-header/app-header.component';
 import { PresetRepositoryService } from '../../../../core/services/preset-repository.service';
 import { ShareService } from '../../../../core/services/share.service';
 import { ToastService } from '../../../../services/toast.service';
@@ -49,9 +45,7 @@ type SortMode = 'recent' | 'alpha';
   selector: 'app-presets-list',
   standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    AppHeaderComponent,
     IonContent,
     IonList,
     IonItem,
@@ -64,8 +58,6 @@ type SortMode = 'recent' | 'alpha';
     IonSegmentButton,
     IonIcon,
     IonButton,
-    IonButtons,
-    IonBackButton,
     IonFab,
     IonFabButton,
     IonText,

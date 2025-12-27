@@ -1,0 +1,34 @@
+<ion-header class="app-header">
+  <ion-toolbar>
+    <!-- Left: Back button or Brand logo -->
+    <ion-buttons slot="start">
+      @if (showBackButton) {
+        <ion-back-button [defaultHref]="defaultHref"></ion-back-button>
+      } @else {
+        <div class="brand">
+          <span class="brand-icon">SC</span>
+        </div>
+      }
+    </ion-buttons>
+
+    <!-- Center: Title -->
+    <ion-title>
+      {{ pageTitle || 'SearchCraft' }}
+    </ion-title>
+
+    <!-- Right: Actions -->
+    <ion-buttons slot="end">
+      <!-- Theme Toggle -->
+      <ion-button (click)="toggleTheme()" [attr.aria-label]="themeLabel">
+        <ion-icon slot="icon-only" [name]="themeIcon"></ion-icon>
+      </ion-button>
+
+      <!-- Presets Navigation -->
+      @if (!hidePresetsButton) {
+        <ion-button (click)="navigateToPresets()" aria-label="Saved presets">
+          <ion-icon slot="icon-only" name="folder-outline"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

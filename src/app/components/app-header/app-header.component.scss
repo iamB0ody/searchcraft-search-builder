@@ -1,0 +1,66 @@
+.app-header {
+  ion-toolbar {
+    --background: var(--ion-toolbar-background);
+    --color: var(--ion-toolbar-color);
+    --border-color: var(--sc-header-border);
+    --border-width: 0 0 1px 0;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+
+  ion-title {
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.3px;
+  }
+}
+
+// Brand logo
+.brand {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.5px;
+  }
+}
+
+// Action buttons styling
+ion-buttons[slot="end"] {
+  ion-button {
+    --color: var(--ion-color-medium);
+    transition: color 0.15s ease;
+
+    &:hover {
+      --color: var(--ion-color-primary);
+    }
+
+    ion-icon {
+      font-size: 22px;
+    }
+  }
+}
+
+// Responsive: Smaller title on mobile
+@media (max-width: 576px) {
+  .app-header ion-title {
+    font-size: 16px;
+  }
+
+  .brand .brand-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+}

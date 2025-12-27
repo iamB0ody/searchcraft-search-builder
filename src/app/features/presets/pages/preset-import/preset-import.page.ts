@@ -1,13 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonButton,
-  IonButtons,
-  IonBackButton,
   IonIcon,
   IonCard,
   IonCardHeader,
@@ -24,6 +19,7 @@ import {
   checkmarkCircleOutline
 } from 'ionicons/icons';
 
+import { AppHeaderComponent } from '../../../../components/app-header/app-header.component';
 import { PresetRepositoryService } from '../../../../core/services/preset-repository.service';
 import { ShareService } from '../../../../core/services/share.service';
 import { ToastService } from '../../../../services/toast.service';
@@ -38,13 +34,9 @@ interface ImportData {
   selector: 'app-preset-import',
   standalone: true,
   imports: [
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    AppHeaderComponent,
     IonContent,
     IonButton,
-    IonButtons,
-    IonBackButton,
     IonIcon,
     IonCard,
     IonCardHeader,

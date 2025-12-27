@@ -4,24 +4,54 @@
 
 .input-label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   color: var(--ion-color-medium);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .chips-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   min-height: 32px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 
   ion-chip {
     margin: 0;
+    --background: rgba(var(--ion-color-primary-rgb), 0.12);
+    font-weight: 500;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 6px 10px;
+
+    &[color="primary"] {
+      --background: rgba(var(--ion-color-primary-rgb), 0.12);
+      --color: var(--ion-color-primary-shade);
+    }
+
+    &[color="secondary"] {
+      --background: rgba(var(--ion-color-secondary-rgb), 0.12);
+      --color: var(--ion-color-secondary-shade);
+    }
+
+    &[color="danger"] {
+      --background: rgba(var(--ion-color-danger-rgb), 0.12);
+      --color: var(--ion-color-danger-shade);
+    }
 
     ion-icon {
       cursor: pointer;
+      margin-left: 6px;
+      font-size: 16px;
+      opacity: 0.7;
+      transition: opacity 0.15s ease;
+
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
@@ -29,27 +59,59 @@
 .input-row {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: var(--ion-color-light);
-  border-radius: 8px;
-  padding: 0 8px;
+  gap: 6px;
+  background: var(--sc-code-background);
+  border: 1px solid var(--sc-code-border);
+  border-radius: 10px;
+  padding: 4px 10px;
+  transition: border-color 0.15s ease;
+
+  &:focus-within {
+    border-color: var(--ion-color-primary);
+  }
 
   ion-input {
     flex: 1;
     --padding-start: 0;
     --padding-end: 0;
+    font-size: 14px;
   }
 
   ion-button {
-    --padding-start: 8px;
-    --padding-end: 8px;
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --border-radius: 8px;
     margin: 0;
+    min-height: 36px;
   }
 }
 
 .helper-text {
   display: block;
   font-size: 12px;
-  margin-top: 4px;
-  padding-left: 4px;
+  margin-top: 6px;
+  padding-left: 2px;
+  line-height: 1.4;
+}
+
+// Dark mode adjustments
+.ion-palette-dark {
+  .chips-container {
+    ion-chip {
+      &[color="primary"] {
+        --background: rgba(var(--ion-color-primary-rgb), 0.2);
+        --color: var(--ion-color-primary-tint);
+      }
+
+      &[color="secondary"] {
+        --background: rgba(var(--ion-color-secondary-rgb), 0.2);
+        --color: var(--ion-color-secondary-tint);
+      }
+
+      &[color="danger"] {
+        --background: rgba(var(--ion-color-danger-rgb), 0.2);
+        --color: var(--ion-color-danger-tint);
+      }
+    }
+  }
 }

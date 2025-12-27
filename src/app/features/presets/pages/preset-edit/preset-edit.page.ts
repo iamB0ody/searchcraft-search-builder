@@ -2,16 +2,11 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonItem,
   IonInput,
   IonTextarea,
   IonButton,
-  IonButtons,
-  IonBackButton,
   IonIcon,
   IonCard,
   IonCardHeader,
@@ -28,6 +23,7 @@ import {
   shareOutline
 } from 'ionicons/icons';
 
+import { AppHeaderComponent } from '../../../../components/app-header/app-header.component';
 import { PresetRepositoryService } from '../../../../core/services/preset-repository.service';
 import { ShareService } from '../../../../core/services/share.service';
 import { ToastService } from '../../../../services/toast.service';
@@ -38,16 +34,12 @@ import { Preset } from '../../../../core/models/preset.model';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    AppHeaderComponent,
     IonContent,
     IonItem,
     IonInput,
     IonTextarea,
     IonButton,
-    IonButtons,
-    IonBackButton,
     IonIcon,
     IonCard,
     IonCardHeader,

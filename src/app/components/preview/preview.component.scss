@@ -1,31 +1,55 @@
 // Preview card enhanced styling
+:host {
+  display: block;
+}
+
 ion-card {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: var(--sc-card-shadow);
+  margin: 0;
+
+  ion-card-header {
+    padding-bottom: 8px;
+  }
 }
 
 ion-card-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .operator-badge {
-  font-size: 12px;
-  vertical-align: middle;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .warnings-list {
   margin-bottom: 16px;
   padding: 0;
+  background: transparent;
 
   ion-item {
-    --border-radius: 8px;
+    --border-radius: 10px;
     --min-height: 44px;
-    margin-bottom: 6px;
-    font-size: 14px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
 
     ion-icon {
-      font-size: 20px;
+      font-size: 18px;
+      margin-right: 8px;
+    }
+
+    ion-label {
+      margin: 10px 0;
     }
   }
 }
@@ -34,17 +58,21 @@ ion-card-title {
   margin-bottom: 20px;
 
   h4 {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    font-weight: 500;
+    margin: 0 0 10px 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--ion-color-medium);
   }
 }
 
 .query-display,
 .url-display {
-  background: var(--ion-color-light);
-  padding: 12px;
-  border-radius: 8px;
+  background: var(--sc-code-background);
+  border: 1px solid var(--sc-code-border);
+  padding: 14px 16px;
+  border-radius: 10px;
   font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
   font-size: 13px;
   white-space: pre-wrap;
@@ -53,13 +81,15 @@ ion-card-title {
   max-height: 150px;
   overflow-y: auto;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--ion-text-color);
 
   &.empty {
     color: var(--ion-color-medium);
     font-style: italic;
-    min-height: 40px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -67,18 +97,34 @@ ion-card-title {
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 24px;
 
   ion-button {
     margin: 0;
-    --border-radius: 8px;
-    min-height: 44px;
+    --border-radius: 10px;
+    min-height: 48px;
+    font-weight: 500;
+
+    &[fill="outline"] {
+      --border-width: 1.5px;
+    }
   }
 }
 
-// Copy button inline with section
-.copy-button {
-  margin-top: 8px;
-  min-height: 44px;
+// Responsive adjustments
+@media (min-width: 992px) {
+  ion-card {
+    position: sticky;
+    top: 20px;
+  }
+}
+
+// Dark mode adjustments
+.ion-palette-dark {
+  .query-display,
+  .url-display {
+    background: var(--sc-code-background);
+    border-color: var(--sc-code-border);
+  }
 }

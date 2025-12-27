@@ -1,11 +1,9 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/presets"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Import Preset</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header
+  [showBackButton]="true"
+  defaultHref="/presets"
+  pageTitle="Import Preset"
+  [hidePresetsButton]="true">
+</app-header>
 
 <ion-content class="ion-padding">
   <!-- Loading State -->

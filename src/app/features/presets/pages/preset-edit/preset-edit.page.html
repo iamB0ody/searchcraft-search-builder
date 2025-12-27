@@ -1,16 +1,9 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/presets"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Edit Preset</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="onSave()" [disabled]="form.invalid">
-        <ion-icon slot="icon-only" name="save-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header
+  [showBackButton]="true"
+  defaultHref="/presets"
+  pageTitle="Edit Preset"
+  [hidePresetsButton]="true">
+</app-header>
 
 <ion-content class="ion-padding">
   @if (preset) {
@@ -78,6 +71,11 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
+      <ion-button expand="block" (click)="onSave()" [disabled]="form.invalid">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save Changes
+      </ion-button>
+
       <ion-button expand="block" color="success" (click)="onApply()">
         <ion-icon name="play-outline" slot="start"></ion-icon>
         Apply Preset

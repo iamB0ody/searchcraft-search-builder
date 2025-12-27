@@ -1,3 +1,6 @@
+/* Import custom theme variables */
+@import 'theme/variables';
+
 /* Global styles */
 
 /* Ionic app requires these base styles */
@@ -12,4 +15,9 @@ body {
   width: 100%;
   position: fixed;
   overflow: hidden;
+}
+
+/* Global card shadow using theme variable */
+ion-card {
+  box-shadow: var(--sc-card-shadow);
 }

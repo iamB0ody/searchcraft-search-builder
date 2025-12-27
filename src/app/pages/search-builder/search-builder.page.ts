@@ -4,9 +4,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime } from 'rxjs/operators';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonCard,
   IonCardHeader,
@@ -23,7 +20,6 @@ import {
   IonRow,
   IonCol,
   IonButton,
-  IonButtons,
   IonIcon,
   IonToggle,
   IonText,
@@ -37,10 +33,10 @@ import {
   peopleOutline,
   briefcaseOutline,
   chevronDownOutline,
-  saveOutline,
-  folderOutline
+  saveOutline
 } from 'ionicons/icons';
 
+import { AppHeaderComponent } from '../../components/app-header/app-header.component';
 import { ChipInputComponent } from '../../components/chip-input/chip-input.component';
 import { PreviewComponent } from '../../components/preview/preview.component';
 import { SuggestionsComponent } from '../../components/suggestions/suggestions.component';
@@ -71,9 +67,7 @@ import {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
+    AppHeaderComponent,
     IonContent,
     IonCard,
     IonCardHeader,
@@ -90,7 +84,6 @@ import {
     IonRow,
     IonCol,
     IonButton,
-    IonButtons,
     IonIcon,
     IonToggle,
     IonText,
@@ -197,8 +190,7 @@ export class SearchBuilderPage implements OnInit {
       peopleOutline,
       briefcaseOutline,
       chevronDownOutline,
-      saveOutline,
-      folderOutline
+      saveOutline
     });
   }
 
@@ -267,10 +259,6 @@ export class SearchBuilderPage implements OnInit {
     });
 
     await modal.present();
-  }
-
-  protected navigateToPresets(): void {
-    this.router.navigate(['/presets']);
   }
 
   private initForm(): void {

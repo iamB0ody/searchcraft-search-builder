@@ -1,11 +1,8 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/search-builder"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Saved Presets</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header
+  [showBackButton]="true"
+  pageTitle="Saved Presets"
+  [hidePresetsButton]="true">
+</app-header>
 
 <ion-content class="ion-padding">
   <!-- Search and Sort -->

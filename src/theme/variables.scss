@@ -1,0 +1,196 @@
+// ============================================
+// SearchCraft Brand Theme
+// Emerald/Teal color palette with light & dark modes
+// ============================================
+
+:root {
+  // ----------------------------------------
+  // Primary - Emerald
+  // ----------------------------------------
+  --ion-color-primary: #10B981;
+  --ion-color-primary-rgb: 16, 185, 129;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0E9F6E;
+  --ion-color-primary-tint: #28C092;
+
+  // ----------------------------------------
+  // Secondary - Teal
+  // ----------------------------------------
+  --ion-color-secondary: #14B8A6;
+  --ion-color-secondary-rgb: 20, 184, 166;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #0F9689;
+  --ion-color-secondary-tint: #2CC2B1;
+
+  // ----------------------------------------
+  // Tertiary - Cyan accent
+  // ----------------------------------------
+  --ion-color-tertiary: #06B6D4;
+  --ion-color-tertiary-rgb: 6, 182, 212;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #05A0BB;
+  --ion-color-tertiary-tint: #1FBDD8;
+
+  // ----------------------------------------
+  // Success - Green
+  // ----------------------------------------
+  --ion-color-success: #22C55E;
+  --ion-color-success-rgb: 34, 197, 94;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #1EAD52;
+  --ion-color-success-tint: #38CB6E;
+
+  // ----------------------------------------
+  // Warning - Amber
+  // ----------------------------------------
+  --ion-color-warning: #F59E0B;
+  --ion-color-warning-rgb: 245, 158, 11;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #D88B09;
+  --ion-color-warning-tint: #F6A823;
+
+  // ----------------------------------------
+  // Danger - Rose/Red
+  // ----------------------------------------
+  --ion-color-danger: #EF4444;
+  --ion-color-danger-rgb: 239, 68, 68;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #D23C3C;
+  --ion-color-danger-tint: #F15757;
+
+  // ----------------------------------------
+  // Light - Background surfaces
+  // ----------------------------------------
+  --ion-color-light: #F3F4F6;
+  --ion-color-light-rgb: 243, 244, 246;
+  --ion-color-light-contrast: #1F2937;
+  --ion-color-light-contrast-rgb: 31, 41, 55;
+  --ion-color-light-shade: #D1D5DB;
+  --ion-color-light-tint: #F9FAFB;
+
+  // ----------------------------------------
+  // Medium - Muted text/icons
+  // ----------------------------------------
+  --ion-color-medium: #6B7280;
+  --ion-color-medium-rgb: 107, 114, 128;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #5B616E;
+  --ion-color-medium-tint: #7A808D;
+
+  // ----------------------------------------
+  // Dark
+  // ----------------------------------------
+  --ion-color-dark: #1F2937;
+  --ion-color-dark-rgb: 31, 41, 55;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #1B2430;
+  --ion-color-dark-tint: #353E4B;
+
+  // ----------------------------------------
+  // Light theme backgrounds & text
+  // ----------------------------------------
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #1F2937;
+  --ion-text-color-rgb: 31, 41, 55;
+
+  // Card, toolbar, item backgrounds
+  --ion-card-background: #ffffff;
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-color: var(--ion-text-color);
+  --ion-item-background: #ffffff;
+
+  // ----------------------------------------
+  // SearchCraft custom variables
+  // ----------------------------------------
+  --sc-code-background: #F3F4F6;
+  --sc-code-border: #E5E7EB;
+  --sc-card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --sc-header-border: rgba(0, 0, 0, 0.08);
+}
+
+// ============================================
+// Dark Theme
+// Applied when .ion-palette-dark is on <body>
+// ============================================
+.ion-palette-dark {
+  // ----------------------------------------
+  // Primary - Brighter emerald for dark bg
+  // ----------------------------------------
+  --ion-color-primary: #34D399;
+  --ion-color-primary-rgb: 52, 211, 153;
+  --ion-color-primary-contrast: #064E3B;
+  --ion-color-primary-contrast-rgb: 6, 78, 59;
+  --ion-color-primary-shade: #2DBF87;
+  --ion-color-primary-tint: #48D9A3;
+
+  // ----------------------------------------
+  // Secondary - Brighter teal
+  // ----------------------------------------
+  --ion-color-secondary: #2DD4BF;
+  --ion-color-secondary-rgb: 45, 212, 191;
+  --ion-color-secondary-contrast: #0F4342;
+  --ion-color-secondary-contrast-rgb: 15, 67, 66;
+  --ion-color-secondary-shade: #28BAA8;
+  --ion-color-secondary-tint: #42D8C5;
+
+  // ----------------------------------------
+  // Tertiary - Brighter cyan
+  // ----------------------------------------
+  --ion-color-tertiary: #22D3EE;
+  --ion-color-tertiary-rgb: 34, 211, 238;
+  --ion-color-tertiary-contrast: #083344;
+  --ion-color-tertiary-contrast-rgb: 8, 51, 68;
+  --ion-color-tertiary-shade: #1EBAD1;
+  --ion-color-tertiary-tint: #38D7F0;
+
+  // ----------------------------------------
+  // Light - Elevated surfaces in dark mode
+  // ----------------------------------------
+  --ion-color-light: #374151;
+  --ion-color-light-rgb: 55, 65, 81;
+  --ion-color-light-contrast: #F9FAFB;
+  --ion-color-light-contrast-rgb: 249, 250, 251;
+  --ion-color-light-shade: #303847;
+  --ion-color-light-tint: #4B5563;
+
+  // ----------------------------------------
+  // Medium - Brighter for visibility
+  // ----------------------------------------
+  --ion-color-medium: #9CA3AF;
+  --ion-color-medium-rgb: 156, 163, 175;
+  --ion-color-medium-contrast: #1F2937;
+  --ion-color-medium-contrast-rgb: 31, 41, 55;
+  --ion-color-medium-shade: #89909A;
+  --ion-color-medium-tint: #A6ACB7;
+
+  // ----------------------------------------
+  // Dark theme backgrounds & text
+  // ----------------------------------------
+  --ion-background-color: #111827;
+  --ion-background-color-rgb: 17, 24, 39;
+  --ion-text-color: #F9FAFB;
+  --ion-text-color-rgb: 249, 250, 251;
+
+  // Card, toolbar, item backgrounds (elevated)
+  --ion-card-background: #1F2937;
+  --ion-toolbar-background: #1F2937;
+  --ion-toolbar-color: var(--ion-text-color);
+  --ion-item-background: #1F2937;
+
+  // ----------------------------------------
+  // SearchCraft custom variables (dark)
+  // ----------------------------------------
+  --sc-code-background: #1F2937;
+  --sc-code-border: #374151;
+  --sc-card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --sc-header-border: rgba(255, 255, 255, 0.08);
+}

@@ -2,12 +2,8 @@
   display: block;
 }
 
-ion-header {
-  display: block;
-}
-
 ion-content {
-  --background: var(--ion-color-light-shade);
+  --background: var(--ion-color-light-tint);
 }
 
 // Max-width container for large screens
@@ -18,26 +14,39 @@ ion-grid {
 
 ion-card {
   margin: 0;
+  border-radius: 16px;
+  box-shadow: var(--sc-card-shadow);
 }
 
 .search-type-segment {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  background: var(--sc-code-background);
+  border-radius: 10px;
+  padding: 4px;
 
   ion-segment-button {
+    --border-radius: 8px;
+    --indicator-color: var(--ion-color-primary);
+    min-height: 44px;
+
     ion-icon {
       margin-right: 6px;
+    }
+
+    ion-label {
+      font-weight: 500;
     }
   }
 }
 
 .mode-select {
-  margin-bottom: 16px;
-  --border-radius: 8px;
+  margin-bottom: 20px;
+  --border-radius: 10px;
 }
 
 app-chip-input {
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   padding: 0 16px;
 }
 
@@ -45,23 +54,24 @@ app-chip-input {
 .job-filters-section,
 .people-filters-section {
   margin-top: 16px;
-  padding: 12px;
-  background: var(--ion-color-light);
+  padding: 16px;
+  background: var(--sc-code-background);
+  border: 1px solid var(--sc-code-border);
   border-radius: 12px;
 
   .section-label {
     display: block;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
-    color: var(--ion-color-medium-shade);
-    margin-bottom: 12px;
+    color: var(--ion-color-medium);
+    margin-bottom: 14px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
 
   .filter-item {
-    --border-radius: 8px;
-    margin-bottom: 8px;
+    --border-radius: 10px;
+    margin-bottom: 10px;
 
     &:last-child {
       margin-bottom: 0;
@@ -73,45 +83,61 @@ app-chip-input {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 24px;
+  margin-top: 28px;
 
   ion-button {
     margin: 0;
-    --border-radius: 8px;
+    --border-radius: 10px;
+    min-height: 48px;
+    font-weight: 500;
+
+    &[fill="outline"] {
+      --border-width: 1.5px;
+    }
   }
 }
 
 // Filter helper text
 .filter-helper {
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 
   small {
     font-size: 12px;
-    line-height: 1.4;
+    line-height: 1.5;
   }
 }
 
 // Accordion styling for filters
 ion-accordion-group {
-  margin-top: 16px;
+  margin-top: 20px;
 
   ion-accordion {
-    background: var(--ion-color-light);
+    background: var(--sc-code-background);
+    border: 1px solid var(--sc-code-border);
     border-radius: 12px;
     margin-bottom: 0;
 
     ion-item[slot="header"] {
       --background: transparent;
-      --padding-start: 12px;
-      --padding-end: 12px;
+      --padding-start: 14px;
+      --padding-end: 14px;
       font-weight: 600;
       font-size: 14px;
     }
 
     .accordion-content {
-      padding: 0 12px 12px 12px;
+      padding: 0 14px 14px 14px;
     }
+  }
+}
+
+.filter-item {
+  --border-radius: 10px;
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -123,7 +149,7 @@ ion-accordion-group {
 
   .preview-column {
     position: sticky;
-    top: 16px;
+    top: 20px;
     align-self: flex-start;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
@@ -149,11 +175,12 @@ ion-accordion-group {
 
   app-preview {
     display: block;
-    margin-top: 8px;
+    margin-top: 12px;
   }
 
   // Tighter spacing on mobile
   app-chip-input {
     padding: 0 12px;
+    margin-bottom: 16px;
   }
 }
