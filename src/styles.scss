@@ -1,24 +1,15 @@
 /* Global styles */
 
-html, body {
+/* Ionic app requires these base styles */
+html {
   height: 100%;
+}
+
+body {
   margin: 0;
   padding: 0;
-}
-
-/* Ensure routed pages fill the viewport */
-app-root {
-  display: block;
   height: 100%;
-}
-
-ion-app {
-  height: 100%;
-}
-
-/* Router outlet pages should fill available space */
-router-outlet + * {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  width: 100%;
+  position: fixed;
+  overflow: hidden;
 }

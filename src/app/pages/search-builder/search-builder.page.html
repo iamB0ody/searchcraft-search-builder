@@ -71,19 +71,74 @@
                 helperText="Terms to exclude from results">
               </app-chip-input>
 
-              <!-- Location (for Jobs only) -->
+              <!-- Job Filters (for Jobs only) -->
               @if (isJobsSearch) {
-                <ion-item class="location-input">
-                  <ion-input
-                    label="Location"
-                    labelPlacement="floating"
-                    formControlName="location"
-                    placeholder="e.g., San Francisco, CA">
-                  </ion-input>
-                </ion-item>
-                <ion-note class="location-note">
-                  Location is appended to the jobs search URL
-                </ion-note>
+                <div class="job-filters-section">
+                  <ion-note class="section-label">Job Filters</ion-note>
+
+                  <!-- Location -->
+                  <ion-item class="filter-item">
+                    <ion-input
+                      label="Location"
+                      labelPlacement="floating"
+                      formControlName="location"
+                      placeholder="e.g., San Francisco, CA">
+                    </ion-input>
+                  </ion-item>
+
+                  <!-- Date Posted -->
+                  <ion-item class="filter-item">
+                    <ion-select
+                      label="Date Posted"
+                      labelPlacement="floating"
+                      formControlName="datePosted"
+                      interface="popover">
+                      @for (option of datePostedOptions; track option.value) {
+                        <ion-select-option [value]="option.value">
+                          {{ option.label }}
+                        </ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-item>
+
+                  <!-- Experience Level (Multi-select) -->
+                  <ion-item class="filter-item">
+                    <ion-select
+                      label="Experience Level"
+                      labelPlacement="floating"
+                      formControlName="experienceLevels"
+                      [multiple]="true"
+                      interface="popover">
+                      @for (option of experienceLevelOptions; track option.value) {
+                        <ion-select-option [value]="option.value">
+                          {{ option.label }}
+                        </ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-item>
+
+                  <!-- Work Type (Multi-select) -->
+                  <ion-item class="filter-item">
+                    <ion-select
+                      label="Work Type"
+                      labelPlacement="floating"
+                      formControlName="workTypes"
+                      [multiple]="true"
+                      interface="popover">
+                      @for (option of workTypeOptions; track option.value) {
+                        <ion-select-option [value]="option.value">
+                          {{ option.label }}
+                        </ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-item>
+
+                  <!-- Easy Apply Toggle -->
+                  <ion-item class="filter-item">
+                    <ion-label>Easy Apply only</ion-label>
+                    <ion-toggle slot="end" formControlName="easyApply"></ion-toggle>
+                  </ion-item>
+                </div>
               }
 
               <!-- Clear Button -->

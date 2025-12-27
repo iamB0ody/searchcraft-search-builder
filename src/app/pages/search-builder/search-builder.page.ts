@@ -23,7 +23,8 @@ import {
   IonCol,
   IonButton,
   IonIcon,
-  IonNote
+  IonNote,
+  IonToggle
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline, peopleOutline, briefcaseOutline } from 'ionicons/icons';
@@ -32,7 +33,14 @@ import { ChipInputComponent } from '../../components/chip-input/chip-input.compo
 import { PreviewComponent } from '../../components/preview/preview.component';
 import { BooleanBuilderService } from '../../services/boolean-builder.service';
 import { LinkedinUrlBuilderService } from '../../services/linkedin-url-builder.service';
-import { SearchFormModel, SearchType, SearchMode } from '../../models/search-form.model';
+import {
+  SearchFormModel,
+  SearchType,
+  SearchMode,
+  DatePosted,
+  ExperienceLevel,
+  WorkType
+} from '../../models/search-form.model';
 
 @Component({
   selector: 'app-search-builder',
@@ -60,6 +68,7 @@ import { SearchFormModel, SearchType, SearchMode } from '../../models/search-for
     IonButton,
     IonIcon,
     IonNote,
+    IonToggle,
     ChipInputComponent,
     PreviewComponent
   ],
@@ -89,6 +98,28 @@ export class SearchBuilderPage implements OnInit {
     { value: 'recruiter', label: 'Recruiter' }
   ];
 
+  protected readonly datePostedOptions: { value: DatePosted; label: string }[] = [
+    { value: 'any', label: 'Any time' },
+    { value: 'day', label: 'Past 24 hours' },
+    { value: 'week', label: 'Past week' },
+    { value: 'month', label: 'Past month' }
+  ];
+
+  protected readonly experienceLevelOptions: { value: ExperienceLevel; label: string }[] = [
+    { value: 'internship', label: 'Internship' },
+    { value: 'entry', label: 'Entry level' },
+    { value: 'associate', label: 'Associate' },
+    { value: 'mid-senior', label: 'Mid-Senior level' },
+    { value: 'director', label: 'Director' },
+    { value: 'executive', label: 'Executive' }
+  ];
+
+  protected readonly workTypeOptions: { value: WorkType; label: string }[] = [
+    { value: 'onsite', label: 'On-site' },
+    { value: 'remote', label: 'Remote' },
+    { value: 'hybrid', label: 'Hybrid' }
+  ];
+
   constructor() {
     addIcons({ trashOutline, peopleOutline, briefcaseOutline });
   }
@@ -105,7 +136,12 @@ export class SearchBuilderPage implements OnInit {
       skills: [[] as string[]],
       exclude: [[] as string[]],
       location: [''],
-      mode: ['linkedin' as SearchMode]
+      mode: ['linkedin' as SearchMode],
+      // Job filters
+      datePosted: ['any' as DatePosted],
+      experienceLevels: [[] as ExperienceLevel[]],
+      workTypes: [[] as WorkType[]],
+      easyApply: [false]
     });
   }
 
@@ -141,7 +177,11 @@ export class SearchBuilderPage implements OnInit {
       skills: [],
       exclude: [],
       location: '',
-      mode: 'linkedin'
+      mode: 'linkedin',
+      datePosted: 'any',
+      experienceLevels: [],
+      workTypes: [],
+      easyApply: false
     });
   }
 }

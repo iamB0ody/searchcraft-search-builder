@@ -1,7 +1,9 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: block;
+}
+
+ion-header {
+  display: block;
 }
 
 ion-content {
@@ -10,10 +12,6 @@ ion-content {
 
 ion-card {
   margin: 0;
-
-  @media (min-width: 992px) {
-    height: calc(100% - 16px);
-  }
 }
 
 .search-type-segment {
@@ -37,16 +35,31 @@ app-chip-input {
   padding: 0 16px;
 }
 
-.location-input {
-  margin-top: 8px;
-  --border-radius: 8px;
-}
+// Job Filters Section
+.job-filters-section {
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
 
-.location-note {
-  display: block;
-  font-size: 12px;
-  padding: 4px 16px;
-  color: var(--ion-color-medium);
+  .section-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ion-color-medium-shade);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-item {
+    --border-radius: 8px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .clear-button {
@@ -66,20 +79,5 @@ app-chip-input {
   app-preview {
     display: block;
     margin-top: 8px;
-  }
-}
-
-@media (min-width: 992px) {
-  ion-row {
-    align-items: stretch;
-  }
-
-  ion-col {
-    display: flex;
-    flex-direction: column;
-
-    > * {
-      flex: 1;
-    }
   }
 }
