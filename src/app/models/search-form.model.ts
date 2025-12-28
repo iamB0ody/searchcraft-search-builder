@@ -2,7 +2,7 @@ export type SearchType = 'people' | 'jobs';
 export type SearchMode = 'linkedin' | 'salesnav' | 'recruiter';
 
 // Job filter types
-export type DatePosted = 'any' | 'day' | 'week' | 'month';
+export type DatePosted = 'any' | 'hour' | 'hours2' | 'hours6' | 'hours12' | 'day' | 'days3' | 'week' | 'month';
 export type ExperienceLevel = 'internship' | 'entry' | 'associate' | 'mid-senior' | 'director' | 'executive';
 export type WorkType = 'onsite' | 'remote' | 'hybrid';
 export type SortBy = 'relevant' | 'recent';
@@ -28,6 +28,8 @@ export interface SearchFormModel {
   easyApply: boolean;
   hasVerifications: boolean;
   underTenApplicants: boolean;
+  inYourNetwork: boolean;
+  fairChanceEmployer: boolean;
   // People filters (only used when searchType is 'people')
   connectionLevels: ConnectionLevel[];
   profileLanguages: ProfileLanguage[];

@@ -320,6 +320,24 @@
                         <ion-label>Under 10 applicants</ion-label>
                         <ion-toggle slot="end" formControlName="underTenApplicants"></ion-toggle>
                       </ion-item>
+
+                      <!-- In Your Network Toggle -->
+                      <ion-item class="filter-item">
+                        <ion-label>
+                          <h3>In your network</h3>
+                          <p>Jobs from your connections</p>
+                        </ion-label>
+                        <ion-toggle slot="end" formControlName="inYourNetwork"></ion-toggle>
+                      </ion-item>
+
+                      <!-- Fair Chance Employer Toggle -->
+                      <ion-item class="filter-item">
+                        <ion-label>
+                          <h3>Fair Chance Employer</h3>
+                          <p>Employers committed to fair-chance hiring</p>
+                        </ion-label>
+                        <ion-toggle slot="end" formControlName="fairChanceEmployer"></ion-toggle>
+                      </ion-item>
                     </div>
                   </ion-accordion>
                 </ion-accordion-group>
@@ -527,6 +545,7 @@
           [emotionalAdjustments]="emotionalAdjustments"
           [hiringSignalsExplanation]="hiringSignalsExplanation"
           [peopleLocation]="form.get('peopleLocation')?.value"
+          [linkedInJobsFilters]="getLinkedInJobsFilters()"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">
         </app-preview>

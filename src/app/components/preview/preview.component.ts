@@ -61,6 +61,11 @@ export class PreviewComponent {
   @Input() emotionalAdjustments: string[] = [];
   @Input() hiringSignalsExplanation: HiringSignalsExplanation | null = null;
   @Input() peopleLocation?: string;
+  @Input() linkedInJobsFilters?: {
+    datePosted?: string;
+    inYourNetwork?: boolean;
+    fairChanceEmployer?: boolean;
+  };
 
   @Output() executeSearch = new EventEmitter<void>();
   @Output() shareSearch = new EventEmitter<void>();
@@ -133,6 +138,29 @@ export class PreviewComponent {
 
   get showLocationBadge(): boolean {
     return !!this.peopleLocation?.trim();
+  }
+
+  get showLinkedInJobsFilters(): boolean {
+    if (!this.linkedInJobsFilters) return false;
+    const hasDateFilter = !!this.linkedInJobsFilters.datePosted && this.linkedInJobsFilters.datePosted !== 'any';
+    const hasNetworkFilter = this.linkedInJobsFilters.inYourNetwork === true;
+    const hasFairChanceFilter = this.linkedInJobsFilters.fairChanceEmployer === true;
+    return hasDateFilter || hasNetworkFilter || hasFairChanceFilter;
+  }
+
+  get datePostedLabel(): string {
+    if (!this.linkedInJobsFilters?.datePosted) return '';
+    const labels: Record<string, string> = {
+      'hour': 'Past hour',
+      'hours2': 'Past 2 hours',
+      'hours6': 'Past 6 hours',
+      'hours12': 'Past 12 hours',
+      'day': 'Past 24 hours',
+      'days3': 'Past 3 days',
+      'week': 'Past week',
+      'month': 'Past month'
+    };
+    return labels[this.linkedInJobsFilters.datePosted] || this.linkedInJobsFilters.datePosted;
   }
 
   getWarningColor(warning: string): string {

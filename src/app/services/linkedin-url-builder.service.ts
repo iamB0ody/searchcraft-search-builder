@@ -12,9 +12,14 @@ import {
 // LinkedIn URL parameter mappings
 const DATE_POSTED_MAP: Record<DatePosted, string> = {
   'any': '',
-  'day': 'r86400',
-  'week': 'r604800',
-  'month': 'r2592000'
+  'hour': 'r3600',       // 1 hour
+  'hours2': 'r7200',     // 2 hours
+  'hours6': 'r21600',    // 6 hours
+  'hours12': 'r43200',   // 12 hours
+  'day': 'r86400',       // 24 hours
+  'days3': 'r259200',    // 3 days
+  'week': 'r604800',     // 7 days
+  'month': 'r2592000'    // 30 days
 };
 
 const EXPERIENCE_LEVEL_MAP: Record<ExperienceLevel, string> = {
@@ -164,6 +169,16 @@ export class LinkedinUrlBuilderService {
     // Under 10 Applicants
     if (form.underTenApplicants) {
       params.set('f_EA', 'true');
+    }
+
+    // In Your Network
+    if (form.inYourNetwork) {
+      params.set('f_JIYN', 'true');
+    }
+
+    // Fair Chance Employer
+    if (form.fairChanceEmployer) {
+      params.set('f_FCE', 'true');
     }
 
     return `${this.JOBS_BASE_URL}?${params.toString()}`;

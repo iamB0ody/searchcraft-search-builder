@@ -184,7 +184,12 @@ export class SearchBuilderPage implements OnInit {
 
   protected readonly datePostedOptions: { value: DatePosted; label: string }[] = [
     { value: 'any', label: 'Any time' },
+    { value: 'hour', label: 'Past hour' },
+    { value: 'hours2', label: 'Past 2 hours' },
+    { value: 'hours6', label: 'Past 6 hours' },
+    { value: 'hours12', label: 'Past 12 hours' },
     { value: 'day', label: 'Past 24 hours' },
+    { value: 'days3', label: 'Past 3 days' },
     { value: 'week', label: 'Past week' },
     { value: 'month', label: 'Past month' }
   ];
@@ -461,6 +466,8 @@ export class SearchBuilderPage implements OnInit {
       easyApply: [false],
       hasVerifications: [false],
       underTenApplicants: [false],
+      inYourNetwork: [false],
+      fairChanceEmployer: [false],
       // People filters
       connectionLevels: [[] as ConnectionLevel[]],
       profileLanguages: [[] as ProfileLanguage[]],
@@ -664,6 +671,16 @@ export class SearchBuilderPage implements OnInit {
     return this.form.get('searchType')?.value === 'jobs';
   }
 
+  protected getLinkedInJobsFilters(): { datePosted?: string; inYourNetwork?: boolean; fairChanceEmployer?: boolean } | undefined {
+    if (!this.isJobsSearch || !this.showLinkedInFilters) return undefined;
+    const form = this.form.value;
+    return {
+      datePosted: form.datePosted,
+      inYourNetwork: form.inYourNetwork,
+      fairChanceEmployer: form.fairChanceEmployer
+    };
+  }
+
   protected clearForm(): void {
     this.form.reset({
       searchType: 'people',
@@ -681,6 +698,8 @@ export class SearchBuilderPage implements OnInit {
       easyApply: false,
       hasVerifications: false,
       underTenApplicants: false,
+      inYourNetwork: false,
+      fairChanceEmployer: false,
       connectionLevels: [],
       profileLanguages: [],
       firstName: '',

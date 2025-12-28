@@ -196,6 +196,26 @@ ion-card-title {
   }
 }
 
+// LinkedIn Jobs Filters Badge
+.linkedin-jobs-filters-badge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--sc-code-background);
+  border-radius: 10px;
+  border: 1px solid var(--sc-code-border);
+
+  ion-chip {
+    margin: 0;
+    font-size: 11px;
+    height: 24px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
 .warnings-list {
   margin-bottom: 16px;
   padding: 0;

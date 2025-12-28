@@ -104,6 +104,27 @@
       </div>
     }
 
+    <!-- LinkedIn Jobs Filters Badge -->
+    @if (showLinkedInJobsFilters) {
+      <div class="linkedin-jobs-filters-badge">
+        @if (linkedInJobsFilters?.datePosted && linkedInJobsFilters?.datePosted !== 'any') {
+          <ion-chip size="small" color="primary">
+            Date: {{ datePostedLabel }}
+          </ion-chip>
+        }
+        @if (linkedInJobsFilters?.inYourNetwork) {
+          <ion-chip size="small" color="tertiary">
+            In Network: On
+          </ion-chip>
+        }
+        @if (linkedInJobsFilters?.fairChanceEmployer) {
+          <ion-chip size="small" color="tertiary">
+            Fair Chance: On
+          </ion-chip>
+        }
+      </div>
+    }
+
     <!-- Warnings -->
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">

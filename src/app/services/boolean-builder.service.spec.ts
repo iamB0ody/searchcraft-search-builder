@@ -30,6 +30,8 @@ describe('BooleanBuilderService', () => {
       easyApply: false,
       hasVerifications: false,
       underTenApplicants: false,
+      inYourNetwork: false,
+      fairChanceEmployer: false,
       connectionLevels: [],
       profileLanguages: [],
       firstName: '',
