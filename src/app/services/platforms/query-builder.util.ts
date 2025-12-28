@@ -132,6 +132,16 @@ export function buildBooleanQuery(
       : formatted.join(' AND ');
   }
 
+  // Build signal includes clause (OR joined, from hiring signals)
+  // These are phrases like "open to work" OR "seeking opportunities"
+  let signalIncludesClause = '';
+  if (payload.signalIncludes && payload.signalIncludes.length > 0) {
+    // Signal phrases are already quoted in the catalog, join with OR
+    signalIncludesClause = options.wrapGroups
+      ? `(${payload.signalIncludes.join(' OR ')})`
+      : payload.signalIncludes.join(' OR ');
+  }
+
   // Build exclude clause (NOT or - prefix)
   let excludeClause = '';
   if (excludes.length > 0) {
@@ -147,12 +157,14 @@ export function buildBooleanQuery(
   // Count operators in each clause
   operatorCount += countOperators(titlesClause);
   operatorCount += countOperators(skillsClause);
+  operatorCount += countOperators(signalIncludesClause);
   operatorCount += countOperators(excludeClause);
 
   // Combine clauses
   const parts: string[] = [];
   if (titlesClause) parts.push(titlesClause);
   if (skillsClause) parts.push(skillsClause);
+  if (signalIncludesClause) parts.push(signalIncludesClause);
 
   let query = parts.join(' AND ');
   if (excludeClause) {

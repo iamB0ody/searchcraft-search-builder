@@ -407,6 +407,63 @@
                 </ion-accordion-group>
               }
 
+              <!-- Hiring Signals (People + LinkedIn/SalesNav only) -->
+              @if (showHiringSignals) {
+                <ion-accordion-group>
+                  <ion-accordion value="hiring-signals">
+                    <ion-item slot="header" color="light">
+                      <ion-label>
+                        Hiring Signals
+                        <ion-text color="medium"><small> (Recruiters)</small></ion-text>
+                      </ion-label>
+                      <ion-toggle
+                        slot="end"
+                        formControlName="hiringSignalsEnabled"
+                        (ionChange)="onHiringSignalsToggle($event.detail.checked)">
+                      </ion-toggle>
+                    </ion-item>
+
+                    <div class="accordion-content" slot="content">
+                      <ion-text color="medium" class="filter-helper">
+                        <small>Add profile text patterns to find available candidates.</small>
+                      </ion-text>
+
+                      @if (form.get('hiringSignalsEnabled')?.value) {
+                        @for (signal of hiringSignalsCatalog; track signal.id) {
+                          <ion-item class="signal-item">
+                            <ion-checkbox
+                              slot="start"
+                              [checked]="form.get('hiringSignalsSelected')?.value?.includes(signal.id)"
+                              (ionChange)="onSignalToggle(signal.id, $event.detail.checked)">
+                            </ion-checkbox>
+                            <ion-label>
+                              <h3>
+                                {{ signal.title }}
+                                @if (signal.isExperimental) {
+                                  <ion-badge color="warning" class="experimental-badge">Beta</ion-badge>
+                                }
+                              </h3>
+                              <p>{{ signal.description }}</p>
+                            </ion-label>
+                            <ion-icon
+                              name="information-circle-outline"
+                              slot="end"
+                              color="medium"
+                              class="signal-info-icon"
+                              (click)="showSignalInfo(signal, $event)">
+                            </ion-icon>
+                          </ion-item>
+                        }
+                      } @else {
+                        <ion-text color="medium">
+                          <p class="ion-padding signal-disabled-hint">Enable the toggle to select hiring signals.</p>
+                        </ion-text>
+                      }
+                    </div>
+                  </ion-accordion>
+                </ion-accordion-group>
+              }
+
               <!-- Suggestions -->
               <app-suggestions
                 [suggestions]="suggestions"
@@ -452,6 +509,7 @@
           [booleanLevel]="platformRegistry.currentPlatform().getCapabilities().booleanLevel"
           [emotionalMode]="form.get('emotionalMode')?.value || 'normal'"
           [emotionalAdjustments]="emotionalAdjustments"
+          [hiringSignalsExplanation]="hiringSignalsExplanation"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">
         </app-preview>

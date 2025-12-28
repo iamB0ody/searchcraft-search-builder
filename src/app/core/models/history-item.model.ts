@@ -1,6 +1,7 @@
 import { QueryPayload } from '../../models/platform.model';
 import { SearchMode, SearchType } from '../../models/search-form.model';
 import { EmotionalSearchMode } from '../../models/emotional-mode.model';
+import { HiringSignalsState } from '../people-signals/hiring-signals.model';
 
 /**
  * A search history item - recorded when user executes a search
@@ -16,6 +17,7 @@ export interface HistoryItem {
   url: string;
   operatorCount: number;
   emotionalMode?: EmotionalSearchMode;  // Emotional search mode (defaults to 'normal')
+  hiringSignals?: HiringSignalsState;   // Hiring signals state (People search only)
 }
 
 /**
@@ -39,7 +41,7 @@ export const MAX_HISTORY_ITEMS = 20;
 /**
  * Current schema version for history
  */
-export const HISTORY_SCHEMA_VERSION = 4;
+export const HISTORY_SCHEMA_VERSION = 5;
 
 /**
  * Migrate storage data to current schema version
@@ -86,6 +88,15 @@ export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
       emotionalMode: item.emotionalMode ?? 'normal'
     }));
     envelope.schemaVersion = 4;
+  }
+
+  // Migrate v4 → v5: add hiringSignals (defaults to disabled)
+  if (envelope.schemaVersion === 4) {
+    envelope.items = envelope.items.map(item => ({
+      ...item,
+      hiringSignals: item.hiringSignals ?? { enabled: false, selected: [] }
+    }));
+    envelope.schemaVersion = 5;
   }
 
   return envelope;

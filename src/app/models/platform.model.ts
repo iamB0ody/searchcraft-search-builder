@@ -1,5 +1,6 @@
 import { SearchType, SearchMode, BadgeStatus } from './search-form.model';
 import { EmotionalSearchMode } from './emotional-mode.model';
+import { HiringSignalsState } from '../core/people-signals/hiring-signals.model';
 
 /**
  * Platform-agnostic query payload
@@ -14,6 +15,10 @@ export interface QueryPayload {
   filters?: Record<string, unknown>;
   /** Optional emotional search mode for query adjustment */
   emotionalMode?: EmotionalSearchMode;
+  /** Optional hiring signals state for People search */
+  hiringSignals?: HiringSignalsState;
+  /** Signal include phrases injected by applyHiringSignals (internal use) */
+  signalIncludes?: string[];
 }
 
 /**

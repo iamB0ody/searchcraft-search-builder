@@ -99,6 +99,76 @@ ion-card-title {
   }
 }
 
+// Hiring Signals Badge
+.hiring-signals-badge {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--sc-code-background);
+  border-radius: 10px;
+  border: 1px solid var(--sc-code-border);
+
+  > ion-badge {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 12px;
+  }
+
+  .signals-detail-accordion {
+    margin-top: 10px;
+
+    ion-accordion {
+      background: transparent;
+      border: none;
+
+      ion-item[slot="header"] {
+        --background: transparent;
+        --padding-start: 0;
+        --min-height: 28px;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .signals-detail-content {
+    padding: 10px 0 0 0;
+  }
+
+  .phrase-group {
+    margin-bottom: 12px;
+
+    strong {
+      display: block;
+      font-size: 11px;
+      color: var(--ion-color-medium);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .phrase-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+
+      ion-chip {
+        margin: 0;
+        font-size: 11px;
+        height: 24px;
+        --padding-start: 8px;
+        --padding-end: 8px;
+      }
+    }
+  }
+
+  .signals-disclaimer {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-style: italic;
+  }
+}
+
 .warnings-list {
   margin-bottom: 16px;
   padding: 0;

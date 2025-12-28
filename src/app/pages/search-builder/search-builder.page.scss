@@ -221,6 +221,48 @@ ion-accordion-group {
   }
 }
 
+// Hiring Signals Section
+.signal-item {
+  --padding-start: 0;
+  --inner-padding-end: 8px;
+
+  h3 {
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    font-size: 12px;
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+
+  .experimental-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    vertical-align: middle;
+  }
+}
+
+.signal-info-icon {
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+
+  &:hover {
+    color: var(--ion-color-primary);
+  }
+}
+
+.signal-disabled-hint {
+  font-size: 13px;
+  text-align: center;
+}
+
 .filter-item {
   --border-radius: 10px;
   margin-bottom: 10px;

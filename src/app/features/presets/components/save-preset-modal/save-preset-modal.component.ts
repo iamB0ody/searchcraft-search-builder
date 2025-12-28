@@ -23,6 +23,7 @@ import { QueryPayload } from '../../../../models/platform.model';
 import { SearchMode } from '../../../../models/search-form.model';
 import { Preset } from '../../../../core/models/preset.model';
 import { EmotionalSearchMode } from '../../../../models/emotional-mode.model';
+import { HiringSignalsState } from '../../../../core/people-signals/hiring-signals.model';
 
 @Component({
   selector: 'app-save-preset-modal',
@@ -49,6 +50,7 @@ export class SavePresetModalComponent {
   @Input() platformId: string = 'linkedin';
   @Input() mode?: SearchMode;
   @Input() emotionalMode: EmotionalSearchMode = 'normal';
+  @Input() hiringSignals?: HiringSignalsState;
 
   private readonly fb = inject(FormBuilder);
   private readonly modalController = inject(ModalController);
@@ -87,6 +89,7 @@ export class SavePresetModalComponent {
         platformId: this.platformId,
         mode: this.mode,
         emotionalMode: this.emotionalMode,
+        hiringSignals: this.hiringSignals,
         tags: tagList?.length ? tagList : undefined
       });
 

@@ -47,6 +47,51 @@
         </ion-text>
       </div>
     }
+
+    <!-- Hiring Signals Badge -->
+    @if (showHiringSignalsBadge) {
+      <div class="hiring-signals-badge">
+        <ion-badge color="tertiary">
+          Hiring Signals: {{ hiringSignalsCount }} active
+        </ion-badge>
+
+        <ion-accordion-group class="signals-detail-accordion">
+          <ion-accordion value="signals-detail">
+            <ion-item slot="header" lines="none" class="signals-detail-header">
+              <ion-label color="medium">
+                <small>View injected phrases</small>
+              </ion-label>
+            </ion-item>
+            <div slot="content" class="signals-detail-content">
+              @if (hiringSignalsExplanation?.injectedIncludes?.length) {
+                <div class="phrase-group">
+                  <strong>Added phrases:</strong>
+                  <div class="phrase-chips">
+                    @for (phrase of hiringSignalsExplanation?.injectedIncludes; track phrase) {
+                      <ion-chip size="small" color="success">{{ phrase }}</ion-chip>
+                    }
+                  </div>
+                </div>
+              }
+              @if (hiringSignalsExplanation?.injectedExcludes?.length) {
+                <div class="phrase-group">
+                  <strong>Excluded:</strong>
+                  <div class="phrase-chips">
+                    @for (phrase of hiringSignalsExplanation?.injectedExcludes; track phrase) {
+                      <ion-chip size="small" color="danger">{{ phrase }}</ion-chip>
+                    }
+                  </div>
+                </div>
+              }
+              <ion-text color="medium" class="signals-disclaimer">
+                <small>Signals are based on profile text patterns; results may vary.</small>
+              </ion-text>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </div>
+    }
+
     <!-- Warnings -->
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">

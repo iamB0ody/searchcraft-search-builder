@@ -26,7 +26,10 @@ import {
   IonText,
   IonAccordion,
   IonAccordionGroup,
-  ModalController
+  IonCheckbox,
+  IonBadge,
+  ModalController,
+  AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -35,7 +38,8 @@ import {
   briefcaseOutline,
   chevronDownOutline,
   saveOutline,
-  warningOutline
+  warningOutline,
+  informationCircleOutline
 } from 'ionicons/icons';
 
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -59,6 +63,9 @@ import { QualityScoreService } from '../../services/quality-score.service';
 import { FeatureFlagService } from '../../core/feature-flags/feature-flag.service';
 import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../models/emotional-mode.model';
 import { applyEmotionalMode } from '../../services/emotional-mode.util';
+import { HiringSignalId, HiringSignalsState, HiringSignalDefinition, DEFAULT_SELECTED_SIGNALS } from '../../core/people-signals/hiring-signals.model';
+import { HIRING_SIGNALS_CATALOG } from '../../core/people-signals/hiring-signals.catalog';
+import { applyHiringSignals, HiringSignalsExplanation } from '../../core/people-signals/apply-hiring-signals';
 import {
   SearchFormModel,
   SearchType,
@@ -100,6 +107,8 @@ import {
     IonText,
     IonAccordion,
     IonAccordionGroup,
+    IonCheckbox,
+    IonBadge,
     ChipInputComponent,
     PreviewComponent,
     SuggestionsComponent
@@ -120,6 +129,7 @@ export class SearchBuilderPage implements OnInit {
   private readonly presetRepository = inject(PresetRepositoryService);
   private readonly historyRepository = inject(HistoryRepositoryService);
   private readonly shareService = inject(ShareService);
+  private readonly alertController = inject(AlertController);
 
   // Platform services
   protected readonly platformRegistry = inject(PlatformRegistryService);
@@ -141,10 +151,19 @@ export class SearchBuilderPage implements OnInit {
   // Emotional mode config for template access
   protected readonly emotionalModeConfig = EMOTIONAL_MODE_CONFIG;
 
+  // Hiring signals config for template access
+  protected readonly hiringSignalsCatalog = HIRING_SIGNALS_CATALOG;
+  protected hiringSignalsExplanation: HiringSignalsExplanation | null = null;
+
   // Get current emotional mode description for template
   protected get currentEmotionalModeDescription(): string {
     const mode = this.form?.get('emotionalMode')?.value || 'normal';
     return EMOTIONAL_MODE_CONFIG[mode as EmotionalSearchMode]?.description || '';
+  }
+
+  // Check if hiring signals section should be shown (People + LinkedIn/SalesNav only)
+  protected get showHiringSignals(): boolean {
+    return !this.isJobsSearch && this.showLinkedInFilters;
   }
 
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
@@ -263,7 +282,8 @@ export class SearchBuilderPage implements OnInit {
       briefcaseOutline,
       chevronDownOutline,
       saveOutline,
-      warningOutline
+      warningOutline,
+      informationCircleOutline
     });
   }
 
@@ -334,17 +354,23 @@ export class SearchBuilderPage implements OnInit {
       const preset = this.presetRepository.getById(state.presetId);
       if (preset) {
         this.presetRepository.touchLastUsedAt(state.presetId);
-        this.applyPreset(preset.payload, preset.platformId, preset.mode, preset.emotionalMode);
+        this.applyPreset(preset.payload, preset.platformId, preset.mode, preset.emotionalMode, preset.hiringSignals);
         this.toast.showSuccess(`Preset "${preset.name}" applied`);
       }
     } else if (state?.historyPayload) {
       // Apply from history
-      this.applyPreset(state.historyPayload, state.historyPlatformId, state.historyMode, state.historyEmotionalMode);
+      this.applyPreset(state.historyPayload, state.historyPlatformId, state.historyMode, state.historyEmotionalMode, state.historyHiringSignals);
       this.toast.showSuccess('Search loaded from history');
     }
   }
 
-  private applyPreset(payload: QueryPayload, platformId?: string, mode?: SearchMode, emotionalMode?: EmotionalSearchMode): void {
+  private applyPreset(
+    payload: QueryPayload,
+    platformId?: string,
+    mode?: SearchMode,
+    emotionalMode?: EmotionalSearchMode,
+    hiringSignals?: HiringSignalsState
+  ): void {
     // Validate and set platform with feature flag check
     if (platformId) {
       if (!this.featureFlags.isPlatformEnabled(platformId as PlatformId)) {
@@ -365,12 +391,18 @@ export class SearchBuilderPage implements OnInit {
       exclude: payload.exclude || [],
       location: payload.location || '',
       mode: mode || 'linkedin',
-      emotionalMode: emotionalMode || 'normal'
+      emotionalMode: emotionalMode || 'normal',
+      hiringSignalsEnabled: hiringSignals?.enabled || false,
+      hiringSignalsSelected: hiringSignals?.selected || []
     });
   }
 
   protected async openSavePresetModal(): Promise<void> {
-    const formValue = this.form.value as SearchFormModel & { emotionalMode?: EmotionalSearchMode };
+    const formValue = this.form.value as SearchFormModel & {
+      emotionalMode?: EmotionalSearchMode;
+      hiringSignalsEnabled?: boolean;
+      hiringSignalsSelected?: HiringSignalId[];
+    };
     const platform = this.platformRegistry.currentPlatform();
 
     const payload: QueryPayload = {
@@ -381,13 +413,20 @@ export class SearchBuilderPage implements OnInit {
       location: formValue.location || undefined
     };
 
+    // Build hiring signals state
+    const hiringSignals: HiringSignalsState = {
+      enabled: formValue.hiringSignalsEnabled || false,
+      selected: formValue.hiringSignalsSelected || []
+    };
+
     const modal = await this.modalController.create({
       component: SavePresetModalComponent,
       componentProps: {
         payload,
         platformId: platform.id,
         mode: formValue.mode,
-        emotionalMode: formValue.emotionalMode || 'normal'
+        emotionalMode: formValue.emotionalMode || 'normal',
+        hiringSignals
       }
     });
 
@@ -419,7 +458,10 @@ export class SearchBuilderPage implements OnInit {
       lastName: [''],
       keywordTitle: [''],
       keywordCompany: [''],
-      keywordSchool: ['']
+      keywordSchool: [''],
+      // Hiring signals (People search only)
+      hiringSignalsEnabled: [false],
+      hiringSignalsSelected: [[] as HiringSignalId[]]
     });
   }
 
@@ -433,6 +475,19 @@ export class SearchBuilderPage implements OnInit {
   }
 
   private updatePreview(form: SearchFormModel): void {
+    // Extract hiring signals from form
+    const formWithExtras = form as SearchFormModel & {
+      emotionalMode?: EmotionalSearchMode;
+      hiringSignalsEnabled?: boolean;
+      hiringSignalsSelected?: HiringSignalId[];
+    };
+
+    // Build hiring signals state
+    const hiringSignals: HiringSignalsState = {
+      enabled: formWithExtras.hiringSignalsEnabled || false,
+      selected: formWithExtras.hiringSignalsSelected || []
+    };
+
     // Build payload from form
     const payload: QueryPayload = {
       searchType: form.searchType,
@@ -440,38 +495,46 @@ export class SearchBuilderPage implements OnInit {
       skills: form.skills || [],
       exclude: form.exclude || [],
       location: form.location || undefined,
-      emotionalMode: (form as SearchFormModel & { emotionalMode?: EmotionalSearchMode }).emotionalMode || 'normal',
+      emotionalMode: formWithExtras.emotionalMode || 'normal',
+      hiringSignals,
       filters: form as unknown as Record<string, unknown> // Pass full form for LinkedIn-specific URL filters
     };
 
     // Apply emotional mode transformation BEFORE platform adapter
-    const emotionalMode = (form as SearchFormModel & { emotionalMode?: EmotionalSearchMode }).emotionalMode || 'normal';
-    const { payload: adjustedPayload, adjustments, useOrForSkills } = applyEmotionalMode(payload, emotionalMode);
+    const emotionalMode = formWithExtras.emotionalMode || 'normal';
+    const { payload: emotionalPayload, adjustments, useOrForSkills } = applyEmotionalMode(payload, emotionalMode);
     this.emotionalAdjustments = adjustments;
     this.useOrForSkills = useOrForSkills;
 
-    // Use current platform adapter with adjusted payload
+    // Apply hiring signals transformation AFTER emotional mode
     const platform = this.platformRegistry.currentPlatform();
-    const result = platform.buildQuery(adjustedPayload);
+    const { payload: signalPayload, explanation } = applyHiringSignals(
+      emotionalPayload,
+      platform.getCapabilities()
+    );
+    this.hiringSignalsExplanation = explanation;
+
+    // Use current platform adapter with fully adjusted payload
+    const result = platform.buildQuery(signalPayload);
 
     this.booleanQuery = result.query;
-    this.searchUrl = result.query ? platform.buildUrl(adjustedPayload, result.query) : '';
+    this.searchUrl = result.query ? platform.buildUrl(signalPayload, result.query) : '';
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
 
-    // Calculate quality score (pass platformId and emotionalMode for platform-specific scoring)
+    // Calculate quality score (pass platformId, emotionalMode, and hiringSignals for scoring)
     this.qualityScoreResult = this.qualityScoreService.calculateScore({
-      titles: adjustedPayload.titles || [],
-      skills: adjustedPayload.skills || [],
-      exclude: adjustedPayload.exclude || [],
+      titles: signalPayload.titles || [],
+      skills: signalPayload.skills || [],
+      exclude: signalPayload.exclude || [],
       booleanQuery: result.query,
       operatorCount: result.operatorCount,
       warnings: result.warnings
-    }, platform.id, emotionalMode);
+    }, platform.id, emotionalMode, this.hiringSignalsExplanation);
 
     // Generate suggestions using adjusted payload
-    this.suggestions = this.intelligence.generateSuggestions(adjustedPayload, result.operatorCount);
+    this.suggestions = this.intelligence.generateSuggestions(signalPayload, result.operatorCount);
   }
 
   protected onApplySuggestion(suggestion: IntelligenceSuggestion): void {
@@ -609,16 +672,68 @@ export class SearchBuilderPage implements OnInit {
       lastName: '',
       keywordTitle: '',
       keywordCompany: '',
-      keywordSchool: ''
+      keywordSchool: '',
+      hiringSignalsEnabled: false,
+      hiringSignalsSelected: []
     });
+  }
+
+  // Hiring signals handlers
+  protected onHiringSignalsToggle(enabled: boolean): void {
+    if (enabled) {
+      // Preselect defaults when first enabled
+      const current = this.form.get('hiringSignalsSelected')?.value || [];
+      if (current.length === 0) {
+        this.form.patchValue({ hiringSignalsSelected: DEFAULT_SELECTED_SIGNALS });
+      }
+    }
+  }
+
+  protected onSignalToggle(signalId: HiringSignalId, checked: boolean): void {
+    const current: HiringSignalId[] = this.form.get('hiringSignalsSelected')?.value || [];
+    let updated: HiringSignalId[];
+
+    if (checked) {
+      updated = [...current, signalId];
+    } else {
+      updated = current.filter(id => id !== signalId);
+    }
+
+    this.form.patchValue({ hiringSignalsSelected: updated });
+  }
+
+  protected async showSignalInfo(signal: HiringSignalDefinition, event: Event): Promise<void> {
+    event.stopPropagation();
+
+    const phrases = [
+      ...signal.includePhrases.map(p => `+ ${p}`),
+      ...signal.excludePhrases.map(p => `- ${p}`)
+    ].join('\n');
+
+    const alert = await this.alertController.create({
+      header: signal.title,
+      message: `This signal adds the following phrases:\n\n${phrases}`,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
   protected onExecuteSearch(): void {
     if (!this.searchUrl) return;
 
-    const formValue = this.form.value as SearchFormModel & { emotionalMode?: EmotionalSearchMode };
+    const formValue = this.form.value as SearchFormModel & {
+      emotionalMode?: EmotionalSearchMode;
+      hiringSignalsEnabled?: boolean;
+      hiringSignalsSelected?: HiringSignalId[];
+    };
     const platform = this.platformRegistry.currentPlatform();
     const emotionalMode = formValue.emotionalMode || 'normal';
+
+    // Build hiring signals state
+    const hiringSignals: HiringSignalsState = {
+      enabled: formValue.hiringSignalsEnabled || false,
+      selected: formValue.hiringSignalsSelected || []
+    };
 
     // Add to history
     this.historyRepository.add({
@@ -635,7 +750,8 @@ export class SearchBuilderPage implements OnInit {
       booleanQuery: this.booleanQuery,
       url: this.searchUrl,
       operatorCount: this.operatorCount,
-      emotionalMode
+      emotionalMode,
+      hiringSignals
     });
 
     // Open in new tab

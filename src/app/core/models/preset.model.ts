@@ -1,6 +1,7 @@
 import { QueryPayload } from '../../models/platform.model';
 import { SearchMode } from '../../models/search-form.model';
 import { EmotionalSearchMode } from '../../models/emotional-mode.model';
+import { HiringSignalsState } from '../people-signals/hiring-signals.model';
 
 /**
  * A saved search preset
@@ -19,6 +20,7 @@ export interface Preset {
   lastUsedAt?: string;     // ISO timestamp, updated when preset is applied
   pinned?: boolean;        // Pinned presets appear at top of list
   emotionalMode?: EmotionalSearchMode;  // Emotional search mode (defaults to 'normal')
+  hiringSignals?: HiringSignalsState;   // Hiring signals state (People search only)
 }
 
 /**
@@ -42,7 +44,7 @@ export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 /**
  * Current schema version
  */
-export const CURRENT_SCHEMA_VERSION = 5;
+export const CURRENT_SCHEMA_VERSION = 6;
 
 /**
  * Migrate storage data to current schema version
@@ -108,6 +110,15 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
       emotionalMode: p.emotionalMode ?? 'normal'
     }));
     envelope.schemaVersion = 5;
+  }
+
+  // Migrate v5 → v6: add hiringSignals (defaults to disabled)
+  if (envelope.schemaVersion === 5) {
+    envelope.presets = envelope.presets.map(p => ({
+      ...p,
+      hiringSignals: p.hiringSignals ?? { enabled: false, selected: [] }
+    }));
+    envelope.schemaVersion = 6;
   }
 
   return envelope;

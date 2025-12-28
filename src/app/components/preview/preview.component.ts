@@ -10,7 +10,10 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonBadge
+  IonBadge,
+  IonChip,
+  IonAccordion,
+  IonAccordionGroup
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline, shareSocialOutline } from 'ionicons/icons';
@@ -20,6 +23,7 @@ import { BadgeStatus } from '../../models/search-form.model';
 import { QualityScoreResult } from '../../models/quality-score.model';
 import { BooleanLevel } from '../../models/platform.model';
 import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../models/emotional-mode.model';
+import { HiringSignalsExplanation } from '../../core/people-signals/apply-hiring-signals';
 
 @Component({
   selector: 'app-preview',
@@ -35,7 +39,10 @@ import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../models/emotion
     IonItem,
     IonLabel,
     IonList,
-    IonBadge
+    IonBadge,
+    IonChip,
+    IonAccordion,
+    IonAccordionGroup
   ],
   templateUrl: './preview.component.html',
   styleUrl: './preview.component.scss'
@@ -52,6 +59,7 @@ export class PreviewComponent {
   @Input() booleanLevel: BooleanLevel = 'good';
   @Input() emotionalMode: EmotionalSearchMode = 'normal';
   @Input() emotionalAdjustments: string[] = [];
+  @Input() hiringSignalsExplanation: HiringSignalsExplanation | null = null;
 
   @Output() executeSearch = new EventEmitter<void>();
   @Output() shareSearch = new EventEmitter<void>();
@@ -111,6 +119,15 @@ export class PreviewComponent {
 
   get showEmotionalModeBadge(): boolean {
     return this.emotionalMode !== 'normal';
+  }
+
+  get showHiringSignalsBadge(): boolean {
+    return this.hiringSignalsExplanation?.enabled === true &&
+      this.hiringSignalsExplanation.appliedSignals.length > 0;
+  }
+
+  get hiringSignalsCount(): number {
+    return this.hiringSignalsExplanation?.appliedSignals?.length || 0;
   }
 
   getWarningColor(warning: string): string {

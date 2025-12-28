@@ -8,6 +8,7 @@ import {
 import { PlatformRegistryService } from './platforms/platform-registry.service';
 import { BooleanLevel } from '../models/platform.model';
 import { EmotionalSearchMode } from '../models/emotional-mode.model';
+import { HiringSignalsExplanation } from '../core/people-signals/apply-hiring-signals';
 
 /**
  * Service for calculating quality scores for search queries.
@@ -23,8 +24,14 @@ export class QualityScoreService {
    * @param input - The search query input to score
    * @param platformId - Optional platform ID for platform-specific scoring
    * @param emotionalMode - Optional emotional mode for mode-specific adjustments
+   * @param hiringSignalsExplanation - Optional hiring signals explanation for signal-specific warnings
    */
-  calculateScore(input: QualityScoreInput, platformId?: string, emotionalMode: EmotionalSearchMode = 'normal'): QualityScoreResult {
+  calculateScore(
+    input: QualityScoreInput,
+    platformId?: string,
+    emotionalMode: EmotionalSearchMode = 'normal',
+    hiringSignalsExplanation?: HiringSignalsExplanation | null
+  ): QualityScoreResult {
     let score = 100;
     const reasons: QualityReason[] = [];
     const tips: string[] = [];
@@ -152,6 +159,39 @@ export class QualityScoreService {
     // Rule 9: Suggestion for no exclusions
     if (input.exclude.length === 0 && (input.titles.length + input.skills.length) > 2) {
       tips.push('Consider adding exclusions to refine results');
+    }
+
+    // Rule 10: Hiring signals warnings
+    if (hiringSignalsExplanation?.enabled) {
+      const totalPhrases =
+        (hiringSignalsExplanation.injectedIncludes?.length || 0) +
+        (hiringSignalsExplanation.injectedExcludes?.length || 0);
+
+      if (totalPhrases > 10) {
+        score -= 10;
+        reasons.push({
+          type: 'warning',
+          message: 'Many hiring signal phrases may limit results'
+        });
+        tips.push('Consider using fewer signals for broader results');
+      }
+
+      if (input.operatorCount > 20 && hiringSignalsExplanation.enabled) {
+        reasons.push({
+          type: 'info',
+          message: 'Hiring signals added to an already complex query'
+        });
+      }
+
+      // Add warnings from the hiring signals explanation
+      if (hiringSignalsExplanation.warnings?.length > 0) {
+        for (const warning of hiringSignalsExplanation.warnings) {
+          reasons.push({
+            type: 'info',
+            message: warning
+          });
+        }
+      }
     }
 
     // Clamp score to 0-100
