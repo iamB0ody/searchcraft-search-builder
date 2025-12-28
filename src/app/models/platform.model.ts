@@ -112,3 +112,38 @@ export interface PlatformAdapter {
   buildUrl(payload: QueryPayload, booleanQuery: string): string;
   validate(payload: QueryPayload, booleanQuery: string): ValidationResult;
 }
+
+/**
+ * Typed platform identifiers for type-safe platform references
+ */
+export type PlatformId =
+  // Global platforms
+  | 'linkedin'
+  | 'salesnav'
+  | 'google-jobs'
+  | 'indeed'
+  // MENA platforms
+  | 'bayt'
+  | 'gulftalent'
+  | 'naukrigulf'
+  | 'recruitnet'
+  | 'bebee'
+  | 'gulfjobs'
+  | 'arabjobs';
+
+/**
+ * Array of all platform IDs for iteration
+ */
+export const ALL_PLATFORM_IDS: readonly PlatformId[] = [
+  'linkedin',
+  'salesnav',
+  'google-jobs',
+  'indeed',
+  'bayt',
+  'gulftalent',
+  'naukrigulf',
+  'recruitnet',
+  'bebee',
+  'gulfjobs',
+  'arabjobs'
+] as const;

@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { PlatformAdapter } from '../../models/platform.model';
+import { PlatformAdapter, PlatformId } from '../../models/platform.model';
 import { SearchType } from '../../models/search-form.model';
+import { FeatureFlagService } from '../../core/feature-flags/feature-flag.service';
 import { LinkedInPlatformAdapter } from './linkedin-platform.adapter';
 import { SalesNavPlatformAdapter } from './salesnav-platform.adapter';
 import { GoogleJobsPlatformAdapter } from './google-jobs-platform.adapter';
@@ -16,6 +17,8 @@ import { ArabJobsPlatformAdapter } from './arabjobs-platform.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class PlatformRegistryService {
+  private readonly featureFlags = inject(FeatureFlagService);
+
   // Global platforms
   private readonly linkedinAdapter = inject(LinkedInPlatformAdapter);
   private readonly salesnavAdapter = inject(SalesNavPlatformAdapter);
@@ -61,7 +64,20 @@ export class PlatformRegistryService {
     this.platforms.set(adapter.id, adapter);
   }
 
+  /**
+   * Set current platform by ID
+   * Falls back to first enabled platform if requested platform is disabled
+   */
   setCurrentPlatform(id: string): void {
+    // Check if platform is disabled via feature flags
+    if (!this.featureFlags.isPlatformEnabled(id as PlatformId)) {
+      const fallback = this.getFirstEnabledPlatform();
+      if (fallback) {
+        this.currentPlatformId.set(fallback.id);
+      }
+      return;
+    }
+
     if (this.platforms.has(id)) {
       this.currentPlatformId.set(id);
     }
@@ -72,11 +88,26 @@ export class PlatformRegistryService {
   }
 
   /**
+   * Get all platforms that are enabled via feature flags
+   */
+  getEnabledPlatforms(): PlatformAdapter[] {
+    return Array.from(this.platforms.values())
+      .filter(p => this.featureFlags.isPlatformEnabled(p.id as PlatformId));
+  }
+
+  /**
+   * Get the first enabled platform (for fallback scenarios)
+   */
+  getFirstEnabledPlatform(): PlatformAdapter | undefined {
+    return this.getEnabledPlatforms()[0];
+  }
+
+  /**
    * Get platforms that support a specific search type
-   * Filters out platforms that don't support the given type
+   * Filters by both feature flags and search type support
    */
   getPlatformsForSearchType(searchType: SearchType): PlatformAdapter[] {
-    return Array.from(this.platforms.values())
+    return this.getEnabledPlatforms()
       .filter(p => p.supportedSearchTypes.includes(searchType));
   }
 }

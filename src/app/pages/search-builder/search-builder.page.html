@@ -26,20 +26,29 @@
               </ion-segment>
 
               <!-- Platform Selector -->
-              <ion-item class="platform-select">
-                <ion-select
-                  label="Platform"
-                  labelPlacement="floating"
-                  [value]="currentPlatformId"
-                  (ionChange)="onPlatformChange($event.detail.value)"
-                  interface="popover">
-                  @for (platform of availablePlatforms; track platform.id) {
-                    <ion-select-option [value]="platform.id">
-                      {{ platform.label }}
-                    </ion-select-option>
-                  }
-                </ion-select>
-              </ion-item>
+              @if (availablePlatforms.length === 0) {
+                <ion-item color="warning">
+                  <ion-icon name="warning-outline" slot="start"></ion-icon>
+                  <ion-label class="ion-text-wrap">
+                    No platforms available. Enable at least one platform in feature flags.
+                  </ion-label>
+                </ion-item>
+              } @else {
+                <ion-item class="platform-select">
+                  <ion-select
+                    label="Platform"
+                    labelPlacement="floating"
+                    [value]="currentPlatformId"
+                    (ionChange)="onPlatformChange($event.detail.value)"
+                    interface="popover">
+                    @for (platform of availablePlatforms; track platform.id) {
+                      <ion-select-option [value]="platform.id">
+                        {{ platform.label }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                </ion-item>
+              }
 
               <!-- Platform Notes -->
               <ion-text color="medium" class="platform-notes">

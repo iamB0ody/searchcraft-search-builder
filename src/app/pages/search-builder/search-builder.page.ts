@@ -34,7 +34,8 @@ import {
   peopleOutline,
   briefcaseOutline,
   chevronDownOutline,
-  saveOutline
+  saveOutline,
+  warningOutline
 } from 'ionicons/icons';
 
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -51,10 +52,11 @@ import { ShareService } from '../../core/services/share.service';
 import { PlatformRegistryService } from '../../services/platforms/platform-registry.service';
 import { GoogleJobsPlatformAdapter } from '../../services/platforms/google-jobs-platform.adapter';
 import { IndeedPlatformAdapter, getIndeedRegionOptions } from '../../services/platforms/indeed-platform.adapter';
-import { QueryPayload, BuilderShareState, PlatformAdapter, IndeedRegion } from '../../models/platform.model';
+import { QueryPayload, BuilderShareState, PlatformAdapter, IndeedRegion, PlatformId } from '../../models/platform.model';
 import { IntelligenceSuggestion } from '../../models/intelligence.model';
 import { QualityScoreResult } from '../../models/quality-score.model';
 import { QualityScoreService } from '../../services/quality-score.service';
+import { FeatureFlagService } from '../../core/feature-flags/feature-flag.service';
 import {
   SearchFormModel,
   SearchType,
@@ -121,6 +123,7 @@ export class SearchBuilderPage implements OnInit {
   protected readonly platformRegistry = inject(PlatformRegistryService);
   protected readonly googleJobsAdapter = inject(GoogleJobsPlatformAdapter);
   protected readonly indeedAdapter = inject(IndeedPlatformAdapter);
+  private readonly featureFlags = inject(FeatureFlagService);
 
   protected form!: FormGroup;
   protected booleanQuery = '';
@@ -246,7 +249,8 @@ export class SearchBuilderPage implements OnInit {
       peopleOutline,
       briefcaseOutline,
       chevronDownOutline,
-      saveOutline
+      saveOutline,
+      warningOutline
     });
   }
 
@@ -292,7 +296,7 @@ export class SearchBuilderPage implements OnInit {
     const { data, role } = await modal.onDidDismiss();
 
     if (role === 'apply' && data === true) {
-      this.applyPreset(decoded.payload, decoded.mode);
+      this.applyPreset(decoded.payload, decoded.platformId, decoded.mode);
       await this.toast.showSuccess('Shared search applied');
     }
 
@@ -317,17 +321,30 @@ export class SearchBuilderPage implements OnInit {
       const preset = this.presetRepository.getById(state.presetId);
       if (preset) {
         this.presetRepository.touchLastUsedAt(state.presetId);
-        this.applyPreset(preset.payload, preset.mode);
+        this.applyPreset(preset.payload, preset.platformId, preset.mode);
         this.toast.showSuccess(`Preset "${preset.name}" applied`);
       }
     } else if (state?.historyPayload) {
       // Apply from history
-      this.applyPreset(state.historyPayload, state.historyMode);
+      this.applyPreset(state.historyPayload, state.historyPlatformId, state.historyMode);
       this.toast.showSuccess('Search loaded from history');
     }
   }
 
-  private applyPreset(payload: QueryPayload, mode?: SearchMode): void {
+  private applyPreset(payload: QueryPayload, platformId?: string, mode?: SearchMode): void {
+    // Validate and set platform with feature flag check
+    if (platformId) {
+      if (!this.featureFlags.isPlatformEnabled(platformId as PlatformId)) {
+        const fallback = this.platformRegistry.getFirstEnabledPlatform();
+        if (fallback) {
+          this.toast.showWarning(`Platform "${platformId}" is disabled. Using ${fallback.label}.`);
+          this.platformRegistry.setCurrentPlatform(fallback.id);
+        }
+      } else {
+        this.platformRegistry.setCurrentPlatform(platformId);
+      }
+    }
+
     this.form.patchValue({
       searchType: payload.searchType,
       titles: payload.titles || [],
