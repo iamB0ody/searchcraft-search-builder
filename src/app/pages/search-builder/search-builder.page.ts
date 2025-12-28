@@ -57,6 +57,8 @@ import { IntelligenceSuggestion } from '../../models/intelligence.model';
 import { QualityScoreResult } from '../../models/quality-score.model';
 import { QualityScoreService } from '../../services/quality-score.service';
 import { FeatureFlagService } from '../../core/feature-flags/feature-flag.service';
+import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../models/emotional-mode.model';
+import { applyEmotionalMode } from '../../services/emotional-mode.util';
 import {
   SearchFormModel,
   SearchType,
@@ -133,6 +135,17 @@ export class SearchBuilderPage implements OnInit {
   protected badgeStatus: BadgeStatus = 'safe';
   protected suggestions: IntelligenceSuggestion[] = [];
   protected qualityScoreResult?: QualityScoreResult;
+  protected emotionalAdjustments: string[] = [];
+  protected useOrForSkills = false;
+
+  // Emotional mode config for template access
+  protected readonly emotionalModeConfig = EMOTIONAL_MODE_CONFIG;
+
+  // Get current emotional mode description for template
+  protected get currentEmotionalModeDescription(): string {
+    const mode = this.form?.get('emotionalMode')?.value || 'normal';
+    return EMOTIONAL_MODE_CONFIG[mode as EmotionalSearchMode]?.description || '';
+  }
 
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
     { value: 'people', label: 'People', icon: 'people-outline' },
@@ -321,17 +334,17 @@ export class SearchBuilderPage implements OnInit {
       const preset = this.presetRepository.getById(state.presetId);
       if (preset) {
         this.presetRepository.touchLastUsedAt(state.presetId);
-        this.applyPreset(preset.payload, preset.platformId, preset.mode);
+        this.applyPreset(preset.payload, preset.platformId, preset.mode, preset.emotionalMode);
         this.toast.showSuccess(`Preset "${preset.name}" applied`);
       }
     } else if (state?.historyPayload) {
       // Apply from history
-      this.applyPreset(state.historyPayload, state.historyPlatformId, state.historyMode);
+      this.applyPreset(state.historyPayload, state.historyPlatformId, state.historyMode, state.historyEmotionalMode);
       this.toast.showSuccess('Search loaded from history');
     }
   }
 
-  private applyPreset(payload: QueryPayload, platformId?: string, mode?: SearchMode): void {
+  private applyPreset(payload: QueryPayload, platformId?: string, mode?: SearchMode, emotionalMode?: EmotionalSearchMode): void {
     // Validate and set platform with feature flag check
     if (platformId) {
       if (!this.featureFlags.isPlatformEnabled(platformId as PlatformId)) {
@@ -351,12 +364,13 @@ export class SearchBuilderPage implements OnInit {
       skills: payload.skills || [],
       exclude: payload.exclude || [],
       location: payload.location || '',
-      mode: mode || 'linkedin'
+      mode: mode || 'linkedin',
+      emotionalMode: emotionalMode || 'normal'
     });
   }
 
   protected async openSavePresetModal(): Promise<void> {
-    const formValue = this.form.value as SearchFormModel;
+    const formValue = this.form.value as SearchFormModel & { emotionalMode?: EmotionalSearchMode };
     const platform = this.platformRegistry.currentPlatform();
 
     const payload: QueryPayload = {
@@ -372,7 +386,8 @@ export class SearchBuilderPage implements OnInit {
       componentProps: {
         payload,
         platformId: platform.id,
-        mode: formValue.mode
+        mode: formValue.mode,
+        emotionalMode: formValue.emotionalMode || 'normal'
       }
     });
 
@@ -387,6 +402,7 @@ export class SearchBuilderPage implements OnInit {
       exclude: [[] as string[]],
       location: [''],
       mode: ['linkedin' as SearchMode],
+      emotionalMode: ['normal' as EmotionalSearchMode],
       // Job filters
       sortBy: ['relevant' as SortBy],
       datePosted: ['any' as DatePosted],
@@ -424,31 +440,38 @@ export class SearchBuilderPage implements OnInit {
       skills: form.skills || [],
       exclude: form.exclude || [],
       location: form.location || undefined,
+      emotionalMode: (form as SearchFormModel & { emotionalMode?: EmotionalSearchMode }).emotionalMode || 'normal',
       filters: form as unknown as Record<string, unknown> // Pass full form for LinkedIn-specific URL filters
     };
 
-    // Use current platform adapter
+    // Apply emotional mode transformation BEFORE platform adapter
+    const emotionalMode = (form as SearchFormModel & { emotionalMode?: EmotionalSearchMode }).emotionalMode || 'normal';
+    const { payload: adjustedPayload, adjustments, useOrForSkills } = applyEmotionalMode(payload, emotionalMode);
+    this.emotionalAdjustments = adjustments;
+    this.useOrForSkills = useOrForSkills;
+
+    // Use current platform adapter with adjusted payload
     const platform = this.platformRegistry.currentPlatform();
-    const result = platform.buildQuery(payload);
+    const result = platform.buildQuery(adjustedPayload);
 
     this.booleanQuery = result.query;
-    this.searchUrl = result.query ? platform.buildUrl(payload, result.query) : '';
+    this.searchUrl = result.query ? platform.buildUrl(adjustedPayload, result.query) : '';
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
 
-    // Calculate quality score (pass platformId for platform-specific scoring)
+    // Calculate quality score (pass platformId and emotionalMode for platform-specific scoring)
     this.qualityScoreResult = this.qualityScoreService.calculateScore({
-      titles: form.titles || [],
-      skills: form.skills || [],
-      exclude: form.exclude || [],
+      titles: adjustedPayload.titles || [],
+      skills: adjustedPayload.skills || [],
+      exclude: adjustedPayload.exclude || [],
       booleanQuery: result.query,
       operatorCount: result.operatorCount,
       warnings: result.warnings
-    }, platform.id);
+    }, platform.id, emotionalMode);
 
-    // Generate suggestions
-    this.suggestions = this.intelligence.generateSuggestions(payload, result.operatorCount);
+    // Generate suggestions using adjusted payload
+    this.suggestions = this.intelligence.generateSuggestions(adjustedPayload, result.operatorCount);
   }
 
   protected onApplySuggestion(suggestion: IntelligenceSuggestion): void {
@@ -571,6 +594,7 @@ export class SearchBuilderPage implements OnInit {
       exclude: [],
       location: '',
       mode: 'linkedin',
+      emotionalMode: 'normal',
       sortBy: 'relevant',
       datePosted: 'any',
       jobTypes: [],
@@ -592,8 +616,9 @@ export class SearchBuilderPage implements OnInit {
   protected onExecuteSearch(): void {
     if (!this.searchUrl) return;
 
-    const formValue = this.form.value as SearchFormModel;
+    const formValue = this.form.value as SearchFormModel & { emotionalMode?: EmotionalSearchMode };
     const platform = this.platformRegistry.currentPlatform();
+    const emotionalMode = formValue.emotionalMode || 'normal';
 
     // Add to history
     this.historyRepository.add({
@@ -609,7 +634,8 @@ export class SearchBuilderPage implements OnInit {
       },
       booleanQuery: this.booleanQuery,
       url: this.searchUrl,
-      operatorCount: this.operatorCount
+      operatorCount: this.operatorCount,
+      emotionalMode
     });
 
     // Open in new tab

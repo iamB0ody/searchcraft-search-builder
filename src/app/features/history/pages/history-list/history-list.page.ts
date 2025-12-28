@@ -33,6 +33,7 @@ import { HistoryRepositoryService } from '../../../../core/services/history-repo
 import { ClipboardService } from '../../../../services/clipboard.service';
 import { ToastService } from '../../../../services/toast.service';
 import { HistoryItem } from '../../../../core/models/history-item.model';
+import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../../../models/emotional-mode.model';
 
 @Component({
   selector: 'app-history-list',
@@ -96,7 +97,12 @@ export class HistoryListPage implements OnInit {
   protected async onApply(item: HistoryItem): Promise<void> {
     // Navigate to builder with the history item's payload
     await this.router.navigate(['/search-builder'], {
-      state: { historyPayload: item.payload, historyMode: item.mode }
+      state: {
+        historyPayload: item.payload,
+        historyPlatformId: item.platformId,
+        historyMode: item.mode,
+        historyEmotionalMode: item.emotionalMode
+      }
     });
   }
 
@@ -196,6 +202,10 @@ export class HistoryListPage implements OnInit {
 
   protected getSearchTypeIcon(item: HistoryItem): string {
     return item.searchType === 'jobs' ? 'briefcase-outline' : 'people-outline';
+  }
+
+  protected getEmotionalModeIcon(mode: EmotionalSearchMode): string {
+    return EMOTIONAL_MODE_CONFIG[mode]?.icon || '';
   }
 
   private loadHistory(): void {

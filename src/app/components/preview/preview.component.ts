@@ -19,6 +19,7 @@ import { ToastService } from '../../services/toast.service';
 import { BadgeStatus } from '../../models/search-form.model';
 import { QualityScoreResult } from '../../models/quality-score.model';
 import { BooleanLevel } from '../../models/platform.model';
+import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../models/emotional-mode.model';
 
 @Component({
   selector: 'app-preview',
@@ -49,9 +50,14 @@ export class PreviewComponent {
   @Input() platformLabel = 'LinkedIn';
   @Input() platformIcon = 'logo-linkedin';
   @Input() booleanLevel: BooleanLevel = 'good';
+  @Input() emotionalMode: EmotionalSearchMode = 'normal';
+  @Input() emotionalAdjustments: string[] = [];
 
   @Output() executeSearch = new EventEmitter<void>();
   @Output() shareSearch = new EventEmitter<void>();
+
+  // Emotional mode config for template access
+  protected readonly emotionalModeConfig = EMOTIONAL_MODE_CONFIG;
 
   get badgeColor(): string {
     switch (this.badgeStatus) {
@@ -93,6 +99,18 @@ export class PreviewComponent {
       case 'partial': return 'Limited Boolean';
       case 'none': return 'Keywords Only';
     }
+  }
+
+  get emotionalModeColor(): string {
+    switch (this.emotionalMode) {
+      case 'urgent': return 'warning';
+      case 'chill': return 'tertiary';
+      default: return 'medium';
+    }
+  }
+
+  get showEmotionalModeBadge(): boolean {
+    return this.emotionalMode !== 'normal';
   }
 
   getWarningColor(warning: string): string {

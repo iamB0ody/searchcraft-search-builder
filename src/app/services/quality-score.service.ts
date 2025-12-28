@@ -7,6 +7,7 @@ import {
 } from '../models/quality-score.model';
 import { PlatformRegistryService } from './platforms/platform-registry.service';
 import { BooleanLevel } from '../models/platform.model';
+import { EmotionalSearchMode } from '../models/emotional-mode.model';
 
 /**
  * Service for calculating quality scores for search queries.
@@ -21,8 +22,9 @@ export class QualityScoreService {
    * Returns score, level, reasons, and optional tips.
    * @param input - The search query input to score
    * @param platformId - Optional platform ID for platform-specific scoring
+   * @param emotionalMode - Optional emotional mode for mode-specific adjustments
    */
-  calculateScore(input: QualityScoreInput, platformId?: string): QualityScoreResult {
+  calculateScore(input: QualityScoreInput, platformId?: string, emotionalMode: EmotionalSearchMode = 'normal'): QualityScoreResult {
     let score = 100;
     const reasons: QualityReason[] = [];
     const tips: string[] = [];
@@ -45,21 +47,31 @@ export class QualityScoreService {
       };
     }
 
-    // Rule 2: Operator count penalties
-    if (input.operatorCount > 20) {
-      score -= 15;
+    // Emotional mode adjustments for operator count thresholds
+    const operatorPenaltyThreshold = emotionalMode === 'urgent' ? 25 : 20;
+    const operatorWarningThreshold = emotionalMode === 'urgent' ? 20 : 15;
+
+    // Rule 2: Operator count penalties (adjusted by emotional mode)
+    if (input.operatorCount > operatorPenaltyThreshold) {
+      score -= emotionalMode === 'urgent' ? 10 : 15;
       reasons.push({ type: 'warning', message: 'Query has many operators, may be complex' });
-    } else if (input.operatorCount > 15) {
-      score -= 10;
+    } else if (input.operatorCount > operatorWarningThreshold) {
+      score -= emotionalMode === 'urgent' ? 5 : 10;
       reasons.push({ type: 'info', message: 'Consider simplifying the query' });
     }
 
-    // Rule 3: Too many ANDs (restrictive)
+    // Rule 3: Too many ANDs (restrictive) - more lenient in chill mode, more strict in urgent mode
     const andCount = (input.booleanQuery.match(/\bAND\b/g) || []).length;
-    if (andCount > 8) {
-      score -= 10;
-      reasons.push({ type: 'warning', message: 'Many AND terms may be too restrictive' });
-      tips.push('Try using OR between similar skills');
+    const andThreshold = emotionalMode === 'urgent' ? 4 : (emotionalMode === 'chill' ? 12 : 8);
+    if (andCount > andThreshold) {
+      const penalty = emotionalMode === 'chill' ? 5 : 10;
+      score -= penalty;
+      if (emotionalMode === 'chill') {
+        reasons.push({ type: 'info', message: 'Many AND terms may limit results' });
+      } else {
+        reasons.push({ type: 'warning', message: 'Many AND terms may be too restrictive' });
+        tips.push('Try using OR between similar skills');
+      }
     }
 
     // Rule 4: Query length
@@ -96,7 +108,6 @@ export class QualityScoreService {
       }
 
       // Penalize many ANDs (Google Jobs works better with OR)
-      const andCount = (input.booleanQuery.match(/\bAND\b/g) || []).length;
       if (andCount > 3) {
         score -= 10;
         reasons.push({ type: 'info', message: 'Consider using OR instead of AND for broader results' });

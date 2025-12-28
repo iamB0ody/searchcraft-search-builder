@@ -72,6 +72,33 @@ ion-card-title {
   }
 }
 
+// Emotional Mode Badge
+.emotional-mode-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--sc-code-background);
+  border-radius: 10px;
+  border: 1px solid var(--sc-code-border);
+
+  ion-badge {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .mode-description {
+    small {
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  }
+}
+
 .warnings-list {
   margin-bottom: 16px;
   padding: 0;

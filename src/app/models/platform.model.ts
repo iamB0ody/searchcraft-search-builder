@@ -1,4 +1,5 @@
 import { SearchType, SearchMode, BadgeStatus } from './search-form.model';
+import { EmotionalSearchMode } from './emotional-mode.model';
 
 /**
  * Platform-agnostic query payload
@@ -11,6 +12,8 @@ export interface QueryPayload {
   exclude: string[];
   location?: string;
   filters?: Record<string, unknown>;
+  /** Optional emotional search mode for query adjustment */
+  emotionalMode?: EmotionalSearchMode;
 }
 
 /**

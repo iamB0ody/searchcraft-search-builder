@@ -1,5 +1,6 @@
 import { QueryPayload } from '../../models/platform.model';
 import { SearchMode, SearchType } from '../../models/search-form.model';
+import { EmotionalSearchMode } from '../../models/emotional-mode.model';
 
 /**
  * A search history item - recorded when user executes a search
@@ -14,6 +15,7 @@ export interface HistoryItem {
   booleanQuery: string;
   url: string;
   operatorCount: number;
+  emotionalMode?: EmotionalSearchMode;  // Emotional search mode (defaults to 'normal')
 }
 
 /**
@@ -37,7 +39,7 @@ export const MAX_HISTORY_ITEMS = 20;
 /**
  * Current schema version for history
  */
-export const HISTORY_SCHEMA_VERSION = 3;
+export const HISTORY_SCHEMA_VERSION = 4;
 
 /**
  * Migrate storage data to current schema version
@@ -75,6 +77,15 @@ export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
       platformId: knownPlatforms.includes(item.platformId) ? item.platformId : 'linkedin'
     }));
     envelope.schemaVersion = 3;
+  }
+
+  // Migrate v3 → v4: add emotionalMode (defaults to 'normal')
+  if (envelope.schemaVersion === 3) {
+    envelope.items = envelope.items.map(item => ({
+      ...item,
+      emotionalMode: item.emotionalMode ?? 'normal'
+    }));
+    envelope.schemaVersion = 4;
   }
 
   return envelope;

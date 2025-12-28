@@ -35,6 +35,18 @@
         }
       </div>
     }
+
+    <!-- Emotional Mode Badge (when not normal) -->
+    @if (showEmotionalModeBadge) {
+      <div class="emotional-mode-badge">
+        <ion-badge [color]="emotionalModeColor">
+          {{ emotionalModeConfig[emotionalMode].icon }} {{ emotionalModeConfig[emotionalMode].label }} Mode
+        </ion-badge>
+        <ion-text color="medium" class="mode-description">
+          <small>{{ emotionalModeConfig[emotionalMode].description }}</small>
+        </ion-text>
+      </div>
+    }
     <!-- Warnings -->
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">

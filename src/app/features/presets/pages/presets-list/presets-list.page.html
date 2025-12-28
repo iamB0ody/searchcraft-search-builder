@@ -58,7 +58,12 @@
             <ion-label>
               <h2>{{ preset.name }}</h2>
               <p>{{ getPresetSummary(preset) }}</p>
-              <ion-note>Updated {{ formatDate(preset.updatedAt) }}</ion-note>
+              <ion-note>
+                Updated {{ formatDate(preset.updatedAt) }}
+                @if (preset.emotionalMode && preset.emotionalMode !== 'normal') {
+                  • {{ getEmotionalModeIcon(preset.emotionalMode) }}
+                }
+              </ion-note>
               @if (preset.lastUsedAt) {
                 <ion-note class="last-used">Last used {{ formatLastUsed(preset) }}</ion-note>
               }

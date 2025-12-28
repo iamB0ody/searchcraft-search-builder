@@ -22,6 +22,7 @@ import { ToastService } from '../../../../services/toast.service';
 import { QueryPayload } from '../../../../models/platform.model';
 import { SearchMode } from '../../../../models/search-form.model';
 import { Preset } from '../../../../core/models/preset.model';
+import { EmotionalSearchMode } from '../../../../models/emotional-mode.model';
 
 @Component({
   selector: 'app-save-preset-modal',
@@ -47,6 +48,7 @@ export class SavePresetModalComponent {
   @Input() payload!: QueryPayload;
   @Input() platformId: string = 'linkedin';
   @Input() mode?: SearchMode;
+  @Input() emotionalMode: EmotionalSearchMode = 'normal';
 
   private readonly fb = inject(FormBuilder);
   private readonly modalController = inject(ModalController);
@@ -84,6 +86,7 @@ export class SavePresetModalComponent {
         payload: this.payload,
         platformId: this.platformId,
         mode: this.mode,
+        emotionalMode: this.emotionalMode,
         tags: tagList?.length ? tagList : undefined
       });
 

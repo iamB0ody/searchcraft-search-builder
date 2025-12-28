@@ -1,5 +1,6 @@
 import { QueryPayload } from '../../models/platform.model';
 import { SearchMode } from '../../models/search-form.model';
+import { EmotionalSearchMode } from '../../models/emotional-mode.model';
 
 /**
  * A saved search preset
@@ -17,6 +18,7 @@ export interface Preset {
   tags?: string[];
   lastUsedAt?: string;     // ISO timestamp, updated when preset is applied
   pinned?: boolean;        // Pinned presets appear at top of list
+  emotionalMode?: EmotionalSearchMode;  // Emotional search mode (defaults to 'normal')
 }
 
 /**
@@ -40,7 +42,7 @@ export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 /**
  * Current schema version
  */
-export const CURRENT_SCHEMA_VERSION = 4;
+export const CURRENT_SCHEMA_VERSION = 5;
 
 /**
  * Migrate storage data to current schema version
@@ -97,6 +99,15 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
       platformId: knownPlatforms.includes(p.platformId) ? p.platformId : 'linkedin'
     }));
     envelope.schemaVersion = 4;
+  }
+
+  // Migrate v4 → v5: add emotionalMode (defaults to 'normal')
+  if (envelope.schemaVersion === 4) {
+    envelope.presets = envelope.presets.map(p => ({
+      ...p,
+      emotionalMode: p.emotionalMode ?? 'normal'
+    }));
+    envelope.schemaVersion = 5;
   }
 
   return envelope;

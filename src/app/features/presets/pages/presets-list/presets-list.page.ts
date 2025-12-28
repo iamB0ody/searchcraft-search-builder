@@ -41,6 +41,7 @@ import { ShareService } from '../../../../core/services/share.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Preset } from '../../../../core/models/preset.model';
 import { formatRelativeTime } from '../../../../core/utils/date.utils';
+import { EmotionalSearchMode, EMOTIONAL_MODE_CONFIG } from '../../../../models/emotional-mode.model';
 
 type SortMode = 'recent' | 'alpha';
 
@@ -204,6 +205,10 @@ export class PresetsListPage implements OnInit {
     }
 
     return parts.join(' • ') || 'Empty preset';
+  }
+
+  protected getEmotionalModeIcon(mode: EmotionalSearchMode): string {
+    return EMOTIONAL_MODE_CONFIG[mode]?.icon || '';
   }
 
   private loadPresets(): void {

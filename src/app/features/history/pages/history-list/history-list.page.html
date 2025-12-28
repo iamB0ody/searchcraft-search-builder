@@ -56,7 +56,12 @@
             <ion-label>
               <h2>{{ getItemSummary(item) }}</h2>
               <p class="query-preview">{{ item.booleanQuery | slice:0:60 }}{{ item.booleanQuery.length > 60 ? '...' : '' }}</p>
-              <ion-note>{{ formatDate(item.createdAt) }} • {{ item.mode }} • {{ item.operatorCount }} ops</ion-note>
+              <ion-note>
+                {{ formatDate(item.createdAt) }} • {{ item.mode }} • {{ item.operatorCount }} ops
+                @if (item.emotionalMode && item.emotionalMode !== 'normal') {
+                  • {{ getEmotionalModeIcon(item.emotionalMode) }}
+                }
+              </ion-note>
             </ion-label>
           </ion-item>
 

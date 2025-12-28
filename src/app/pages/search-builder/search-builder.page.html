@@ -55,6 +55,39 @@
                 <small>{{ platformRegistry.currentPlatform().notes[0] }}</small>
               </ion-text>
 
+              <!-- Emotional Search Mode Selector -->
+              <div class="emotional-mode-selector">
+                <ion-label class="emotional-mode-label">Search Mode</ion-label>
+                <ion-segment formControlName="emotionalMode" class="emotional-mode-segment">
+                  <ion-segment-button value="urgent">
+                    <ion-label>{{ emotionalModeConfig.urgent.icon }} Urgent</ion-label>
+                  </ion-segment-button>
+                  <ion-segment-button value="normal">
+                    <ion-label>{{ emotionalModeConfig.normal.icon }} Normal</ion-label>
+                  </ion-segment-button>
+                  <ion-segment-button value="chill">
+                    <ion-label>{{ emotionalModeConfig.chill.icon }} Chill</ion-label>
+                  </ion-segment-button>
+                </ion-segment>
+                <ion-text color="medium" class="emotional-mode-description">
+                  <small>{{ currentEmotionalModeDescription }}</small>
+                </ion-text>
+              </div>
+
+              <!-- Emotional Mode Adjustments (shown when active) -->
+              @if (emotionalAdjustments.length > 0) {
+                <div class="emotional-adjustments">
+                  <ion-text color="medium">
+                    <small>
+                      <strong>Adjustments:</strong>
+                      @for (adj of emotionalAdjustments; track adj) {
+                        <span class="adjustment-item">{{ adj }}</span>
+                      }
+                    </small>
+                  </ion-text>
+                </div>
+              }
+
               <!-- Boolean Level Warning for Limited Platforms -->
               @if (hasLimitedBoolean) {
                 <div class="capability-hint">
@@ -417,6 +450,8 @@
           [platformLabel]="platformRegistry.currentPlatform().label"
           [platformIcon]="platformRegistry.currentPlatform().icon"
           [booleanLevel]="platformRegistry.currentPlatform().getCapabilities().booleanLevel"
+          [emotionalMode]="form.get('emotionalMode')?.value || 'normal'"
+          [emotionalAdjustments]="emotionalAdjustments"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">
         </app-preview>
