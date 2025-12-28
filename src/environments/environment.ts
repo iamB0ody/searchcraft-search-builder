@@ -9,12 +9,6 @@ export const environment = {
   production: false,
   featureFlags: {
     platforms: {
-      // Global platforms
-      linkedin: true,
-      salesnav: true,
-      'google-jobs': true,
-      indeed: true,
-      // MENA platforms
       bayt: false,
       gulftalent: false,
       naukrigulf: false,
