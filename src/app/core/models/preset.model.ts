@@ -44,7 +44,7 @@ export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 /**
  * Current schema version
  */
-export const CURRENT_SCHEMA_VERSION = 6;
+export const CURRENT_SCHEMA_VERSION = 7;
 
 /**
  * Migrate storage data to current schema version
@@ -119,6 +119,11 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
       hiringSignals: p.hiringSignals ?? { enabled: false, selected: [] }
     }));
     envelope.schemaVersion = 6;
+  }
+
+  // Migrate v6 → v7: peopleLocation support (optional field in payload, no transformation needed)
+  if (envelope.schemaVersion === 6) {
+    envelope.schemaVersion = 7;
   }
 
   return envelope;

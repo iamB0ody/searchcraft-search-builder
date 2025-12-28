@@ -92,6 +92,18 @@
       </div>
     }
 
+    <!-- People Location Badge -->
+    @if (showLocationBadge) {
+      <div class="location-badge">
+        <ion-badge color="tertiary">
+          Location: {{ peopleLocation }}
+        </ion-badge>
+        <ion-text color="medium">
+          <small>Applied as keyword in query</small>
+        </ion-text>
+      </div>
+    }
+
     <!-- Warnings -->
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">

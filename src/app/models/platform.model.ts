@@ -3,6 +3,13 @@ import { EmotionalSearchMode } from './emotional-mode.model';
 import { HiringSignalsState } from '../core/people-signals/hiring-signals.model';
 
 /**
+ * Location filter for People search (keyword injection only)
+ */
+export interface PeopleLocationFilter {
+  value: string;  // e.g., "Germany", "Berlin, Germany"
+}
+
+/**
  * Platform-agnostic query payload
  * Contains all search criteria in a normalized format
  */
@@ -19,6 +26,8 @@ export interface QueryPayload {
   hiringSignals?: HiringSignalsState;
   /** Signal include phrases injected by applyHiringSignals (internal use) */
   signalIncludes?: string[];
+  /** Optional location filter for People search */
+  peopleLocation?: PeopleLocationFilter;
 }
 
 /**

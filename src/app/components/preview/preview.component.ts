@@ -60,6 +60,7 @@ export class PreviewComponent {
   @Input() emotionalMode: EmotionalSearchMode = 'normal';
   @Input() emotionalAdjustments: string[] = [];
   @Input() hiringSignalsExplanation: HiringSignalsExplanation | null = null;
+  @Input() peopleLocation?: string;
 
   @Output() executeSearch = new EventEmitter<void>();
   @Output() shareSearch = new EventEmitter<void>();
@@ -128,6 +129,10 @@ export class PreviewComponent {
 
   get hiringSignalsCount(): number {
     return this.hiringSignalsExplanation?.appliedSignals?.length || 0;
+  }
+
+  get showLocationBadge(): boolean {
+    return !!this.peopleLocation?.trim();
   }
 
   getWarningColor(warning: string): string {

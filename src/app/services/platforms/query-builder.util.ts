@@ -142,6 +142,14 @@ export function buildBooleanQuery(
       : payload.signalIncludes.join(' OR ');
   }
 
+  // Build people location clause (keyword injection for People search)
+  let peopleLocationClause = '';
+  if (payload.searchType === 'people' && payload.peopleLocation?.value?.trim()) {
+    const location = payload.peopleLocation.value.trim();
+    // Quote multi-word locations
+    peopleLocationClause = location.includes(' ') ? `"${location}"` : location;
+  }
+
   // Build exclude clause (NOT or - prefix)
   let excludeClause = '';
   if (excludes.length > 0) {
@@ -165,6 +173,7 @@ export function buildBooleanQuery(
   if (titlesClause) parts.push(titlesClause);
   if (skillsClause) parts.push(skillsClause);
   if (signalIncludesClause) parts.push(signalIncludesClause);
+  if (peopleLocationClause) parts.push(peopleLocationClause);
 
   let query = parts.join(' AND ');
   if (excludeClause) {

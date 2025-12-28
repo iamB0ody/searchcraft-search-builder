@@ -187,6 +187,22 @@
                 helperText="Terms to exclude from results">
               </app-chip-input>
 
+              <!-- People Location (People search only) -->
+              @if (showPeopleLocation) {
+                <ion-item class="location-item">
+                  <ion-input
+                    label="Location"
+                    labelPlacement="floating"
+                    formControlName="peopleLocation"
+                    placeholder="e.g., Germany, Berlin, Cairo"
+                    [clearInput]="true">
+                  </ion-input>
+                </ion-item>
+                <ion-text color="medium" class="filter-helper">
+                  <small>Adds location keywords to narrow your people search.</small>
+                </ion-text>
+              }
+
               <!-- Job Filters (for Jobs + LinkedIn platforms only) -->
               @if (isJobsSearch && showLinkedInFilters) {
                 <ion-accordion-group [value]="defaultAccordionValue">
@@ -510,6 +526,7 @@
           [emotionalMode]="form.get('emotionalMode')?.value || 'normal'"
           [emotionalAdjustments]="emotionalAdjustments"
           [hiringSignalsExplanation]="hiringSignalsExplanation"
+          [peopleLocation]="form.get('peopleLocation')?.value"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">
         </app-preview>

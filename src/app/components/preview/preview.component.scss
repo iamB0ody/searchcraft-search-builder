@@ -169,6 +169,33 @@ ion-card-title {
   }
 }
 
+// People Location Badge
+.location-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: var(--sc-code-background);
+  border-radius: 10px;
+  border: 1px solid var(--sc-code-border);
+
+  ion-badge {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  ion-text {
+    small {
+      font-size: 12px;
+      font-style: italic;
+    }
+  }
+}
+
 .warnings-list {
   margin-bottom: 16px;
   padding: 0;

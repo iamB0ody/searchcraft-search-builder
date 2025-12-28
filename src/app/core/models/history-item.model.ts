@@ -41,7 +41,7 @@ export const MAX_HISTORY_ITEMS = 20;
 /**
  * Current schema version for history
  */
-export const HISTORY_SCHEMA_VERSION = 5;
+export const HISTORY_SCHEMA_VERSION = 6;
 
 /**
  * Migrate storage data to current schema version
@@ -97,6 +97,11 @@ export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
       hiringSignals: item.hiringSignals ?? { enabled: false, selected: [] }
     }));
     envelope.schemaVersion = 5;
+  }
+
+  // Migrate v5 → v6: peopleLocation support (optional field in payload, no transformation needed)
+  if (envelope.schemaVersion === 5) {
+    envelope.schemaVersion = 6;
   }
 
   return envelope;

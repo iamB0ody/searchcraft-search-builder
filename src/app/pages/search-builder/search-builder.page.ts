@@ -166,6 +166,11 @@ export class SearchBuilderPage implements OnInit {
     return !this.isJobsSearch && this.showLinkedInFilters;
   }
 
+  // Check if people location section should be shown (People search only)
+  protected get showPeopleLocation(): boolean {
+    return !this.isJobsSearch;
+  }
+
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
     { value: 'people', label: 'People', icon: 'people-outline' },
     { value: 'jobs', label: 'Jobs', icon: 'briefcase-outline' }
@@ -390,6 +395,7 @@ export class SearchBuilderPage implements OnInit {
       skills: payload.skills || [],
       exclude: payload.exclude || [],
       location: payload.location || '',
+      peopleLocation: payload.peopleLocation?.value || '',
       mode: mode || 'linkedin',
       emotionalMode: emotionalMode || 'normal',
       hiringSignalsEnabled: hiringSignals?.enabled || false,
@@ -402,6 +408,7 @@ export class SearchBuilderPage implements OnInit {
       emotionalMode?: EmotionalSearchMode;
       hiringSignalsEnabled?: boolean;
       hiringSignalsSelected?: HiringSignalId[];
+      peopleLocation?: string;
     };
     const platform = this.platformRegistry.currentPlatform();
 
@@ -410,7 +417,10 @@ export class SearchBuilderPage implements OnInit {
       titles: formValue.titles || [],
       skills: formValue.skills || [],
       exclude: formValue.exclude || [],
-      location: formValue.location || undefined
+      location: formValue.location || undefined,
+      peopleLocation: formValue.peopleLocation?.trim()
+        ? { value: formValue.peopleLocation.trim() }
+        : undefined
     };
 
     // Build hiring signals state
@@ -459,6 +469,7 @@ export class SearchBuilderPage implements OnInit {
       keywordTitle: [''],
       keywordCompany: [''],
       keywordSchool: [''],
+      peopleLocation: [''],
       // Hiring signals (People search only)
       hiringSignalsEnabled: [false],
       hiringSignalsSelected: [[] as HiringSignalId[]]
@@ -480,6 +491,7 @@ export class SearchBuilderPage implements OnInit {
       emotionalMode?: EmotionalSearchMode;
       hiringSignalsEnabled?: boolean;
       hiringSignalsSelected?: HiringSignalId[];
+      peopleLocation?: string;
     };
 
     // Build hiring signals state
@@ -497,6 +509,9 @@ export class SearchBuilderPage implements OnInit {
       location: form.location || undefined,
       emotionalMode: formWithExtras.emotionalMode || 'normal',
       hiringSignals,
+      peopleLocation: formWithExtras.peopleLocation?.trim()
+        ? { value: formWithExtras.peopleLocation.trim() }
+        : undefined,
       filters: form as unknown as Record<string, unknown> // Pass full form for LinkedIn-specific URL filters
     };
 
@@ -673,6 +688,7 @@ export class SearchBuilderPage implements OnInit {
       keywordTitle: '',
       keywordCompany: '',
       keywordSchool: '',
+      peopleLocation: '',
       hiringSignalsEnabled: false,
       hiringSignalsSelected: []
     });
@@ -725,6 +741,7 @@ export class SearchBuilderPage implements OnInit {
       emotionalMode?: EmotionalSearchMode;
       hiringSignalsEnabled?: boolean;
       hiringSignalsSelected?: HiringSignalId[];
+      peopleLocation?: string;
     };
     const platform = this.platformRegistry.currentPlatform();
     const emotionalMode = formValue.emotionalMode || 'normal';
@@ -745,7 +762,10 @@ export class SearchBuilderPage implements OnInit {
         titles: formValue.titles || [],
         skills: formValue.skills || [],
         exclude: formValue.exclude || [],
-        location: formValue.location || undefined
+        location: formValue.location || undefined,
+        peopleLocation: formValue.peopleLocation?.trim()
+          ? { value: formValue.peopleLocation.trim() }
+          : undefined
       },
       booleanQuery: this.booleanQuery,
       url: this.searchUrl,
@@ -759,7 +779,7 @@ export class SearchBuilderPage implements OnInit {
   }
 
   protected async onShareSearch(): Promise<void> {
-    const formValue = this.form.value as SearchFormModel;
+    const formValue = this.form.value as SearchFormModel & { peopleLocation?: string };
     const platform = this.platformRegistry.currentPlatform();
 
     const state: BuilderShareState = {
@@ -769,7 +789,10 @@ export class SearchBuilderPage implements OnInit {
         titles: formValue.titles || [],
         skills: formValue.skills || [],
         exclude: formValue.exclude || [],
-        location: formValue.location || undefined
+        location: formValue.location || undefined,
+        peopleLocation: formValue.peopleLocation?.trim()
+          ? { value: formValue.peopleLocation.trim() }
+          : undefined
       },
       platformId: platform.id,
       mode: formValue.mode
