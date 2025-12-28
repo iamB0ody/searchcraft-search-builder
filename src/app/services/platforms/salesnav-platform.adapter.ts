@@ -33,7 +33,12 @@ export class SalesNavPlatformAdapter implements PlatformAdapter {
       supportsQuotes: true,
       supportsNot: true,
       maxOperators: this.OPERATOR_LIMIT,
-      maxQueryLength: 500
+      maxQueryLength: 500,
+      booleanLevel: 'good',
+      supportsOR: true,
+      supportsAND: true,
+      supportsMinusExclude: true,
+      region: 'global'
     };
   }
 

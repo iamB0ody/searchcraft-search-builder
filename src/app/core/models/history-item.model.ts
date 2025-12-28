@@ -37,7 +37,7 @@ export const MAX_HISTORY_ITEMS = 20;
 /**
  * Current schema version for history
  */
-export const HISTORY_SCHEMA_VERSION = 2;
+export const HISTORY_SCHEMA_VERSION = 3;
 
 /**
  * Migrate storage data to current schema version
@@ -62,6 +62,19 @@ export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
       platformId: item.platformId === 'google' ? 'google-jobs' : item.platformId
     }));
     envelope.schemaVersion = 2;
+  }
+
+  // Migrate v2 → v3: add fallback for unknown platformIds (new MENA platforms)
+  if (envelope.schemaVersion === 2) {
+    const knownPlatforms = [
+      'linkedin', 'salesnav', 'google-jobs', 'indeed',
+      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs'
+    ];
+    envelope.items = envelope.items.map(item => ({
+      ...item,
+      platformId: knownPlatforms.includes(item.platformId) ? item.platformId : 'linkedin'
+    }));
+    envelope.schemaVersion = 3;
   }
 
   return envelope;

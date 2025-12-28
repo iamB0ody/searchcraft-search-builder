@@ -86,7 +86,12 @@ export class LinkedInPlatformAdapter implements PlatformAdapter {
       supportsQuotes: true,
       supportsNot: true,
       maxOperators: undefined,
-      maxQueryLength: this.MAX_QUERY_LENGTH
+      maxQueryLength: this.MAX_QUERY_LENGTH,
+      booleanLevel: 'good',
+      supportsOR: true,
+      supportsAND: true,
+      supportsMinusExclude: true,
+      region: 'global'
     };
   }
 

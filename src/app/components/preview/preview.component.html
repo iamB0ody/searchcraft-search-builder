@@ -2,6 +2,9 @@
   <ion-card-header>
     <ion-card-title>
       Search Preview
+      <ion-badge [color]="booleanLevelColor" class="boolean-level-badge">
+        {{ booleanLevelLabel }}
+      </ion-badge>
       @if (operatorCount > 0) {
         <ion-badge [color]="badgeColor" class="operator-badge">
           {{ operatorCount }} operators

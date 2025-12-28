@@ -18,6 +18,7 @@ import { ClipboardService } from '../../services/clipboard.service';
 import { ToastService } from '../../services/toast.service';
 import { BadgeStatus } from '../../models/search-form.model';
 import { QualityScoreResult } from '../../models/quality-score.model';
+import { BooleanLevel } from '../../models/platform.model';
 
 @Component({
   selector: 'app-preview',
@@ -47,6 +48,7 @@ export class PreviewComponent {
   @Input() qualityScore?: QualityScoreResult;
   @Input() platformLabel = 'LinkedIn';
   @Input() platformIcon = 'logo-linkedin';
+  @Input() booleanLevel: BooleanLevel = 'good';
 
   @Output() executeSearch = new EventEmitter<void>();
   @Output() shareSearch = new EventEmitter<void>();
@@ -74,6 +76,22 @@ export class PreviewComponent {
       case 'good': return 'Good';
       case 'ok': return 'OK';
       case 'risky': return 'Risky';
+    }
+  }
+
+  get booleanLevelColor(): string {
+    switch (this.booleanLevel) {
+      case 'good': return 'success';
+      case 'partial': return 'warning';
+      case 'none': return 'medium';
+    }
+  }
+
+  get booleanLevelLabel(): string {
+    switch (this.booleanLevel) {
+      case 'good': return 'Full Boolean';
+      case 'partial': return 'Limited Boolean';
+      case 'none': return 'Keywords Only';
     }
   }
 

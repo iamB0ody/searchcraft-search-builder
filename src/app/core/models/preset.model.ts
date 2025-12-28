@@ -40,7 +40,7 @@ export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 /**
  * Current schema version
  */
-export const CURRENT_SCHEMA_VERSION = 3;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 /**
  * Migrate storage data to current schema version
@@ -84,6 +84,19 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
       platformId: p.platformId === 'google' ? 'google-jobs' : p.platformId
     }));
     envelope.schemaVersion = 3;
+  }
+
+  // Migrate v3 → v4: add fallback for unknown platformIds (new MENA platforms)
+  if (envelope.schemaVersion === 3) {
+    const knownPlatforms = [
+      'linkedin', 'salesnav', 'google-jobs', 'indeed',
+      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs'
+    ];
+    envelope.presets = envelope.presets.map(p => ({
+      ...p,
+      platformId: knownPlatforms.includes(p.platformId) ? p.platformId : 'linkedin'
+    }));
+    envelope.schemaVersion = 4;
   }
 
   return envelope;

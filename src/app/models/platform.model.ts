@@ -51,6 +51,19 @@ export interface BuilderShareState {
 }
 
 /**
+ * Boolean support level for a platform
+ * - 'good': Full boolean support (AND, OR, NOT, parentheses)
+ * - 'partial': Limited boolean support (some operators work)
+ * - 'none': Keywords only (no boolean operators)
+ */
+export type BooleanLevel = 'good' | 'partial' | 'none';
+
+/**
+ * Platform region for UI grouping
+ */
+export type PlatformRegion = 'global' | 'mena';
+
+/**
  * Describes what boolean features a platform supports
  */
 export interface PlatformCapabilities {
@@ -60,6 +73,17 @@ export interface PlatformCapabilities {
   supportsNot: boolean;
   maxOperators?: number;
   maxQueryLength?: number;
+
+  // Boolean level indicator for UI hints
+  booleanLevel: BooleanLevel;
+
+  // Granular operator support
+  supportsOR: boolean;
+  supportsAND: boolean;
+  supportsMinusExclude: boolean;
+
+  // Platform region for UI grouping
+  region: PlatformRegion;
 }
 
 /**

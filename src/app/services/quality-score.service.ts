@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   QualityLevel,
   QualityReason,
   QualityScoreInput,
   QualityScoreResult
 } from '../models/quality-score.model';
+import { PlatformRegistryService } from './platforms/platform-registry.service';
+import { BooleanLevel } from '../models/platform.model';
 
 /**
  * Service for calculating quality scores for search queries.
@@ -12,6 +14,7 @@ import {
  */
 @Injectable({ providedIn: 'root' })
 export class QualityScoreService {
+  private readonly platformRegistry = inject(PlatformRegistryService);
 
   /**
    * Calculate a quality score (0-100) for a search query input.
@@ -100,12 +103,42 @@ export class QualityScoreService {
       }
     }
 
-    // Rule 7: Balanced search bonus (titles + skills)
+    // Rule 7: Platform-aware penalties for limited Boolean platforms
+    if (platformId) {
+      const platform = this.platformRegistry.getPlatformById(platformId);
+      if (platform) {
+        const booleanLevel: BooleanLevel = platform.getCapabilities().booleanLevel;
+
+        if (booleanLevel === 'partial' || booleanLevel === 'none') {
+          // Penalize complexity more for limited platforms
+          if (input.operatorCount > 5) {
+            score -= 15;
+            reasons.push({ type: 'warning', message: 'This platform prefers simpler queries' });
+            tips.push('Try using fewer search terms');
+          }
+
+          // Penalize parentheses on limited platforms
+          if (input.booleanQuery.includes('(')) {
+            score -= 10;
+            reasons.push({ type: 'info', message: 'Nested groups may not be supported' });
+          }
+
+          // Extra penalty for 'none' level platforms
+          if (booleanLevel === 'none' && input.operatorCount > 3) {
+            score -= 10;
+            reasons.push({ type: 'warning', message: 'Boolean operators are not supported on this platform' });
+            tips.push('Query will be converted to simple keywords');
+          }
+        }
+      }
+    }
+
+    // Rule 8: Balanced search bonus (titles + skills)
     if (input.titles.length >= 1 && input.skills.length >= 1) {
       score += 5;
     }
 
-    // Rule 8: Suggestion for no exclusions
+    // Rule 9: Suggestion for no exclusions
     if (input.exclude.length === 0 && (input.titles.length + input.skills.length) > 2) {
       tips.push('Consider adding exclusions to refine results');
     }

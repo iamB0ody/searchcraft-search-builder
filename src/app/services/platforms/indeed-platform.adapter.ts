@@ -124,7 +124,12 @@ export class IndeedPlatformAdapter implements PlatformAdapter {
       supportsQuotes: true,
       supportsNot: false, // Indeed uses - instead of NOT
       maxOperators: undefined,
-      maxQueryLength: this.MAX_QUERY_LENGTH
+      maxQueryLength: this.MAX_QUERY_LENGTH,
+      booleanLevel: 'good',
+      supportsOR: true,
+      supportsAND: true,
+      supportsMinusExclude: true,
+      region: 'global'
     };
   }
 

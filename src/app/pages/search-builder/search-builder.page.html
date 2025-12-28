@@ -46,6 +46,22 @@
                 <small>{{ platformRegistry.currentPlatform().notes[0] }}</small>
               </ion-text>
 
+              <!-- Boolean Level Warning for Limited Platforms -->
+              @if (hasLimitedBoolean) {
+                <div class="capability-hint">
+                  <ion-icon name="information-circle-outline" color="warning"></ion-icon>
+                  <ion-text color="warning">
+                    <small>
+                      @if (currentBooleanLevel === 'partial') {
+                        Limited Boolean support. Complex queries will be simplified.
+                      } @else {
+                        Keywords only. Boolean operators are not supported.
+                      }
+                    </small>
+                  </ion-text>
+                </div>
+              }
+
               <!-- Google Jobs-specific toggles -->
               @if (isGoogleJobsPlatform) {
                 <ion-item class="platform-option">
@@ -391,6 +407,7 @@
           [qualityScore]="qualityScoreResult"
           [platformLabel]="platformRegistry.currentPlatform().label"
           [platformIcon]="platformRegistry.currentPlatform().icon"
+          [booleanLevel]="platformRegistry.currentPlatform().getCapabilities().booleanLevel"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">
         </app-preview>

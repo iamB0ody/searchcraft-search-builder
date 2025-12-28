@@ -21,13 +21,18 @@ ion-card-title {
   font-weight: 600;
 }
 
-.operator-badge {
+.operator-badge,
+.boolean-level-badge {
   font-size: 11px;
   font-weight: 500;
   padding: 4px 10px;
   border-radius: 12px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+.boolean-level-badge {
+  margin-left: auto;
 }
 
 // Quality Score Section

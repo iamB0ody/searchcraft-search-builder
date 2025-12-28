@@ -44,6 +44,28 @@ ion-card {
   --border-radius: 10px;
 }
 
+// Platform capability hint for limited Boolean support
+.capability-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  background: rgba(var(--ion-color-warning-rgb), 0.1);
+  border: 1px solid rgba(var(--ion-color-warning-rgb), 0.3);
+  border-radius: 10px;
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  small {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
 app-chip-input {
   display: block;
   margin-bottom: 20px;

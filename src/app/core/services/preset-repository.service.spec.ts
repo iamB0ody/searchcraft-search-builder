@@ -361,7 +361,7 @@ describe('PresetRepositoryService', () => {
 
       const result = migrateStorage(v1Data);
 
-      expect(result.schemaVersion).toBe(3);
+      expect(result.schemaVersion).toBe(4);
       expect(result.presets[0].notes).toBe('Old description');
       expect((result.presets[0] as any).description).toBeUndefined();
     });

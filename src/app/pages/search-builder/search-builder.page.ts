@@ -229,6 +229,17 @@ export class SearchBuilderPage implements OnInit {
     return this.currentPlatformId === 'linkedin' || this.currentPlatformId === 'salesnav';
   }
 
+  // Check if current platform has limited Boolean support
+  protected get hasLimitedBoolean(): boolean {
+    const capabilities = this.platformRegistry.currentPlatform().getCapabilities();
+    return capabilities.booleanLevel !== 'good';
+  }
+
+  // Get current platform's Boolean level for display
+  protected get currentBooleanLevel(): string {
+    return this.platformRegistry.currentPlatform().getCapabilities().booleanLevel;
+  }
+
   constructor() {
     addIcons({
       trashOutline,
@@ -501,10 +512,15 @@ export class SearchBuilderPage implements OnInit {
   protected onPlatformChange(platformId: string): void {
     this.platformRegistry.setCurrentPlatform(platformId);
 
-    // If Google Jobs selected and search type is 'people', switch to 'jobs'
-    if (platformId === 'google-jobs' && this.form.get('searchType')?.value === 'people') {
+    // Jobs-only platforms: Google Jobs, Indeed, and all MENA platforms
+    const jobsOnlyPlatforms = [
+      'google-jobs', 'indeed',
+      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs'
+    ];
+
+    if (jobsOnlyPlatforms.includes(platformId) && this.form.get('searchType')?.value === 'people') {
       this.form.patchValue({ searchType: 'jobs' });
-      this.toast.showInfo('Google Jobs supports job searches only.');
+      this.toast.showInfo('This platform supports job searches only.');
     }
 
     // Trigger preview update
