@@ -77,11 +77,11 @@ export class AppHeaderComponent {
   }
 
   async handleInstallClick(): Promise<void> {
-    if (this.pwaInstall.isIosSafari()) {
+    if (this.pwaInstall.isIos()) {
       const modal = await this.modalController.create({
         component: IosInstallModalComponent,
-        breakpoints: [0, 0.5],
-        initialBreakpoint: 0.5
+        breakpoints: [0, 0.5, 0.75, 1],
+        initialBreakpoint: 0.75
       });
       await modal.present();
     } else if (this.pwaInstall.canInstall()) {

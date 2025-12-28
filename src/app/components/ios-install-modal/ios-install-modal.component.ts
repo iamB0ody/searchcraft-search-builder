@@ -12,7 +12,8 @@ import {
   ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { shareOutline, addOutline, checkmarkOutline, closeOutline } from 'ionicons/icons';
+import { shareOutline, addOutline, checkmarkOutline, closeOutline, ellipsisHorizontalOutline } from 'ionicons/icons';
+import { PwaInstallService, IosBrowser } from '../../core/services/pwa-install.service';
 
 @Component({
   selector: 'app-ios-install-modal',
@@ -33,9 +34,14 @@ import { shareOutline, addOutline, checkmarkOutline, closeOutline } from 'ionico
 })
 export class IosInstallModalComponent {
   private readonly modalController = inject(ModalController);
+  private readonly pwaInstall = inject(PwaInstallService);
 
   constructor() {
-    addIcons({ shareOutline, addOutline, checkmarkOutline, closeOutline });
+    addIcons({ shareOutline, addOutline, checkmarkOutline, closeOutline, ellipsisHorizontalOutline });
+  }
+
+  get browser(): IosBrowser {
+    return this.pwaInstall.iosBrowser();
   }
 
   onDismiss(): void {

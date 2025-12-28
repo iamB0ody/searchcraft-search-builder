@@ -6,6 +6,7 @@
     "start": "ng serve",
     "start:local": "ng serve --configuration local",
     "start:dev": "ng serve --configuration development",
+    "start:network": "ng serve --configuration local --host 0.0.0.0",
     "build": "ng build",
     "build:local": "ng build --configuration local",
     "build:dev": "ng build --configuration development",

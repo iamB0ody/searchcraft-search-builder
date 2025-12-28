@@ -8,6 +8,8 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+export type IosBrowser = 'safari' | 'chrome' | 'firefox' | null;
+
 const DISMISS_STORAGE_KEY = 'sc-pwa-dismiss-timestamp';
 const DISMISS_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
@@ -26,8 +28,11 @@ export class PwaInstallService {
   /** Whether the app is already installed as PWA */
   readonly isInstalled = signal(false);
 
-  /** Whether running on iOS Safari (needs manual install guidance) */
-  readonly isIosSafari = signal(false);
+  /** Whether running on iOS (needs manual install guidance) */
+  readonly isIos = signal(false);
+
+  /** Which iOS browser is being used (null if not iOS) */
+  readonly iosBrowser = signal<IosBrowser>(null);
 
   /** Whether install prompt was recently dismissed */
   readonly isDismissed = signal(false);
@@ -48,8 +53,8 @@ export class PwaInstallService {
     // Check if already installed
     this.checkInstallState();
 
-    // Detect iOS Safari
-    this.detectIosSafari();
+    // Detect iOS and browser type
+    this.detectIos();
 
     // Check if previously dismissed
     this.checkDismissState();
@@ -70,15 +75,30 @@ export class PwaInstallService {
     this.isInstalled.set(isStandalone || isIosStandalone);
   }
 
-  private detectIosSafari(): void {
+  private detectIos(): void {
     const ua = navigator.userAgent;
-    const isIos = /iPad|iPhone|iPod/.test(ua);
-    const isWebkit = /WebKit/.test(ua);
+    const isIosDevice = /iPad|iPhone|iPod/.test(ua);
+
+    if (!isIosDevice || this.isInstalled()) {
+      this.isIos.set(false);
+      this.iosBrowser.set(null);
+      return;
+    }
+
+    // Detect specific iOS browser
     const isChrome = /CriOS/.test(ua);
     const isFirefox = /FxiOS/.test(ua);
 
-    // iOS Safari = iOS + WebKit but not Chrome/Firefox
-    this.isIosSafari.set(isIos && isWebkit && !isChrome && !isFirefox && !this.isInstalled());
+    this.isIos.set(true);
+
+    if (isChrome) {
+      this.iosBrowser.set('chrome');
+    } else if (isFirefox) {
+      this.iosBrowser.set('firefox');
+    } else {
+      // Default to Safari (iOS WebKit without Chrome/Firefox identifiers)
+      this.iosBrowser.set('safari');
+    }
   }
 
   private checkDismissState(): void {
@@ -154,6 +174,6 @@ export class PwaInstallService {
     if (this.isInstalled() || this.isDismissed()) {
       return false;
     }
-    return this.canInstall() || this.isIosSafari();
+    return this.canInstall() || this.isIos();
   }
 }
