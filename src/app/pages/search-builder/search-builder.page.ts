@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -28,6 +28,8 @@ import {
   IonAccordionGroup,
   IonCheckbox,
   IonBadge,
+  IonFooter,
+  IonToolbar,
   ModalController,
   AlertController
 } from '@ionic/angular/standalone';
@@ -39,7 +41,9 @@ import {
   chevronDownOutline,
   saveOutline,
   warningOutline,
-  informationCircleOutline
+  informationCircleOutline,
+  arrowDownOutline,
+  arrowForwardOutline
 } from 'ionicons/icons';
 
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -111,6 +115,8 @@ import {
     IonAccordionGroup,
     IonCheckbox,
     IonBadge,
+    IonFooter,
+    IonToolbar,
     ChipInputComponent,
     PreviewComponent,
     SuggestionsComponent
@@ -150,6 +156,12 @@ export class SearchBuilderPage implements OnInit {
   protected qualityScoreResult?: QualityScoreResult;
   protected emotionalAdjustments: string[] = [];
   protected useOrForSkills = false;
+
+  // Preview scroll/highlight state
+  @ViewChild('previewSection', { read: ElementRef }) previewSection!: ElementRef;
+  protected showPreviewHighlight = false;
+  private hasScrolledToPreview = false;
+  private readonly SCROLL_NUDGE_KEY = 'searchcraft_preview_nudge_shown';
 
   // Emotional mode config for template access
   protected readonly emotionalModeConfig = EMOTIONAL_MODE_CONFIG;
@@ -296,7 +308,9 @@ export class SearchBuilderPage implements OnInit {
       chevronDownOutline,
       saveOutline,
       warningOutline,
-      informationCircleOutline
+      informationCircleOutline,
+      arrowDownOutline,
+      arrowForwardOutline
     });
   }
 
@@ -624,6 +638,9 @@ export class SearchBuilderPage implements OnInit {
 
     // Generate suggestions using adjusted payload
     this.suggestions = this.intelligence.generateSuggestions(signalPayload, result.operatorCount);
+
+    // Auto-scroll to preview on first valid result (mobile only)
+    this.autoScrollToPreviewIfNeeded();
   }
 
   protected onApplySuggestion(suggestion: IntelligenceSuggestion): void {
@@ -885,5 +902,79 @@ export class SearchBuilderPage implements OnInit {
     };
 
     await this.shareService.shareBuilderState(state);
+  }
+
+  /**
+   * Scrolls to the preview section and triggers highlight animation.
+   * Called by mobile sticky CTA button.
+   */
+  protected scrollToPreview(): void {
+    if (!this.previewSection?.nativeElement) return;
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    this.previewSection.nativeElement.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'start'
+    });
+
+    // Trigger highlight animation
+    this.triggerHighlight();
+  }
+
+  /**
+   * Triggers the highlight animation on the preview section.
+   * Respects reduced motion preferences.
+   */
+  private triggerHighlight(): void {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    this.showPreviewHighlight = true;
+    setTimeout(() => {
+      this.showPreviewHighlight = false;
+    }, 1500);
+  }
+
+  /**
+   * Checks if auto-scroll nudge should be shown (first time only).
+   * Uses sessionStorage to track per-session nudge state.
+   */
+  private shouldShowScrollNudge(): boolean {
+    if (typeof sessionStorage === 'undefined') return false;
+    return !sessionStorage.getItem(this.SCROLL_NUDGE_KEY);
+  }
+
+  /**
+   * Marks the scroll nudge as shown for this session.
+   */
+  private markScrollNudgeShown(): void {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(this.SCROLL_NUDGE_KEY, 'true');
+    }
+  }
+
+  /**
+   * Auto-scrolls to preview on first valid result (mobile only).
+   * Only triggers once per session.
+   */
+  private autoScrollToPreviewIfNeeded(): void {
+    // Only on mobile (< 992px)
+    if (window.innerWidth >= 992) return;
+
+    // Only if we haven't scrolled yet and nudge hasn't been shown
+    if (this.hasScrolledToPreview || !this.shouldShowScrollNudge()) return;
+
+    // Only if there's a valid result
+    if (!this.booleanQuery || !this.searchUrl) return;
+
+    this.hasScrolledToPreview = true;
+    this.markScrollNudgeShown();
+
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      this.scrollToPreview();
+    }, 300);
   }
 }

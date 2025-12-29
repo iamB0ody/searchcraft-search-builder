@@ -13,6 +13,13 @@ ion-card {
   }
 }
 
+.preview-helper-text {
+  margin: 8px 0 0 0;
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  font-weight: 400;
+}
+
 ion-card-title {
   display: flex;
   align-items: center;

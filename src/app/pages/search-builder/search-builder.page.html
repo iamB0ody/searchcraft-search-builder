@@ -523,6 +523,19 @@
                   <ion-icon name="trash-outline" slot="start"></ion-icon>
                   Clear All
                 </ion-button>
+
+                <!-- Desktop: View Result link (hidden on mobile where sticky bar is used) -->
+                @if (booleanQuery && searchUrl) {
+                  <ion-button
+                    expand="block"
+                    fill="clear"
+                    color="primary"
+                    class="view-result-link ion-hide-lg-down"
+                    (click)="scrollToPreview()">
+                    View Result
+                    <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+                  </ion-button>
+                }
               </div>
             </form>
           </ion-card-content>
@@ -532,6 +545,7 @@
       <!-- Preview Column -->
       <ion-col size="12" size-lg="6" class="preview-column">
         <app-preview
+          #previewSection
           [booleanQuery]="booleanQuery"
           [searchUrl]="searchUrl"
           [warnings]="warnings"
@@ -546,6 +560,7 @@
           [hiringSignalsExplanation]="hiringSignalsExplanation"
           [peopleLocation]="form.get('peopleLocation')?.value"
           [linkedInJobsFilters]="getLinkedInJobsFilters()"
+          [class.preview-highlight]="showPreviewHighlight"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">
         </app-preview>
@@ -553,3 +568,19 @@
     </ion-row>
   </ion-grid>
 </ion-content>
+
+<!-- Mobile Sticky CTA Bar (visible only on mobile when result exists) -->
+@if (booleanQuery && searchUrl) {
+  <ion-footer class="mobile-cta-footer ion-hide-lg-up">
+    <ion-toolbar>
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="scrollToPreview()"
+        class="view-result-btn">
+        <ion-icon name="arrow-down-outline" slot="start"></ion-icon>
+        View Result
+      </ion-button>
+    </ion-toolbar>
+  </ion-footer>
+}
