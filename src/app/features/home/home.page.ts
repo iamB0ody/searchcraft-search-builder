@@ -17,12 +17,17 @@ import {
   rocketOutline,
   peopleOutline,
   briefcaseOutline,
-  layersOutline,
   timeOutline,
   shieldCheckmarkOutline,
   lockClosedOutline,
   checkmarkCircleOutline,
-  arrowForwardOutline
+  arrowForwardOutline,
+  constructOutline,
+  pulseOutline,
+  flashOutline,
+  eyeOutline,
+  logoLinkedin,
+  searchOutline
 } from 'ionicons/icons';
 
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -54,12 +59,17 @@ export class HomePage {
       rocketOutline,
       peopleOutline,
       briefcaseOutline,
-      layersOutline,
       timeOutline,
       shieldCheckmarkOutline,
       lockClosedOutline,
       checkmarkCircleOutline,
-      arrowForwardOutline
+      arrowForwardOutline,
+      constructOutline,
+      pulseOutline,
+      flashOutline,
+      eyeOutline,
+      logoLinkedin,
+      searchOutline
     });
   }
 
