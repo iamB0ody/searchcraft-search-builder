@@ -44,7 +44,11 @@ import {
   warningOutline,
   informationCircleOutline,
   arrowDownOutline,
-  arrowForwardOutline
+  arrowForwardOutline,
+  // Platform logos
+  logoLinkedin, logoGoogle, logoTwitter, logoReddit,
+  // Generic platform icons
+  briefcase, searchOutline, business
 } from 'ionicons/icons';
 
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -332,7 +336,11 @@ export class SearchBuilderPage implements OnInit {
       warningOutline,
       informationCircleOutline,
       arrowDownOutline,
-      arrowForwardOutline
+      arrowForwardOutline,
+      // Platform logos
+      logoLinkedin, logoGoogle, logoTwitter, logoReddit,
+      // Generic platform icons
+      briefcase, searchOutline, business
     });
   }
 

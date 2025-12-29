@@ -16,7 +16,14 @@ import {
   IonAccordionGroup
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline, shareSocialOutline } from 'ionicons/icons';
+import {
+  copy, open, warning, checkmarkCircle, alertCircle,
+  informationCircleOutline, alertCircleOutline, shareSocialOutline,
+  // Platform logos
+  logoLinkedin, logoGoogle, logoTwitter, logoReddit,
+  // Generic platform icons
+  briefcase, briefcaseOutline, searchOutline, business
+} from 'ionicons/icons';
 import { ClipboardService } from '../../services/clipboard.service';
 import { ToastService } from '../../services/toast.service';
 import { BadgeStatus } from '../../models/search-form.model';
@@ -180,7 +187,14 @@ export class PreviewComponent {
   private toast = inject(ToastService);
 
   constructor() {
-    addIcons({ copy, open, warning, checkmarkCircle, alertCircle, informationCircleOutline, alertCircleOutline, shareSocialOutline });
+    addIcons({
+      copy, open, warning, checkmarkCircle, alertCircle,
+      informationCircleOutline, alertCircleOutline, shareSocialOutline,
+      // Platform logos
+      logoLinkedin, logoGoogle, logoTwitter, logoReddit,
+      // Generic platform icons
+      briefcase, briefcaseOutline, searchOutline, business
+    });
   }
 
   async copyQuery(): Promise<void> {
