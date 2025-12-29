@@ -1,11 +1,21 @@
-# SearchCraft
+<p align="center">
+  <img src="public/icons/icon-128.png" alt="SearchCraft Logo" width="128" height="128">
+</p>
 
-**Build smarter job and people searches for LinkedIn and job platforms — without guessing Boolean syntax.**
+<h1 align="center">SearchCraft</h1>
 
-[![Deploy to GitHub Pages](https://github.com/iamB0ody/searchcraft-search-builder/actions/workflows/deploy.yml/badge.svg)](https://searchcraft.site)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  <strong>Build smarter job and people searches for LinkedIn and job platforms — without guessing Boolean syntax.</strong>
+</p>
 
-SearchCraft is a web application that helps job seekers and recruiters build precise Boolean search queries visually. It generates platform-ready search URLs for LinkedIn, Indeed, Google Jobs, and regional job boards.
+<p align="center">
+  <a href="https://searchcraft.site"><img src="https://github.com/iamB0ody/searchcraft-search-builder/actions/workflows/deploy.yml/badge.svg" alt="Deploy to GitHub Pages"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+</p>
+
+<p align="center">
+  SearchCraft is a web application that helps job seekers and recruiters build precise Boolean search queries visually. It generates platform-ready search URLs for LinkedIn, Indeed, Google Jobs, and regional job boards.
+</p>
 
 ---
 
