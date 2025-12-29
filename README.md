@@ -1,57 +1,138 @@
 # SearchCraft
 
-**Craft smarter job and people searches across multiple platforms.**
+**Build smarter job and people searches for LinkedIn and job platforms — without guessing Boolean syntax.**
 
 [![Deploy to GitHub Pages](https://github.com/iamB0ody/searchcraft-search-builder/actions/workflows/deploy.yml/badge.svg)](https://searchcraft.site)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Progressive Web App that generates Boolean search queries and opens platform-specific URLs for LinkedIn, Indeed, Google Jobs, and regional job boards.
+SearchCraft is a web application that helps job seekers and recruiters build precise Boolean search queries visually. It generates platform-ready search URLs for LinkedIn, Indeed, Google Jobs, and regional job boards.
+
+---
 
 ## What is SearchCraft?
 
-SearchCraft helps recruiters, job seekers, and researchers build precise search queries without memorizing Boolean syntax. Enter job titles, skills, and exclusions — SearchCraft generates the query and opens the search directly on your chosen platform.
+SearchCraft is a visual Boolean search builder that runs entirely in your browser.
 
-**Important:** SearchCraft does not scrape websites or access any APIs. It simply generates search URLs that open in your browser. You use your own account on each platform. Results depend on each platform's search capabilities.
+- **Build searches visually** — Add job titles, skills, and exclusions without memorizing Boolean syntax
+- **Generate platform-ready URLs** — Open your search directly on LinkedIn, Indeed, or other job boards
+- **No scraping, no login required** — SearchCraft generates URLs; you use your own platform accounts
+- **Privacy-first** — All data stays in your browser. No tracking, no server, no analytics
+
+---
+
+## Who is it for?
+
+### Job Seekers
+
+- Find relevant jobs faster with precise Boolean queries
+- Reduce noise in search results by excluding unwanted terms
+- Discover recently posted jobs with date filters
+- Use LinkedIn and job boards more effectively
+
+### Recruiters
+
+- Build recruiter-grade people searches on LinkedIn
+- Use hiring signals to find candidates more likely to respond
+- Save and reuse search presets for different roles
+- Source candidates more efficiently across platforms
+
+---
 
 ## Key Features
 
-- **Multi-Platform Support** — 11 platforms including LinkedIn, Sales Navigator, Indeed (63 regions), and MENA job boards
-- **Boolean Query Builder** — Visual editor with AND/OR/NOT logic
-- **Live Preview** — See your query update in real-time with character/operator counts
-- **Presets** — Save, edit, duplicate, and organize frequently-used searches
-- **Search History** — Automatically track past searches for quick re-use
-- **Share Searches** — Export via WhatsApp, Telegram, Email, or shareable links
-- **Quality Score** — Get 0-100 scoring with actionable tips to improve your query
-- **Light/Dark Theme** — System-aware theme with manual toggle
-- **PWA** — Install on desktop or mobile, works offline
+### Visual Search Builder
+Build Boolean queries with a simple form. Add job titles (OR-joined), skills (AND-joined), and exclusion terms (NOT).
+
+### Emotional Search Mode
+Adjust your search intensity based on your mindset:
+- **Urgent** — Broader results, faster searching (accepts more noise)
+- **Normal** — Balanced precision and coverage (default)
+- **Chill** — Quality-focused, precise results (stricter matching)
+
+### Hiring Signals (People Search)
+Enable smart Boolean phrases to find engaged candidates:
+- Open to opportunities
+- Recruiter-friendly bio
+- Exclude students/interns
+- Exclude freelance-only profiles
+
+### LinkedIn Jobs Filters
+Advanced filters for LinkedIn job searches:
+- Date posted (past 24 hours, week, month)
+- Jobs in your network
+- Fair Chance Employer
+
+### Real-Time Preview
+See your Boolean query and platform URL update as you type. Quality score (0-100) with actionable tips.
+
+### Presets & History
+Save frequently-used searches as presets. Search history tracks past queries for quick re-use.
+
+### Share Searches
+Share via WhatsApp, Telegram, Email, or generate a shareable link.
+
+### PWA Support
+Install SearchCraft on your phone or desktop. Works offline (searches require internet).
+
+---
 
 ## Supported Platforms
 
-| Platform | Search Type | Boolean Support | Notes |
-|----------|-------------|-----------------|-------|
-| LinkedIn | People, Jobs | Good | Full Boolean with AND, OR, NOT, parentheses |
-| Sales Navigator | People | Good | 15 operator limit per query |
-| Google Jobs | Jobs | Good | Best with shorter, simpler queries |
-| Indeed | Jobs | Good | 63 regional domains supported |
-| Bayt | Jobs | Partial | OR and quotes only |
-| GulfTalent | Jobs | Partial | OR and quotes only |
-| NaukriGulf | Jobs | Partial | OR and quotes only |
-| Recruit.net | Jobs | Keywords | Boolean converted to keywords |
-| beBee | Jobs | Keywords | Boolean converted to keywords |
-| GulfJobs | Jobs | Keywords | Boolean converted to keywords |
-| ArabJobs | Jobs | Keywords | Boolean converted to keywords |
+### Job Search
 
-**Boolean Support Levels:**
-- **Good** — Supports AND, OR, NOT/minus, parentheses, quotes
-- **Partial** — Supports some operators (usually OR and quotes)
-- **Keywords** — No Boolean; terms are searched as keywords
+| Platform | Boolean Support | Notes |
+|----------|-----------------|-------|
+| LinkedIn Jobs | Good | Full Boolean with AND, OR, NOT, parentheses |
+| Google Jobs | Good | Works best with shorter queries |
+| Indeed | Good | 63 regional domains supported |
+| Bayt | Partial | OR and quotes only |
+| GulfTalent | Partial | OR and quotes only |
+| NaukriGulf | Partial | OR and quotes only |
+| Recruit.net | Keywords | Boolean converted to keywords |
+| beBee | Keywords | Boolean converted to keywords |
+| GulfJobs | Keywords | Boolean converted to keywords |
+| ArabJobs | Keywords | Boolean converted to keywords |
 
-## Quick Start
+### People Search
+
+| Platform | Boolean Support | Notes |
+|----------|-----------------|-------|
+| LinkedIn | Good | Full Boolean, hiring signals supported |
+| Sales Navigator | Good | 15 operator limit per query |
+
+**Note:** SearchCraft generates search URLs — final results depend on each platform's search capabilities.
+
+---
+
+## How It Works
+
+1. **Choose what you're searching for**
+   Select Jobs or People, then pick your target platform
+
+2. **Fill the search builder**
+   Add job titles, skills, location, and optional filters
+
+3. **Open in platform**
+   Click to launch your search directly on LinkedIn, Indeed, or other platforms
+
+---
+
+## Tech Stack
+
+- **Angular 20** — Modern web framework
+- **Ionic 8** — Cross-platform UI components
+- **TypeScript** — Type-safe JavaScript
+- **PWA** — Angular Service Worker for offline support
+- **localStorage** — Browser-based data persistence (no server)
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ recommended
-- npm, yarn, or pnpm
+- Node.js 18 or higher
+- npm (or yarn/pnpm)
 
 ### Install Dependencies
 
@@ -81,47 +162,44 @@ Output is in `dist/searchcraft/browser/`. Includes service worker for PWA.
 npm test
 ```
 
-## How It Works
-
-1. **Choose a platform** — Select from LinkedIn, Indeed, Google Jobs, or regional boards
-2. **Build your search** — Add job titles (OR), skills (AND), and exclusions (NOT)
-3. **Execute** — Copy the query or click to open the search directly on the platform
-
-## PWA Notes
-
-SearchCraft is a Progressive Web App:
-
-- **Service Worker** is enabled only in production builds
-- **Install on mobile:** Open the site in Chrome/Safari, tap "Add to Home Screen"
-- **Install on desktop:** Click the install icon in the browser address bar
-- **Offline:** The app shell works offline; searches require internet
-
-To test PWA locally:
+### Test PWA Locally
 
 ```bash
 npm run build:prod
 npx serve dist/searchcraft/browser
 ```
 
-## Data & Privacy
+---
 
-- **All data is stored locally** in your browser's LocalStorage
-- **No server, no tracking** — SearchCraft runs entirely in your browser
-- **What's stored:** Presets, search history, theme preference
-- **Clearing data:** Use browser settings to clear site data
+## Limitations
 
-## Project Structure
+- **No job description analysis** — SearchCraft builds search queries; it doesn't read or analyze job postings
+- **No platform scraping** — Results come directly from each platform's search functionality
+- **Filter availability varies** — Some filters (like "In your network") only work on specific platforms
+- **Results depend on platforms** — Each platform interprets Boolean queries differently
 
-```
-src/app/
-├── components/       # Shared UI components (header, chip-input, preview)
-├── core/             # Services (theme, share, storage, feature-flags)
-├── features/         # Feature modules (home, presets, history)
-├── models/           # TypeScript interfaces and types
-├── pages/            # Main pages (search-builder)
-└── services/         # Platform adapters, quality score, intelligence
-    └── platforms/    # 11 platform adapters + registry
-```
+---
+
+## Roadmap
+
+- Additional job platforms and regional support
+- Improved onboarding experience
+- More recruiter-focused tools and hiring signals
+- Query templates for common searches
+- Browser extension for one-click searches
+
+---
+
+## Privacy
+
+- **No login required** — Use SearchCraft without creating an account
+- **No tracking** — No analytics, no cookies, no data collection
+- **No server** — Everything runs in your browser
+- **Local storage only** — Presets and history are stored in your browser's localStorage
+
+To clear your data, use your browser's "Clear site data" option.
+
+---
 
 ## Contributing
 
@@ -136,16 +214,13 @@ Contributions are welcome!
 
 Please open an issue first for major changes to discuss the approach.
 
-## Roadmap
-
-- Additional job platforms
-- Browser extension for one-click searches
-- Query templates and guided mode
-- Import/export presets as files
+---
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+---
 
 ## Disclaimer
 
