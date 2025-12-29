@@ -66,6 +66,8 @@ export class PreviewComponent {
     inYourNetwork?: boolean;
     fairChanceEmployer?: boolean;
   };
+  /** Phrases auto-injected by posts intent toggles */
+  @Input() postsInjectedPhrases: string[] = [];
 
   @Output() executeSearch = new EventEmitter<void>();
   @Output() shareSearch = new EventEmitter<void>();
@@ -146,6 +148,10 @@ export class PreviewComponent {
     const hasNetworkFilter = this.linkedInJobsFilters.inYourNetwork === true;
     const hasFairChanceFilter = this.linkedInJobsFilters.fairChanceEmployer === true;
     return hasDateFilter || hasNetworkFilter || hasFairChanceFilter;
+  }
+
+  get showPostsInjectedPhrases(): boolean {
+    return this.postsInjectedPhrases.length > 0;
   }
 
   get datePostedLabel(): string {

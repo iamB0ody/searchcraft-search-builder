@@ -1,6 +1,7 @@
 import { SearchType, SearchMode, BadgeStatus } from './search-form.model';
 import { EmotionalSearchMode } from './emotional-mode.model';
 import { HiringSignalsState } from '../core/people-signals/hiring-signals.model';
+import { PostsPayload } from './posts-payload.model';
 
 /**
  * Location filter for People search (keyword injection only)
@@ -28,6 +29,8 @@ export interface QueryPayload {
   signalIncludes?: string[];
   /** Optional location filter for People search */
   peopleLocation?: PeopleLocationFilter;
+  /** Optional posts payload for Posts search */
+  postsPayload?: PostsPayload;
 }
 
 /**
@@ -101,6 +104,12 @@ export interface PlatformCapabilities {
 
   // Platform region for UI grouping
   region: PlatformRegion;
+
+  // Posts-specific capabilities
+  /** Whether platform supports hashtag search (e.g., LinkedIn Posts, X) */
+  supportsHashtags?: boolean;
+  /** Whether platform supports date range filtering */
+  supportsDateRange?: boolean;
 }
 
 /**
@@ -146,7 +155,14 @@ export type PlatformId =
   | 'recruitnet'
   | 'bebee'
   | 'gulfjobs'
-  | 'arabjobs';
+  | 'arabjobs'
+  // Posts platforms
+  | 'linkedin-posts'
+  | 'x-search'
+  | 'reddit-search'
+  | 'google-posts-linkedin'
+  | 'google-posts-x'
+  | 'google-posts-reddit';
 
 /**
  * Array of all platform IDs for iteration
@@ -162,5 +178,12 @@ export const ALL_PLATFORM_IDS: readonly PlatformId[] = [
   'recruitnet',
   'bebee',
   'gulfjobs',
-  'arabjobs'
+  'arabjobs',
+  // Posts platforms
+  'linkedin-posts',
+  'x-search',
+  'reddit-search',
+  'google-posts-linkedin',
+  'google-posts-x',
+  'google-posts-reddit'
 ] as const;

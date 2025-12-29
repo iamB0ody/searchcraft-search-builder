@@ -126,6 +126,38 @@
       </div>
     }
 
+    <!-- Posts Injected Phrases -->
+    @if (showPostsInjectedPhrases) {
+      <div class="posts-injected-badge">
+        <ion-badge color="tertiary">
+          Intent Phrases: {{ postsInjectedPhrases.length }} added
+        </ion-badge>
+
+        <ion-accordion-group class="signals-detail-accordion">
+          <ion-accordion value="posts-detail">
+            <ion-item slot="header" lines="none" class="signals-detail-header">
+              <ion-label color="medium">
+                <small>View applied phrases</small>
+              </ion-label>
+            </ion-item>
+            <div slot="content" class="signals-detail-content">
+              <div class="phrase-group">
+                <strong>Auto-added phrases:</strong>
+                <div class="phrase-chips">
+                  @for (phrase of postsInjectedPhrases; track phrase) {
+                    <ion-chip size="small" color="success">{{ phrase }}</ion-chip>
+                  }
+                </div>
+              </div>
+              <ion-text color="medium" class="signals-disclaimer">
+                <small>These phrases were added based on your intent toggles.</small>
+              </ion-text>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </div>
+    }
+
     <!-- Warnings -->
     @if (warnings.length > 0) {
       <ion-list class="warnings-list" lines="none">

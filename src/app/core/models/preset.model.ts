@@ -44,7 +44,7 @@ export type PresetUpdateInput = Partial<Omit<Preset, 'id' | 'createdAt'>>;
 /**
  * Current schema version
  */
-export const CURRENT_SCHEMA_VERSION = 7;
+export const CURRENT_SCHEMA_VERSION = 8;
 
 /**
  * Migrate storage data to current schema version
@@ -94,7 +94,10 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
   if (envelope.schemaVersion === 3) {
     const knownPlatforms = [
       'linkedin', 'salesnav', 'google-jobs', 'indeed',
-      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs'
+      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs',
+      // Posts platforms
+      'linkedin-posts', 'x-search', 'reddit-search',
+      'google-posts-linkedin', 'google-posts-x', 'google-posts-reddit'
     ];
     envelope.presets = envelope.presets.map(p => ({
       ...p,
@@ -124,6 +127,12 @@ export function migrateStorage(data: unknown): PresetStorageEnvelope {
   // Migrate v6 → v7: peopleLocation support (optional field in payload, no transformation needed)
   if (envelope.schemaVersion === 6) {
     envelope.schemaVersion = 7;
+  }
+
+  // Migrate v7 → v8: postsPayload support (optional field in payload, no transformation needed)
+  // Also supports new posts platform IDs
+  if (envelope.schemaVersion === 7) {
+    envelope.schemaVersion = 8;
   }
 
   return envelope;

@@ -1,4 +1,4 @@
-export type SearchType = 'people' | 'jobs';
+export type SearchType = 'people' | 'jobs' | 'posts';
 export type SearchMode = 'linkedin' | 'salesnav' | 'recruiter';
 
 // Job filter types

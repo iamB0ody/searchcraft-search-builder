@@ -55,37 +55,39 @@
                 <small>{{ platformRegistry.currentPlatform().notes[0] }}</small>
               </ion-text>
 
-              <!-- Emotional Search Mode Selector -->
-              <div class="emotional-mode-selector">
-                <ion-label class="emotional-mode-label">Search Mode</ion-label>
-                <ion-segment formControlName="emotionalMode" class="emotional-mode-segment">
-                  <ion-segment-button value="urgent">
-                    <ion-label>{{ emotionalModeConfig.urgent.icon }} Urgent</ion-label>
-                  </ion-segment-button>
-                  <ion-segment-button value="normal">
-                    <ion-label>{{ emotionalModeConfig.normal.icon }} Normal</ion-label>
-                  </ion-segment-button>
-                  <ion-segment-button value="chill">
-                    <ion-label>{{ emotionalModeConfig.chill.icon }} Chill</ion-label>
-                  </ion-segment-button>
-                </ion-segment>
-                <ion-text color="medium" class="emotional-mode-description">
-                  <small>{{ currentEmotionalModeDescription }}</small>
-                </ion-text>
-              </div>
-
-              <!-- Emotional Mode Adjustments (shown when active) -->
-              @if (emotionalAdjustments.length > 0) {
-                <div class="emotional-adjustments">
-                  <ion-text color="medium">
-                    <small>
-                      <strong>Adjustments:</strong>
-                      @for (adj of emotionalAdjustments; track adj) {
-                        <span class="adjustment-item">{{ adj }}</span>
-                      }
-                    </small>
+              <!-- Emotional Search Mode Selector (not for posts) -->
+              @if (!showPostsBuilder) {
+                <div class="emotional-mode-selector">
+                  <ion-label class="emotional-mode-label">Search Mode</ion-label>
+                  <ion-segment formControlName="emotionalMode" class="emotional-mode-segment">
+                    <ion-segment-button value="urgent">
+                      <ion-label>{{ emotionalModeConfig.urgent.icon }} Urgent</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="normal">
+                      <ion-label>{{ emotionalModeConfig.normal.icon }} Normal</ion-label>
+                    </ion-segment-button>
+                    <ion-segment-button value="chill">
+                      <ion-label>{{ emotionalModeConfig.chill.icon }} Chill</ion-label>
+                    </ion-segment-button>
+                  </ion-segment>
+                  <ion-text color="medium" class="emotional-mode-description">
+                    <small>{{ currentEmotionalModeDescription }}</small>
                   </ion-text>
                 </div>
+
+                <!-- Emotional Mode Adjustments (shown when active) -->
+                @if (emotionalAdjustments.length > 0) {
+                  <div class="emotional-adjustments">
+                    <ion-text color="medium">
+                      <small>
+                        <strong>Adjustments:</strong>
+                        @for (adj of emotionalAdjustments; track adj) {
+                          <span class="adjustment-item">{{ adj }}</span>
+                        }
+                      </small>
+                    </ion-text>
+                  </div>
+                }
               }
 
               <!-- Boolean Level Warning for Limited Platforms -->
@@ -160,32 +162,140 @@
                 </ion-item>
               }
 
-              <!-- Titles Input (OR joined) -->
-              <app-chip-input
-                formControlName="titles"
-                label="Job Titles (OR)"
-                placeholder="e.g., Software Engineer"
-                chipColor="primary"
-                helperText="Multiple titles are joined with OR">
-              </app-chip-input>
+              <!-- Main Builder Section (People/Jobs) -->
+              @if (showMainBuilder) {
+                <!-- Titles Input (OR joined) -->
+                <app-chip-input
+                  formControlName="titles"
+                  label="Job Titles (OR)"
+                  placeholder="e.g., Software Engineer"
+                  chipColor="primary"
+                  helperText="Multiple titles are joined with OR">
+                </app-chip-input>
 
-              <!-- Skills Input (AND joined) -->
-              <app-chip-input
-                formControlName="skills"
-                label="Skills (AND)"
-                placeholder="e.g., Angular, TypeScript"
-                chipColor="secondary"
-                helperText="Skills are joined with AND">
-              </app-chip-input>
+                <!-- Skills Input (AND joined) -->
+                <app-chip-input
+                  formControlName="skills"
+                  label="Skills (AND)"
+                  placeholder="e.g., Angular, TypeScript"
+                  chipColor="secondary"
+                  helperText="Skills are joined with AND">
+                </app-chip-input>
 
-              <!-- Exclude Input (NOT) -->
-              <app-chip-input
-                formControlName="exclude"
-                label="Exclude (NOT)"
-                placeholder="e.g., Junior, Intern"
-                chipColor="danger"
-                helperText="Terms to exclude from results">
-              </app-chip-input>
+                <!-- Exclude Input (NOT) -->
+                <app-chip-input
+                  formControlName="exclude"
+                  label="Exclude (NOT)"
+                  placeholder="e.g., Junior, Intern"
+                  chipColor="danger"
+                  helperText="Terms to exclude from results">
+                </app-chip-input>
+              }
+
+              <!-- Posts Builder Section -->
+              @if (showPostsBuilder) {
+                <ion-text color="medium" class="posts-helper-text">
+                  <small>We'll generate a search link to find posts that match your intent.</small>
+                </ion-text>
+
+                <!-- Posts Keywords Input -->
+                <app-chip-input
+                  formControlName="postsKeywords"
+                  label="Keywords"
+                  placeholder="e.g., Angular, Frontend Engineer"
+                  chipColor="primary"
+                  helperText="Primary search terms">
+                </app-chip-input>
+
+                <!-- Any Of Phrases (OR) -->
+                <app-chip-input
+                  formControlName="postsAnyOfPhrases"
+                  label="Any of these (OR)"
+                  placeholder="e.g., developer, engineer"
+                  chipColor="secondary"
+                  helperText="Posts containing any of these phrases">
+                </app-chip-input>
+
+                <!-- Must Include Phrases -->
+                <app-chip-input
+                  formControlName="postsMustIncludePhrases"
+                  label="Must include"
+                  placeholder="e.g., remote, senior"
+                  chipColor="tertiary"
+                  helperText="Exact phrases that must appear">
+                </app-chip-input>
+
+                <!-- Exclude Phrases -->
+                <app-chip-input
+                  formControlName="postsExcludePhrases"
+                  label="Exclude"
+                  placeholder="e.g., intern, unpaid"
+                  chipColor="danger"
+                  helperText="Terms to exclude from results">
+                </app-chip-input>
+
+                <!-- Hashtags (for platforms that support it) -->
+                <app-chip-input
+                  formControlName="postsHashtags"
+                  label="Hashtags"
+                  placeholder="e.g., hiring, opentowork"
+                  chipColor="success"
+                  helperText="Hashtags to search for (without #)">
+                </app-chip-input>
+
+                <!-- Location -->
+                <ion-item class="location-item">
+                  <ion-input
+                    label="Location"
+                    labelPlacement="floating"
+                    formControlName="postsLocationText"
+                    placeholder="e.g., Germany, Remote, San Francisco"
+                    [clearInput]="true">
+                  </ion-input>
+                </ion-item>
+
+                <!-- Date Range -->
+                <ion-item class="filter-item">
+                  <ion-select
+                    label="Date Range"
+                    labelPlacement="floating"
+                    formControlName="postsDateRange"
+                    interface="popover">
+                    @for (option of postsDateRangeOptions; track option.value) {
+                      <ion-select-option [value]="option.value">
+                        {{ option.label }}
+                      </ion-select-option>
+                    }
+                  </ion-select>
+                </ion-item>
+
+                <!-- Intent Toggles -->
+                <div class="intent-toggles">
+                  <ion-item class="intent-toggle-item">
+                    <ion-label>
+                      <h3>Hiring Intent</h3>
+                      <p>Add phrases like "hiring", "job opening", "we're hiring"</p>
+                    </ion-label>
+                    <ion-toggle slot="end" formControlName="includeHiringIntent"></ion-toggle>
+                  </ion-item>
+
+                  <ion-item class="intent-toggle-item">
+                    <ion-label>
+                      <h3>Open to Work Intent</h3>
+                      <p>Add phrases like "open to work", "seeking opportunities"</p>
+                    </ion-label>
+                    <ion-toggle slot="end" formControlName="includeOpenToWorkIntent"></ion-toggle>
+                  </ion-item>
+
+                  <ion-item class="intent-toggle-item">
+                    <ion-label>
+                      <h3>Remote Intent</h3>
+                      <p>Add phrases like "remote", "work from home", "anywhere"</p>
+                    </ion-label>
+                    <ion-toggle slot="end" formControlName="includeRemoteIntent"></ion-toggle>
+                  </ion-item>
+                </div>
+              }
 
               <!-- People Location (People search only) -->
               @if (showPeopleLocation) {
@@ -560,6 +670,7 @@
           [hiringSignalsExplanation]="hiringSignalsExplanation"
           [peopleLocation]="form.get('peopleLocation')?.value"
           [linkedInJobsFilters]="getLinkedInJobsFilters()"
+          [postsInjectedPhrases]="postsInjectedPhrases"
           [class.preview-highlight]="showPreviewHighlight"
           (executeSearch)="onExecuteSearch()"
           (shareSearch)="onShareSearch()">

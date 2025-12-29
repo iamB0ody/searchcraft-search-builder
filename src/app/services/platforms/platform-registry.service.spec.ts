@@ -15,8 +15,8 @@ describe('PlatformRegistryService', () => {
   });
 
   describe('platform registration', () => {
-    it('should have all 11 platforms registered', () => {
-      expect(service.availablePlatforms().length).toBe(11);
+    it('should have all 17 platforms registered', () => {
+      expect(service.availablePlatforms().length).toBe(17);
     });
 
     it('should include global platforms', () => {
@@ -35,12 +35,21 @@ describe('PlatformRegistryService', () => {
       expect(service.getPlatformById('gulfjobs')).toBeTruthy();
       expect(service.getPlatformById('arabjobs')).toBeTruthy();
     });
+
+    it('should include posts platforms', () => {
+      expect(service.getPlatformById('linkedin-posts')).toBeTruthy();
+      expect(service.getPlatformById('x-search')).toBeTruthy();
+      expect(service.getPlatformById('reddit-search')).toBeTruthy();
+      expect(service.getPlatformById('google-posts-linkedin')).toBeTruthy();
+      expect(service.getPlatformById('google-posts-x')).toBeTruthy();
+      expect(service.getPlatformById('google-posts-reddit')).toBeTruthy();
+    });
   });
 
   describe('getEnabledPlatforms', () => {
     it('should return all platforms when all are enabled', () => {
       const enabled = service.getEnabledPlatforms();
-      expect(enabled.length).toBe(11);
+      expect(enabled.length).toBe(17);
     });
 
     it('should include linkedin in enabled platforms', () => {
@@ -73,6 +82,17 @@ describe('PlatformRegistryService', () => {
       expect(platforms.length).toBeGreaterThanOrEqual(9);
       expect(platforms.map(p => p.id)).toContain('linkedin');
       expect(platforms.map(p => p.id)).toContain('indeed');
+    });
+
+    it('should return posts-compatible platforms for posts search', () => {
+      const platforms = service.getPlatformsForSearchType('posts');
+      expect(platforms.length).toBe(6);
+      expect(platforms.map(p => p.id)).toContain('linkedin-posts');
+      expect(platforms.map(p => p.id)).toContain('x-search');
+      expect(platforms.map(p => p.id)).toContain('reddit-search');
+      expect(platforms.map(p => p.id)).toContain('google-posts-linkedin');
+      expect(platforms.map(p => p.id)).toContain('google-posts-x');
+      expect(platforms.map(p => p.id)).toContain('google-posts-reddit');
     });
   });
 

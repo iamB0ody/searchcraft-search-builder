@@ -82,7 +82,7 @@ export class HistoryRepositoryService {
 
   /**
    * Search history items by keyword
-   * Searches in booleanQuery, url, titles, and skills
+   * Searches in booleanQuery, url, titles, skills, and posts payload fields
    */
   search(query: string): HistoryItem[] {
     const lower = query.toLowerCase().trim();
@@ -96,7 +96,13 @@ export class HistoryRepositoryService {
       item.payload.titles?.some(t => t.toLowerCase().includes(lower)) ||
       item.payload.skills?.some(s => s.toLowerCase().includes(lower)) ||
       item.payload.exclude?.some(e => e.toLowerCase().includes(lower)) ||
-      item.payload.location?.toLowerCase().includes(lower)
+      item.payload.location?.toLowerCase().includes(lower) ||
+      // Posts payload fields
+      item.payload.postsPayload?.keywords?.some(k => k.toLowerCase().includes(lower)) ||
+      item.payload.postsPayload?.mustIncludePhrases?.some(p => p.toLowerCase().includes(lower)) ||
+      item.payload.postsPayload?.anyOfPhrases?.some(p => p.toLowerCase().includes(lower)) ||
+      item.payload.postsPayload?.hashtags?.some(h => h.toLowerCase().includes(lower)) ||
+      item.payload.postsPayload?.locationText?.toLowerCase().includes(lower)
     );
   }
 

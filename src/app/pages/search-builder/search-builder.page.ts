@@ -38,6 +38,7 @@ import {
   trashOutline,
   peopleOutline,
   briefcaseOutline,
+  newspaperOutline,
   chevronDownOutline,
   saveOutline,
   warningOutline,
@@ -85,6 +86,7 @@ import {
   ProfileLanguage,
   BadgeStatus
 } from '../../models/search-form.model';
+import { PostsPayload, PostsDateRange, createDefaultPostsPayload, HIRING_INTENT_PHRASES, OPEN_TO_WORK_INTENT_PHRASES, REMOTE_INTENT_PHRASES } from '../../models/posts-payload.model';
 
 @Component({
   selector: 'app-search-builder',
@@ -156,6 +158,7 @@ export class SearchBuilderPage implements OnInit {
   protected qualityScoreResult?: QualityScoreResult;
   protected emotionalAdjustments: string[] = [];
   protected useOrForSkills = false;
+  protected postsInjectedPhrases: string[] = [];
 
   // Preview scroll/highlight state
   @ViewChild('previewSection', { read: ElementRef }) previewSection!: ElementRef;
@@ -178,17 +181,28 @@ export class SearchBuilderPage implements OnInit {
 
   // Check if hiring signals section should be shown (People + LinkedIn/SalesNav only)
   protected get showHiringSignals(): boolean {
-    return !this.isJobsSearch && this.showLinkedInFilters;
+    return this.isPeopleSearch && this.showLinkedInFilters;
   }
 
   // Check if people location section should be shown (People search only)
   protected get showPeopleLocation(): boolean {
-    return !this.isJobsSearch;
+    return this.isPeopleSearch;
+  }
+
+  // Check if posts builder section should be shown
+  protected get showPostsBuilder(): boolean {
+    return this.isPostsSearch;
+  }
+
+  // Check if main builder section (titles/skills/exclude) should be shown (not posts)
+  protected get showMainBuilder(): boolean {
+    return !this.isPostsSearch;
   }
 
   protected readonly searchTypes: { value: SearchType; label: string; icon: string }[] = [
     { value: 'people', label: 'People', icon: 'people-outline' },
-    { value: 'jobs', label: 'Jobs', icon: 'briefcase-outline' }
+    { value: 'jobs', label: 'Jobs', icon: 'briefcase-outline' },
+    { value: 'posts', label: 'Posts', icon: 'newspaper-outline' }
   ];
 
   protected readonly searchModes: { value: SearchMode; label: string }[] = [
@@ -260,6 +274,13 @@ export class SearchBuilderPage implements OnInit {
     { value: 'ru', label: 'Russian' }
   ];
 
+  // Posts date range options
+  protected readonly postsDateRangeOptions: { value: PostsDateRange; label: string }[] = [
+    { value: 'any', label: 'Any time' },
+    { value: '24h', label: 'Past 24 hours' },
+    { value: '7d', label: 'Past 7 days' }
+  ];
+
   // Indeed regions for dropdown
   protected readonly indeedRegions = getIndeedRegionOptions();
 
@@ -305,6 +326,7 @@ export class SearchBuilderPage implements OnInit {
       trashOutline,
       peopleOutline,
       briefcaseOutline,
+      newspaperOutline,
       chevronDownOutline,
       saveOutline,
       warningOutline,
@@ -560,7 +582,18 @@ export class SearchBuilderPage implements OnInit {
       peopleLocation: [''],
       // Hiring signals (People search only)
       hiringSignalsEnabled: [false],
-      hiringSignalsSelected: [[] as HiringSignalId[]]
+      hiringSignalsSelected: [[] as HiringSignalId[]],
+      // Posts filters
+      postsKeywords: [[] as string[]],
+      postsAnyOfPhrases: [[] as string[]],
+      postsMustIncludePhrases: [[] as string[]],
+      postsExcludePhrases: [[] as string[]],
+      postsHashtags: [[] as string[]],
+      postsLocationText: [''],
+      postsDateRange: ['any' as PostsDateRange],
+      includeHiringIntent: [false],
+      includeOpenToWorkIntent: [false],
+      includeRemoteIntent: [false]
     });
   }
 
@@ -574,12 +607,23 @@ export class SearchBuilderPage implements OnInit {
   }
 
   private updatePreview(form: SearchFormModel): void {
-    // Extract hiring signals from form
+    // Extract extended fields from form
     const formWithExtras = form as SearchFormModel & {
       emotionalMode?: EmotionalSearchMode;
       hiringSignalsEnabled?: boolean;
       hiringSignalsSelected?: HiringSignalId[];
       peopleLocation?: string;
+      // Posts fields
+      postsKeywords?: string[];
+      postsAnyOfPhrases?: string[];
+      postsMustIncludePhrases?: string[];
+      postsExcludePhrases?: string[];
+      postsHashtags?: string[];
+      postsLocationText?: string;
+      postsDateRange?: PostsDateRange;
+      includeHiringIntent?: boolean;
+      includeOpenToWorkIntent?: boolean;
+      includeRemoteIntent?: boolean;
     };
 
     // Build hiring signals state
@@ -587,6 +631,38 @@ export class SearchBuilderPage implements OnInit {
       enabled: formWithExtras.hiringSignalsEnabled || false,
       selected: formWithExtras.hiringSignalsSelected || []
     };
+
+    // Build posts payload if in posts mode
+    let postsPayload: PostsPayload | undefined;
+    if (form.searchType === 'posts') {
+      postsPayload = {
+        keywords: formWithExtras.postsKeywords || [],
+        anyOfPhrases: formWithExtras.postsAnyOfPhrases || [],
+        mustIncludePhrases: formWithExtras.postsMustIncludePhrases || [],
+        excludePhrases: formWithExtras.postsExcludePhrases || [],
+        hashtags: formWithExtras.postsHashtags || [],
+        locationText: formWithExtras.postsLocationText || '',
+        dateRange: formWithExtras.postsDateRange || 'any',
+        includeHiringIntent: formWithExtras.includeHiringIntent || false,
+        includeOpenToWorkIntent: formWithExtras.includeOpenToWorkIntent || false,
+        includeRemoteIntent: formWithExtras.includeRemoteIntent || false
+      };
+
+      // Compute injected phrases for transparency
+      const injected: string[] = [];
+      if (postsPayload.includeHiringIntent) {
+        injected.push(...HIRING_INTENT_PHRASES);
+      }
+      if (postsPayload.includeOpenToWorkIntent) {
+        injected.push(...OPEN_TO_WORK_INTENT_PHRASES);
+      }
+      if (postsPayload.includeRemoteIntent) {
+        injected.push(...REMOTE_INTENT_PHRASES);
+      }
+      this.postsInjectedPhrases = injected;
+    } else {
+      this.postsInjectedPhrases = [];
+    }
 
     // Build payload from form
     const payload: QueryPayload = {
@@ -600,44 +676,61 @@ export class SearchBuilderPage implements OnInit {
       peopleLocation: formWithExtras.peopleLocation?.trim()
         ? { value: formWithExtras.peopleLocation.trim() }
         : undefined,
+      postsPayload,
       filters: form as unknown as Record<string, unknown> // Pass full form for LinkedIn-specific URL filters
     };
 
-    // Apply emotional mode transformation BEFORE platform adapter
+    // Apply emotional mode transformation BEFORE platform adapter (skip for posts)
     const emotionalMode = formWithExtras.emotionalMode || 'normal';
-    const { payload: emotionalPayload, adjustments, useOrForSkills } = applyEmotionalMode(payload, emotionalMode);
-    this.emotionalAdjustments = adjustments;
-    this.useOrForSkills = useOrForSkills;
+    let finalPayload = payload;
+    if (form.searchType !== 'posts') {
+      const { payload: emotionalPayload, adjustments, useOrForSkills } = applyEmotionalMode(payload, emotionalMode);
+      this.emotionalAdjustments = adjustments;
+      this.useOrForSkills = useOrForSkills;
+      finalPayload = emotionalPayload;
+    } else {
+      this.emotionalAdjustments = [];
+      this.useOrForSkills = false;
+    }
 
-    // Apply hiring signals transformation AFTER emotional mode
+    // Apply hiring signals transformation AFTER emotional mode (skip for posts)
     const platform = this.platformRegistry.currentPlatform();
-    const { payload: signalPayload, explanation } = applyHiringSignals(
-      emotionalPayload,
-      platform.getCapabilities()
-    );
-    this.hiringSignalsExplanation = explanation;
+    if (form.searchType !== 'posts') {
+      const { payload: signalPayload, explanation } = applyHiringSignals(
+        finalPayload,
+        platform.getCapabilities()
+      );
+      this.hiringSignalsExplanation = explanation;
+      finalPayload = signalPayload;
+    } else {
+      this.hiringSignalsExplanation = null;
+    }
 
     // Use current platform adapter with fully adjusted payload
-    const result = platform.buildQuery(signalPayload);
+    const result = platform.buildQuery(finalPayload);
 
     this.booleanQuery = result.query;
-    this.searchUrl = result.query ? platform.buildUrl(signalPayload, result.query) : '';
+    this.searchUrl = result.query ? platform.buildUrl(finalPayload, result.query) : '';
     this.warnings = result.warnings;
     this.operatorCount = result.operatorCount;
     this.badgeStatus = result.badgeStatus;
 
     // Calculate quality score (pass platformId, emotionalMode, and hiringSignals for scoring)
     this.qualityScoreResult = this.qualityScoreService.calculateScore({
-      titles: signalPayload.titles || [],
-      skills: signalPayload.skills || [],
-      exclude: signalPayload.exclude || [],
+      titles: finalPayload.titles || [],
+      skills: finalPayload.skills || [],
+      exclude: finalPayload.exclude || [],
       booleanQuery: result.query,
       operatorCount: result.operatorCount,
       warnings: result.warnings
     }, platform.id, emotionalMode, this.hiringSignalsExplanation);
 
-    // Generate suggestions using adjusted payload
-    this.suggestions = this.intelligence.generateSuggestions(signalPayload, result.operatorCount);
+    // Generate suggestions using adjusted payload (skip for posts)
+    if (form.searchType !== 'posts') {
+      this.suggestions = this.intelligence.generateSuggestions(finalPayload, result.operatorCount);
+    } else {
+      this.suggestions = [];
+    }
 
     // Auto-scroll to preview on first valid result (mobile only)
     this.autoScrollToPreviewIfNeeded();
@@ -699,10 +792,26 @@ export class SearchBuilderPage implements OnInit {
   protected onSearchTypeChange(event: CustomEvent): void {
     const newSearchType = event.detail.value as SearchType;
 
-    // If switching to 'people' while on Google Jobs, switch platform to LinkedIn
+    // If switching to 'people' while on jobs-only platform, switch to LinkedIn
     if (newSearchType === 'people' && this.currentPlatformId === 'google-jobs') {
       this.platformRegistry.setCurrentPlatform('linkedin');
       this.toast.showInfo('Switched to LinkedIn for people search.');
+    }
+
+    // If switching to 'posts', switch to first posts platform
+    if (newSearchType === 'posts') {
+      const postsPlatforms = this.platformRegistry.getPlatformsForSearchType('posts');
+      if (postsPlatforms.length > 0) {
+        this.platformRegistry.setCurrentPlatform(postsPlatforms[0].id);
+      }
+
+      // Apply persona-based intent defaults
+      const persona = this.onboardingService.getPersona();
+      if (persona === 'jobSeeker') {
+        this.form.patchValue({ includeHiringIntent: true, includeOpenToWorkIntent: false });
+      } else if (persona === 'recruiter') {
+        this.form.patchValue({ includeHiringIntent: false, includeOpenToWorkIntent: true });
+      }
     }
 
     this.form.patchValue({ searchType: newSearchType });
@@ -727,9 +836,22 @@ export class SearchBuilderPage implements OnInit {
       'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs'
     ];
 
-    if (jobsOnlyPlatforms.includes(platformId) && this.form.get('searchType')?.value === 'people') {
+    // Posts-only platforms
+    const postsOnlyPlatforms = [
+      'linkedin-posts', 'x-search', 'reddit-search',
+      'google-posts-linkedin', 'google-posts-x', 'google-posts-reddit'
+    ];
+
+    const currentSearchType = this.form.get('searchType')?.value;
+
+    if (jobsOnlyPlatforms.includes(platformId) && currentSearchType !== 'jobs') {
       this.form.patchValue({ searchType: 'jobs' });
       this.toast.showInfo('This platform supports job searches only.');
+    }
+
+    if (postsOnlyPlatforms.includes(platformId) && currentSearchType !== 'posts') {
+      this.form.patchValue({ searchType: 'posts' });
+      this.toast.showInfo('This platform supports posts searches only.');
     }
 
     // Trigger preview update
@@ -753,6 +875,14 @@ export class SearchBuilderPage implements OnInit {
 
   protected get isJobsSearch(): boolean {
     return this.form.get('searchType')?.value === 'jobs';
+  }
+
+  protected get isPostsSearch(): boolean {
+    return this.form.get('searchType')?.value === 'posts';
+  }
+
+  protected get isPeopleSearch(): boolean {
+    return this.form.get('searchType')?.value === 'people';
   }
 
   protected getLinkedInJobsFilters(): { datePosted?: string; inYourNetwork?: boolean; fairChanceEmployer?: boolean } | undefined {
@@ -793,7 +923,18 @@ export class SearchBuilderPage implements OnInit {
       keywordSchool: '',
       peopleLocation: '',
       hiringSignalsEnabled: false,
-      hiringSignalsSelected: []
+      hiringSignalsSelected: [],
+      // Posts fields
+      postsKeywords: [],
+      postsAnyOfPhrases: [],
+      postsMustIncludePhrases: [],
+      postsExcludePhrases: [],
+      postsHashtags: [],
+      postsLocationText: '',
+      postsDateRange: 'any',
+      includeHiringIntent: false,
+      includeOpenToWorkIntent: false,
+      includeRemoteIntent: false
     });
   }
 

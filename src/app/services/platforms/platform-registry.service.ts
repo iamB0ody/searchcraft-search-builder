@@ -14,6 +14,13 @@ import { RecruitNetPlatformAdapter } from './recruitnet-platform.adapter';
 import { BeBeePlatformAdapter } from './bebee-platform.adapter';
 import { GulfJobsPlatformAdapter } from './gulfjobs-platform.adapter';
 import { ArabJobsPlatformAdapter } from './arabjobs-platform.adapter';
+// Posts Platforms
+import { LinkedInPostsPlatformAdapter } from './linkedin-posts-platform.adapter';
+import { XSearchPlatformAdapter } from './x-search-platform.adapter';
+import { RedditSearchPlatformAdapter } from './reddit-search-platform.adapter';
+import { GooglePostsLinkedInPlatformAdapter } from './google-posts-linkedin-platform.adapter';
+import { GooglePostsXPlatformAdapter } from './google-posts-x-platform.adapter';
+import { GooglePostsRedditPlatformAdapter } from './google-posts-reddit-platform.adapter';
 
 @Injectable({ providedIn: 'root' })
 export class PlatformRegistryService {
@@ -32,6 +39,13 @@ export class PlatformRegistryService {
   private readonly beBeeAdapter = inject(BeBeePlatformAdapter);
   private readonly gulfJobsAdapter = inject(GulfJobsPlatformAdapter);
   private readonly arabJobsAdapter = inject(ArabJobsPlatformAdapter);
+  // Posts platforms
+  private readonly linkedinPostsAdapter = inject(LinkedInPostsPlatformAdapter);
+  private readonly xSearchAdapter = inject(XSearchPlatformAdapter);
+  private readonly redditSearchAdapter = inject(RedditSearchPlatformAdapter);
+  private readonly googlePostsLinkedInAdapter = inject(GooglePostsLinkedInPlatformAdapter);
+  private readonly googlePostsXAdapter = inject(GooglePostsXPlatformAdapter);
+  private readonly googlePostsRedditAdapter = inject(GooglePostsRedditPlatformAdapter);
 
   private platforms = new Map<string, PlatformAdapter>();
   private currentPlatformId = signal<string>('linkedin');
@@ -58,6 +72,13 @@ export class PlatformRegistryService {
     this.register(this.beBeeAdapter);
     this.register(this.gulfJobsAdapter);
     this.register(this.arabJobsAdapter);
+    // Register Posts platforms
+    this.register(this.linkedinPostsAdapter);
+    this.register(this.xSearchAdapter);
+    this.register(this.redditSearchAdapter);
+    this.register(this.googlePostsLinkedInAdapter);
+    this.register(this.googlePostsXAdapter);
+    this.register(this.googlePostsRedditAdapter);
   }
 
   register(adapter: PlatformAdapter): void {

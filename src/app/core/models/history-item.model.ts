@@ -41,7 +41,7 @@ export const MAX_HISTORY_ITEMS = 20;
 /**
  * Current schema version for history
  */
-export const HISTORY_SCHEMA_VERSION = 6;
+export const HISTORY_SCHEMA_VERSION = 7;
 
 /**
  * Migrate storage data to current schema version
@@ -72,7 +72,10 @@ export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
   if (envelope.schemaVersion === 2) {
     const knownPlatforms = [
       'linkedin', 'salesnav', 'google-jobs', 'indeed',
-      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs'
+      'bayt', 'gulftalent', 'naukrigulf', 'recruitnet', 'bebee', 'gulfjobs', 'arabjobs',
+      // Posts platforms
+      'linkedin-posts', 'x-search', 'reddit-search',
+      'google-posts-linkedin', 'google-posts-x', 'google-posts-reddit'
     ];
     envelope.items = envelope.items.map(item => ({
       ...item,
@@ -102,6 +105,12 @@ export function migrateHistoryStorage(data: unknown): HistoryStorageEnvelope {
   // Migrate v5 → v6: peopleLocation support (optional field in payload, no transformation needed)
   if (envelope.schemaVersion === 5) {
     envelope.schemaVersion = 6;
+  }
+
+  // Migrate v6 → v7: postsPayload support (optional field in payload, no transformation needed)
+  // Also supports new posts platform IDs and 'posts' search type
+  if (envelope.schemaVersion === 6) {
+    envelope.schemaVersion = 7;
   }
 
   return envelope;
