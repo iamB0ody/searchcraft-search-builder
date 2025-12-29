@@ -48,6 +48,8 @@ import { PreviewComponent } from '../../components/preview/preview.component';
 import { SuggestionsComponent } from '../../components/suggestions/suggestions.component';
 import { ImportSearchModalComponent } from '../../components/import-search-modal/import-search-modal.component';
 import { SavePresetModalComponent } from '../../features/presets/components/save-preset-modal/save-preset-modal.component';
+import { OnboardingModalComponent, OnboardingResult } from '../../components/onboarding-modal/onboarding-modal.component';
+import { OnboardingService } from '../../core/services/onboarding.service';
 import { IntelligenceEngineService } from '../../services/intelligence/intelligence-engine.service';
 import { ToastService } from '../../services/toast.service';
 import { PresetRepositoryService } from '../../core/services/preset-repository.service';
@@ -136,6 +138,7 @@ export class SearchBuilderPage implements OnInit {
   protected readonly googleJobsAdapter = inject(GoogleJobsPlatformAdapter);
   protected readonly indeedAdapter = inject(IndeedPlatformAdapter);
   private readonly featureFlags = inject(FeatureFlagService);
+  private readonly onboardingService = inject(OnboardingService);
 
   protected form!: FormGroup;
   protected booleanQuery = '';
@@ -312,6 +315,7 @@ export class SearchBuilderPage implements OnInit {
     this.setupFormSubscription();
     await this.checkForSharedState();
     this.checkForPresetToApply();
+    await this.checkForOnboarding();
   }
 
   ionViewWillEnter(): void {
@@ -371,7 +375,70 @@ export class SearchBuilderPage implements OnInit {
       // Apply from history
       this.applyPreset(state.historyPayload, state.historyPlatformId, state.historyMode, state.historyEmotionalMode, state.historyHiringSignals);
       this.toast.showSuccess('Search loaded from history');
+    } else if (state?.onboardingPayload) {
+      // Apply from onboarding
+      this.applyPreset(
+        state.onboardingPayload,
+        state.onboardingPlatformId,
+        undefined,
+        undefined,
+        state.onboardingHiringSignals
+      );
+      this.toast.showSuccess('Search ready! Customize and go.');
     }
+  }
+
+  private async checkForOnboarding(): Promise<void> {
+    if (this.featureFlags.isOnboardingEnabled() && !this.onboardingService.hasCompletedOnboarding()) {
+      await this.showOnboardingModal();
+    }
+  }
+
+  private async showOnboardingModal(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: OnboardingModalComponent,
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+      handle: false,
+      backdropDismiss: false
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss<OnboardingResult>();
+
+    if (role === 'complete' && data) {
+      this.applyOnboardingResult(data);
+    }
+  }
+
+  private applyOnboardingResult(result: OnboardingResult): void {
+    // Set platform
+    this.platformRegistry.setCurrentPlatform(result.platformId);
+
+    // Build payload
+    const payload: QueryPayload = {
+      searchType: result.searchType,
+      titles: result.titles,
+      skills: [],
+      exclude: [],
+      location: result.location
+    };
+
+    // Build hiring signals state if enabled
+    const hiringSignals: HiringSignalsState | undefined = result.hiringSignalsEnabled
+      ? { enabled: true, selected: DEFAULT_SELECTED_SIGNALS }
+      : undefined;
+
+    // Apply to form
+    this.applyPreset(payload, result.platformId, undefined, undefined, hiringSignals);
+
+    // Handle date posted for job searches
+    if (result.datePosted) {
+      this.form.patchValue({ datePosted: result.datePosted });
+    }
+
+    this.toast.showSuccess('Search ready! Customize and go.');
   }
 
   private applyPreset(

@@ -8,14 +8,7 @@ export const environment = {
   name: 'local' as const,
   production: false,
   featureFlags: {
-    platforms: {
-      bayt: false,
-      gulftalent: false,
-      naukrigulf: false,
-      recruitnet: false,
-      bebee: false,
-      gulfjobs: false,
-      arabjobs: false,
-    },
+    platforms: {},
+    onboarding: true,
   } as Partial<FeatureFlags>,
 };

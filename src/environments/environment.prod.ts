@@ -8,6 +8,14 @@ export const environment = {
   name: 'prod' as const,
   production: true,
   featureFlags: {
-    platforms: {},
+    platforms: {
+      bayt: false,
+      gulftalent: false,
+      naukrigulf: false,
+      recruitnet: false,
+      bebee: false,
+      gulfjobs: false,
+      arabjobs: false,
+    },
   } as Partial<FeatureFlags>,
 };

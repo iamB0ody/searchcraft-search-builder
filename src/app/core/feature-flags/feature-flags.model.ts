@@ -7,6 +7,8 @@ import { PlatformId } from '../../models/platform.model';
 export interface FeatureFlags {
   /** Platform enable/disable flags - undefined means enabled (default true) */
   platforms: Partial<Record<PlatformId, boolean>>;
+  /** Enable/disable onboarding modal for new users */
+  onboarding?: boolean;
 }
 
 /**
@@ -28,5 +30,6 @@ export const DEFAULT_FEATURE_FLAGS: FeatureFlags = {
     'bebee': true,
     'gulfjobs': true,
     'arabjobs': true
-  }
+  },
+  onboarding: true
 };

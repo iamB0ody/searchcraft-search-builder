@@ -36,6 +36,14 @@ export class FeatureFlagService {
   }
 
   /**
+   * Check if onboarding is enabled
+   * @returns true if enabled, false if disabled (defaults to true)
+   */
+  isOnboardingEnabled(): boolean {
+    return this.flags.onboarding ?? true;
+  }
+
+  /**
    * Merge default flags with environment overrides
    * Environment values take precedence over defaults
    */
@@ -47,7 +55,8 @@ export class FeatureFlagService {
       platforms: {
         ...defaults.platforms,
         ...overrides?.platforms
-      }
+      },
+      onboarding: overrides?.onboarding ?? defaults.onboarding
     };
   }
 }

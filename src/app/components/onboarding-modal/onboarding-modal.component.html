@@ -1,0 +1,208 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if (currentStep === 'details') {
+        <ion-button (click)="onBack()" aria-label="Go back">
+          <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+    <ion-title>{{ stepTitle }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSkip()" color="medium" aria-label="Skip onboarding">
+        Skip
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-progress-bar [value]="progress" color="primary"></ion-progress-bar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Step 1: Persona Selection -->
+  @if (currentStep === 'persona') {
+    <div class="persona-step">
+      <ion-text color="medium" class="step-description">
+        <p>Let us personalize your experience</p>
+      </ion-text>
+
+      <div class="persona-cards">
+        <!-- Job Seeker Card -->
+        <ion-card
+          button
+          [class.selected]="selectedPersona === 'jobSeeker'"
+          (click)="selectPersona('jobSeeker')"
+          aria-label="I'm a job seeker">
+          <ion-card-content>
+            <div class="persona-icon">
+              <ion-icon name="person-outline" color="primary"></ion-icon>
+            </div>
+            <ion-card-title>I'm a job seeker</ion-card-title>
+            <ion-text color="medium">
+              <p>Find your next opportunity</p>
+            </ion-text>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Recruiter Card -->
+        <ion-card
+          button
+          [class.selected]="selectedPersona === 'recruiter'"
+          (click)="selectPersona('recruiter')"
+          aria-label="I'm a recruiter">
+          <ion-card-content>
+            <div class="persona-icon">
+              <ion-icon name="briefcase-outline" color="primary"></ion-icon>
+            </div>
+            <ion-card-title>I'm a recruiter</ion-card-title>
+            <ion-text color="medium">
+              <p>Find the right candidates</p>
+            </ion-text>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  }
+
+  <!-- Step 2A: Job Seeker Details -->
+  @if (currentStep === 'details' && selectedPersona === 'jobSeeker') {
+    <div class="details-step">
+      <ion-text color="medium" class="step-description">
+        <p>Tell us what you're looking for</p>
+      </ion-text>
+
+      <form [formGroup]="jobSeekerForm" class="details-form">
+        <!-- Job Title -->
+        <ion-item>
+          <ion-input
+            formControlName="jobTitle"
+            label="Job Title"
+            labelPlacement="floating"
+            placeholder="e.g., Software Engineer"
+            [clearInput]="true"
+            required>
+          </ion-input>
+        </ion-item>
+
+        <!-- Platform -->
+        <ion-item>
+          <ion-select
+            formControlName="platform"
+            label="Platform"
+            labelPlacement="floating"
+            interface="popover">
+            @for (platform of jobPlatforms; track platform.id) {
+              <ion-select-option [value]="platform.id">
+                {{ platform.label }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+
+        <!-- Location -->
+        <ion-item>
+          <ion-input
+            formControlName="location"
+            label="Location (optional)"
+            labelPlacement="floating"
+            placeholder="e.g., San Francisco, CA"
+            [clearInput]="true">
+          </ion-input>
+        </ion-item>
+
+        <!-- Date Posted -->
+        <ion-item>
+          <ion-select
+            formControlName="datePosted"
+            label="Date Posted"
+            labelPlacement="floating"
+            interface="popover">
+            @for (option of datePostedOptions; track option.value) {
+              <ion-select-option [value]="option.value">
+                {{ option.label }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+      </form>
+    </div>
+  }
+
+  <!-- Step 2B: Recruiter Details -->
+  @if (currentStep === 'details' && selectedPersona === 'recruiter') {
+    <div class="details-step">
+      <ion-text color="medium" class="step-description">
+        <p>Tell us who you're looking for</p>
+      </ion-text>
+
+      <form [formGroup]="recruiterForm" class="details-form">
+        <!-- Search Type -->
+        <div class="search-type-selector">
+          <ion-label color="medium">Search for</ion-label>
+          <ion-segment
+            formControlName="searchType"
+            (ionChange)="onSearchTypeChange()">
+            <ion-segment-button value="people">
+              <ion-label>People</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="jobs">
+              <ion-label>Jobs</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+
+        <!-- Role/Title -->
+        <ion-item>
+          <ion-input
+            formControlName="roleTitle"
+            label="Role / Title"
+            labelPlacement="floating"
+            placeholder="e.g., Senior Software Engineer"
+            [clearInput]="true"
+            required>
+          </ion-input>
+        </ion-item>
+
+        <!-- Location -->
+        <ion-item>
+          <ion-input
+            formControlName="location"
+            label="Location (optional)"
+            labelPlacement="floating"
+            placeholder="e.g., Germany, Berlin"
+            [clearInput]="true">
+          </ion-input>
+        </ion-item>
+
+        <!-- Hiring Signals (People only) -->
+        @if (showHiringSignalsToggle) {
+          <ion-item lines="none" class="hiring-signals-toggle">
+            <ion-label>
+              <h3>Enable Hiring Signals</h3>
+              <p>Find candidates open to opportunities</p>
+            </ion-label>
+            <ion-toggle slot="end" formControlName="hiringSignals"></ion-toggle>
+          </ion-item>
+        }
+      </form>
+    </div>
+  }
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <ion-toolbar>
+    <ion-button
+      expand="block"
+      [disabled]="!canProceed"
+      (click)="onContinue()"
+      size="large"
+      class="action-button">
+      @if (currentStep === 'persona') {
+        Continue
+        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+      } @else {
+        <ion-icon slot="start" name="rocket-outline"></ion-icon>
+        Build my search
+      }
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
